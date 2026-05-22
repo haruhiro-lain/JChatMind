@@ -3,7 +3,6 @@ package com.kama.jchatmind.agent;
 import com.kama.jchatmind.converter.ChatMessageConverter;
 import com.kama.jchatmind.message.SseMessage;
 import com.kama.jchatmind.model.dto.ChatMessageDTO;
-import com.kama.jchatmind.model.dto.KnowledgeBaseDTO;
 import com.kama.jchatmind.model.response.CreateChatMessageResponse;
 import com.kama.jchatmind.model.vo.ChatMessageVO;
 import com.kama.jchatmind.service.ChatMessageFacadeService;
@@ -51,9 +50,6 @@ public class JChatMind {
     // 可用的工具
     private List<ToolCallback> availableTools;
 
-    // 可访问的知识库
-    private List<KnowledgeBaseDTO> availableKbs;
-
     // 工具调用管理器
     private ToolCallingManager toolCallingManager;
 
@@ -95,7 +91,6 @@ public class JChatMind {
                      Integer maxMessages,
                      List<Message> memory,
                      List<ToolCallback> availableTools,
-                     List<KnowledgeBaseDTO> availableKbs,
                      String chatSessionId,
                      SseService sseService,
                      ChatMessageFacadeService chatMessageFacadeService,
@@ -109,7 +104,6 @@ public class JChatMind {
         this.chatClient = chatClient;
 
         this.availableTools = availableTools;
-        this.availableKbs = availableKbs;
 
         this.chatSessionId = chatSessionId;
         this.sseService = sseService;
@@ -221,11 +215,8 @@ public class JChatMind {
         String thinkPrompt = """
                 现在你是一个智能的的具体「决策模块」
                 请根据当前对话上下文，决定下一步的动作。
-                                \s
-                【额外信息】
-                - 你目前拥有的知识库列表以及描述：%s
-                - 如果有缺失的上下文时，优先从知识库中进行搜索
-                """.formatted(this.availableKbs);
+                如果有可用的工具，优先考虑调用工具来完成任务。
+                """;
 
         // 将 thinkPrompt 通过 .user(thinkPrompt) 的方式构造进入 chatClient 中
         // 既能让每次 messageList 的最后一条是 本条提示词，

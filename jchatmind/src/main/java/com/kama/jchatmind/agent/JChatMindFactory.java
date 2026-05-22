@@ -5,14 +5,10 @@ import com.kama.jchatmind.agent.tools.Tool;
 import com.kama.jchatmind.config.ChatClientRegistry;
 import com.kama.jchatmind.converter.AgentConverter;
 import com.kama.jchatmind.converter.ChatMessageConverter;
-import com.kama.jchatmind.converter.KnowledgeBaseConverter;
 import com.kama.jchatmind.mapper.AgentMapper;
-import com.kama.jchatmind.mapper.KnowledgeBaseMapper;
 import com.kama.jchatmind.model.dto.AgentDTO;
 import com.kama.jchatmind.model.dto.ChatMessageDTO;
-import com.kama.jchatmind.model.dto.KnowledgeBaseDTO;
 import com.kama.jchatmind.model.entity.Agent;
-import com.kama.jchatmind.model.entity.KnowledgeBase;
 import com.kama.jchatmind.service.ChatMessageFacadeService;
 import com.kama.jchatmind.service.SseService;
 import com.kama.jchatmind.service.ToolFacadeService;
@@ -38,8 +34,6 @@ public class JChatMindFactory {
     private final SseService sseService;
     private final AgentMapper agentMapper;
     private final AgentConverter agentConverter;
-    private final KnowledgeBaseMapper knowledgeBaseMapper;
-    private final KnowledgeBaseConverter knowledgeBaseConverter;
     private final ToolFacadeService toolFacadeService;
     private final ChatMessageFacadeService chatMessageFacadeService;
     private final ChatMessageConverter chatMessageConverter;
@@ -52,8 +46,6 @@ public class JChatMindFactory {
             SseService sseService,
             AgentMapper agentMapper,
             AgentConverter agentConverter,
-            KnowledgeBaseMapper knowledgeBaseMapper,
-            KnowledgeBaseConverter knowledgeBaseConverter,
             ToolFacadeService toolFacadeService,
             ChatMessageFacadeService chatMessageFacadeService,
             ChatMessageConverter chatMessageConverter
@@ -62,8 +54,6 @@ public class JChatMindFactory {
         this.sseService = sseService;
         this.agentMapper = agentMapper;
         this.agentConverter = agentConverter;
-        this.knowledgeBaseMapper = knowledgeBaseMapper;
-        this.knowledgeBaseConverter = knowledgeBaseConverter;
         this.toolFacadeService = toolFacadeService;
         this.chatMessageFacadeService = chatMessageFacadeService;
         this.chatMessageConverter = chatMessageConverter;
@@ -124,28 +114,6 @@ public class JChatMindFactory {
         }
     }
 
-    private List<KnowledgeBaseDTO> resolveRuntimeKnowledgeBases(AgentDTO agentConfig) {
-        List<String> allowedKbIds = agentConfig.getAllowedKbs();
-        if (allowedKbIds == null || allowedKbIds.isEmpty()) {
-            return Collections.emptyList();
-        }
-
-        List<KnowledgeBase> knowledgeBases = knowledgeBaseMapper.selectByIdBatch(allowedKbIds);
-        if (knowledgeBases.isEmpty()) {
-            return Collections.emptyList();
-        }
-        List<KnowledgeBaseDTO> kbDTOs = new ArrayList<>();
-        try {
-            for (KnowledgeBase knowledgeBase : knowledgeBases) {
-                KnowledgeBaseDTO kbDTO = knowledgeBaseConverter.toDTO(knowledgeBase);
-                kbDTOs.add(kbDTO);
-            }
-        } catch (JsonProcessingException e) {
-            throw new RuntimeException(e);
-        }
-        return kbDTOs;
-    }
-
     private List<Tool> resolveRuntimeTools(AgentDTO agentConfig) {
         // 固定工具（系统强制）
         List<Tool> runtimeTools = new ArrayList<>(toolFacadeService.getFixedTools());
@@ -196,7 +164,6 @@ public class JChatMindFactory {
     private JChatMind buildAgentRuntime(
             Agent agent,
             List<Message> memory,
-            List<KnowledgeBaseDTO> knowledgeBases,
             List<ToolCallback> toolCallbacks,
             String chatSessionId
     ) {
@@ -213,7 +180,6 @@ public class JChatMindFactory {
                 agentConfig.getChatOptions().getMessageLength(),
                 memory,
                 toolCallbacks,
-                knowledgeBases,
                 chatSessionId,
                 sseService,
                 chatMessageFacadeService,
@@ -229,8 +195,6 @@ public class JChatMindFactory {
         AgentDTO agentConfig = toAgentConfig(agent);
         List<Message> memory = loadMemory(chatSessionId);
 
-        // 解析 agent 的支持的知识库
-        List<KnowledgeBaseDTO> knowledgeBases = resolveRuntimeKnowledgeBases(agentConfig);
         // 解析 agent 支持的工具调用
         List<Tool> runtimeTools = resolveRuntimeTools(agentConfig);
         // 将工具调用转换成 ToolCallback 的形式
@@ -239,7 +203,6 @@ public class JChatMindFactory {
         return buildAgentRuntime(
                 agent,
                 memory,
-                knowledgeBases,
                 toolCallbacks,
                 chatSessionId
         );

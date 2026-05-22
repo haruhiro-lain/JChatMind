@@ -71,13 +71,6 @@
             <scope>provided</scope>
         </dependency>
 
-        <!-- 解析 markdown 文件 -->
-        <dependency>
-            <groupId>com.vladsch.flexmark</groupId>
-            <artifactId>flexmark-all</artifactId>
-            <version>0.64.8</version>
-        </dependency>
-
         <!-- 数据访问 -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -103,11 +96,6 @@
             <artifactId>spring-ai-starter-model-zhipuai</artifactId>
         </dependency>
 
-        <!-- 邮件发送 -->
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-mail</artifactId>
-        </dependency>
     </dependencies>
     <build>
         <plugins>

@@ -1,0 +1,8 @@
+*.class
+**/target/
+
+# IDE
+.idea/
+
+# temporary workspace for AI collaboration
+TEMP/
