@@ -1,219 +1,354 @@
-
-# AI智能体助手-JChatMind
-
-最近很多录友在做 AI 项目，但我发现一个普遍问题：
-
-简历写着“接入大模型、实现聊天”。
-
-面试官一句话就能给你问懵：“**那你到底做了什么？不就是调 API 吗**？”
-
-一个聊天对话框和agent 是有区别的。
-
-我这次在[知识星球](https://programmercarl.com/other/kstar.html)里**更新一个Java Agent项目**：JChatMind（AI智能体助手）
-
-JChatMind 是一个智能 AI Agent 系统，基于 Spring AI 框架构建，实现了自主决策、工具调用和知识库检索等核心能力。
-
-系统采用 **Think-Execute 循环机制，能够理解复杂任务、规划执行步骤、调用外部工具，并基于 RAG 技术从知识库中检索相关信息，完成多步骤的复杂任务**。
-
-它不是“聊天机器人”，而是 Agent：**能规划、能调用工具、能检索知识库、还能把执行过程实时推给前端**。
-
-你做完它，面试官再问 AI 项目，你能讲的就不是“我接了个接口”，而是：
-
-* 我实现了 Think-Execute 循环（自主决策）
-* 我实现了 工具调用框架（可扩展）
-* 我实现了 RAG + 向量检索（pgvector）
-* 我实现了 多模型切换架构（注册表模式）
-* 我实现了 SSE 实时推送（执行状态可视化）
-
-### 项目演示
-
-![image](https://file1.kamacoder.com/i/web/2026-01-09_16-30-36.jpg)
-
-![image](https://file1.kamacoder.com/i/web/2026-01-09_16-31-19.jpg)
-
-![image](https://file1.kamacoder.com/i/web/2026-01-09_16-31-49.jpg)
-
-![image](https://file1.kamacoder.com/i/web/2026-01-09_16-32-08.jpg)
-
-### 项目专栏目录
-
-![](https://file1.kamacoder.com/i/web/2026-01-08_10-43-35.jpg)
-
-从理论基础：agent的基本概念
-
-到项目实战：大模型怎么用、环境怎么搭，Agent loop如何设计，怎么引入知识库与RAG，以及MCP
-
-最后再到求职相关：项目的简历写法、项目亮点、本项目常见面试题，都给大家准备好了。
-
-从**项目源码到答疑，一条龙服务，不用担心学不会，有什么问题都可以在专属微信群提问**：（[知识星球](https://programmercarl.com/other/kstar.html)里每个项目都有专属答疑群）
-
-![](https://file1.kamacoder.com/i/web/2026-01-08_10-59-23.jpg)
-
-### 项目架构图
-
-![](https://file1.kamacoder.com/i/web/2026-01-08_11-19-14.jpg)
-
-JChatMind 通过分层架构 + Agent 核心服务，把 AI 能力（模型、RAG、工具）抽象成可组合、可扩展的系统模块
-
-### 获取本专栏
-
-扫如下十元代金券，只需要 196元，加入[知识星球](https://programmercarl.com/other/kstar.html)，你将**获取20+套项目教程的专栏+源码+配套答疑**： （每个项目不到十元钱，而且**加入星球的服务远不止就这些项目**！）
-
-如果不知道[知识星球](https://programmercarl.com/other/kstar.html)对自己是否有帮助，可以进来看看，感受一下星球里的学习氛围，**三天（72h）内可以全额退款**！
-
-知识星球APP右上角 自己申请退款，一个小时到账 全程无套路， **记得是三天内（72h）才能退款**。
-
-### 项目专栏细节
-
-理论知识讲解：
-
-![](https://file1.kamacoder.com/i/web/2026-01-08_11-02-38.jpg)
-
-循序渐进，带你做agent实战开发：
-
-![](https://file1.kamacoder.com/i/web/2026-01-08_11-03-33.jpg)
-
-![](https://file1.kamacoder.com/i/web/2026-01-08_11-03-57.jpg)
-
-![](https://file1.kamacoder.com/i/web/2026-01-08_11-03-57.jpg)
-
-![](https://file1.kamacoder.com/i/web/2026-01-08_11-04-20.jpg)
-
-![](https://file1.kamacoder.com/i/web/2026-01-08_11-04-41.jpg)
-
-最后，求职相关，简历写法、相关面试题，技术亮点 都安排的明明白白：
-
-**技术亮点、性能指标、功能指标、技术指标**，都给大家列出，甚至，不同岗位（后端、算法、大模型）使用这个项目的简历写法，都列出来，让面试没有死角：
-
-![](https://file1.kamacoder.com/i/web/2026-01-08_11-05-09.jpg)
-
-**技术选型的理由、技术难点、解决方案、技术成长点、深入解析计数原理**：
-
-![](https://file1.kamacoder.com/i/web/2026-01-08_11-11-08.jpg)
-
-针对项目原理和项目实现都准备了相关面试题
-
-项目原理面试题以及回答：
-![](https://file1.kamacoder.com/i/web/2026-01-08_11-15-22.jpg)
-
-项目实战面试题以及回答：
-![](https://file1.kamacoder.com/i/web/2026-01-08_11-14-09.jpg)
-
-
-### 项目亮点
-
-1、**真正的 Agent Loop（Think-Execute 循环 + 状态机**）
-
-不是“调用一次大模型就结束”，而是支持：
-
-* 多轮规划
-* 多轮工具调用
-* 状态管理（THINKING / EXECUTING / DONE / ERROR）
-* 错误处理与最大步数控制（防止无限循环）
-
-这里的技术点：“怎么避免 Agent 无限调用工具？怎么做状态管理？怎么做超时控制？”
-
-2、**工具系统（固定工具 + 可选工具，可扩展、可治理**）
-
-很多人做工具调用只是“写几个 if else”，JChatMind 的工具系统是“框架化”的：
-
-* 工具自动注册
-* 固定工具 / 可选工具分类管理
-* 可扩展：新增工具不改核心流程
-* 可控：禁用 Spring AI 自动执行，改为手动管理 ToolCalling 流程
-
-这里的技术点：“工具调用怎么做扩展？工具失败怎么处理？工具返回结果怎么进入对话历史？”
-
-这就是讲“系统设计”的地方。
-
-3、**RAG 知识库（PostgreSQL + pgvector**）
-
-RAG 不是 PPT 概念，JChatMind 是完整链路：
-
-* Markdown 文档解析、分块
-* Embedding 生成并落库
-* pgvector 相似度检索（<->）
-* ivfflat 索引优化，支持 10 万+向量
-
-而且最关键的点是：用 PostgreSQL 一套体系把结构化数据和向量数据都管了（部署简单、成本低、事务一致性好）
-
-4、**多模型支持（注册表模式 ChatClientRegistry**）
-
-项目不是“绑定一个模型”，而是：
-
-* DeepSeek / 智谱 AI 可切换
-* 统一 ChatClient 接口
-* 注册表模式管理模型实例（解耦创建与使用）
-* 便于未来扩展更多模型
-
-这里也涉及到：如果要加一个新模型要改哪些代码？怎么做到无侵入？
-
-5、**SSE 实时通信（执行过程实时可视化**）
-
-很多 Agent 项目体验很差：用户不知道系统在干嘛。
-
-JChatMind 用 SSE 做了：
-
-* 状态实时推送：THINKING / EXECUTING / DONE
-* 前端能实时看到“Agent 正在干啥”
-* 比 WebSocket 更简单，适合单向推送
-
-这里会涉及到：SSE 和 WebSocket 区别？连接怎么管理？超时怎么处理？并发怎么扛？
-
-这又是一套高质量八股 + 项目结合。
-
-
-### 学完本项目可以掌握什么？
-
-* AI Agent 核心：Think-Execute 循环（多轮规划 + 多轮工具调用）+ 状态机 + 超时/错误处理
-* 工具调用体系：可扩展工具框架（固定/可选工具）、工具注册与调度、手动接管 Spring AI 工具执行流程
-* RAG 全链路：Markdown 解析与分块 → Embedding 入库 → pgvector 相似度检索（索引优化、SQL 调优）
-* 多模型架构设计：ChatClientRegistry 注册表模式，支持 DeepSeek/智谱等模型动态切换与扩展
-* 后端工程能力：Spring Boot 分层架构、RESTful API、统一异常/响应、MyBatis 复杂 SQL + 自定义 TypeHandler（vector）
-* 实时通信：SSE 服务端推送、连接管理、执行状态实时展示
-* 可量化成果表达：响应 <2s、并发 100+、检索准确率 85%+ 这种“面试官一眼懂”的指标怎么做、怎么写、怎么讲
-
-
-### 加入知识星球获取本项目
-
-加入[知识星球](https://programmercarl.com/other/kstar.html) 获取本项目。
-
-加入[知识星球](https://mp.weixin.qq.com/s/iUiIRYlJvNqTsvfQXwK6FA)四大权益
-
-1、**高质量项目合集（C++ / Java / Go / Python / AI**）
-
-可以获得星球里 **20+ 套项目专栏资料，不仅有详细讲解，而且都配套专属答疑服务**。
-
-全网十分稀缺的  **C++ AI应用项目（AI应用服务平台），Go AI项目（GopherAI），Java AI项目（JChatMind**）。
-
-![](https://file1.kamacoder.com/i/web/2025-12-31_11-41-52.jpg)
-
-2、**精品八股PDF**
-
-速记八股帮助众多录友们，短时间内快速上岸：
-
-![](https://file1.kamacoder.com/i/web/2025-09-28_17-44-23.jpg)
-
-3、**独家资料 & 学习氛围**
-
-大厂面经、薪资报告、秋招投递总结表
-
-![](https://file1.kamacoder.com/i/web/2025-09-28_18-26-47.jpg)
-
-学习路线清晰，方向明确
-
-![](https://file1.kamacoder.com/i/web/2025-09-28_18-39-32.jpg)
-
-星球里全是志同道合的伙伴，学习氛围 🔥🔥🔥
-
-![](https://file1.kamacoder.com/i/web/2025-09-28_18-50-25.jpg)
-
-4、**卡哥 1v1 提问 & 简历修改**
-
-直接向我提问，面试疑惑、学习路线、职业规划一对一解答
-
-![](https://file1.kamacoder.com/i/web/2025-09-29_10-07-44.jpg)
-
-加入[知识星球](https://mp.weixin.qq.com/s/iUiIRYlJvNqTsvfQXwK6FA)后如果不满意，三天内（72h）可全额退款！
-
-
+# JChatMind — AI Agent 智能体聊天平台
+
+> 基于 **Spring AI + React** 的多模型 AI Agent 聊天系统，支持 Agent Loop（ReAct 模式）与工具调用。
+> 面向面试准备的精简版，保留核心架构：**Think-Execute 循环 + Tool Calling + ChatMemory + SSE 实时推送**。
+
+---
+
+## 架构总览
+
+```
+┌─────────────────────────────────────────────────────────┐
+│                    前端 (React + Vite)                    │
+│  Ant Design 6 + Tailwind CSS + SSE EventSource          │
+│  Port: 5173                                              │
+└──────────────────────┬──────────────────────────────────┘
+                       │ HTTP REST + SSE
+┌──────────────────────▼──────────────────────────────────┐
+│                后端 (Spring Boot 3.5 + Spring AI 1.1)     │
+│                                                          │
+│  ┌──────────┐  ┌──────────────┐  ┌──────────────────┐   │
+│  │ Controller│─▶│ FacadeService │─▶│  Mapper (MyBatis) │   │
+│  │  Layer   │  │    Layer      │  │     Layer        │   │
+│  └──────────┘  └──────────────┘  └────────┬─────────┘   │
+│                                           │              │
+│  ┌───────────────────────────────────────┐│              │
+│  │          Agent 核心引擎                ││              │
+│  │  ┌─────────────────────────────────┐  ││              │
+│  │  │  JChatMind (Agent Loop)         │  ││              │
+│  │  │  IDLE → THINKING → EXECUTING    │  ││              │
+│  │  │  → FINISHED / ERROR             │  ││              │
+│  │  │  think() → execute() → 循环     │  ││              │
+│  │  └─────────────────────────────────┘  ││              │
+│  │  JChatMindFactory (Agent 工厂)        ││              │
+│  │  ChatClientRegistry (多模型注册表)     ││              │
+│  │  ToolCallingManager (工具调用管理)     ││              │
+│  └───────────────────────────────────────┘│              │
+│                                           │              │
+│  Port: 8080                               │              │
+└───────────────────────────────────────────┼──────────────┘
+                                            │
+┌───────────────────────────────────────────┼──────────────┐
+│                    基础设施 (Docker)        │              │
+│  ┌─────────────────────┐  ┌──────────────┴──────────┐   │
+│  │ PostgreSQL 16        │  │  Ollama (Embedding)     │   │
+│  │ + pgvector 向量扩展   │  │  bge-m3 嵌入模型        │   │
+│  │ Port: 5432           │  │  Port: 11434            │   │
+│  └─────────────────────┘  └─────────────────────────┘   │
+│                                                          │
+│  ┌──────────────────────────────────────────────────┐   │
+│  │  外部 LLM API (DeepSeek / 智谱 GLM-4.6)           │   │
+│  └──────────────────────────────────────────────────┘   │
+└──────────────────────────────────────────────────────────┘
+```
+
+### 核心模块
+
+| 模块 | 技术 | 说明 |
+|------|------|------|
+| **Agent Loop** | 自实现 ReAct 模式 | `think()` 决策 → `execute()` 工具执行 → 循环，最多 20 步 |
+| **多模型支持** | Spring AI + ChatClientRegistry | DeepSeek / 智谱 GLM-4.6 动态切换 |
+| **聊天记忆** | ChatMemory (MessageWindow) | 滑动窗口记忆，窗口长度可配置 |
+| **工具调用** | Spring AI Tool Calling | TerminateTool (固定) + DataBaseTools (可选) |
+| **实时推送** | SSE (Server-Sent Events) | Agent 状态实时推送前端 |
+| **持久化** | MyBatis + PostgreSQL + pgvector | Agent / ChatSession / ChatMessage 三表 |
+| **异步驱动** | Spring Event + @Async | 聊天请求事件驱动 Agent 执行 |
+
+### 数据模型
+
+```
+agent (智能体)
+├── id (UUID)
+├── name / description / system_prompt
+├── model (deepseek-chat / glm-4.6)
+├── allowed_tools (JSONB)    — 可选工具列表
+├── allowed_kbs (JSONB)      — 知识库列表（精简版暂不使用）
+└── chat_options (JSONB)     — temperature / topP / messageLength
+
+chat_session (聊天会话)
+├── id (UUID)
+├── agent_id → agent.id
+└── title
+
+chat_message (聊天消息)
+├── id (UUID)
+├── session_id → chat_session.id
+├── role (user / assistant / system / tool)
+├── content
+└── metadata (JSONB) — toolCalls / toolResponse
+```
+
+---
+
+## 快速开始
+
+### 前置要求
+
+| 工具 | 最低版本 | 说明 |
+|------|---------|------|
+| JDK | 17+ | 后端编译运行 |
+| Maven | 3.6+ | IDEA 自带即可 |
+| Node.js | 22+ | 前端开发 |
+| Docker + Compose | 24+ | PostgreSQL + Ollama 容器化 |
+| Git | 任意 | 克隆仓库 |
+
+### 1. 克隆并切换分支
+
+```bash
+git clone <repo-url>
+cd JChatMind
+git checkout beta          # 精简版分支
+```
+
+### 2. 一键启动 Docker 基础设施
+
+```bash
+cd TEMP/docker/jchatmind
+docker compose up -d
+```
+
+启动后验证：
+
+```bash
+# 检查容器状态
+docker compose ps
+# 期望：jchatmind-postgres (healthy) + jchatmind-ollama (healthy)
+```
+
+### 3. 拉取嵌入模型（首次）
+
+```bash
+docker exec -it jchatmind-ollama ollama pull bge-m3
+```
+
+> 模型约 1.2GB，仅需执行一次。后续 Ollama 数据卷持久化。
+
+### 4. 初始化数据库
+
+连接 PostgreSQL 执行建表 SQL：
+
+```sql
+-- 通过 docker exec 执行
+docker exec -i jchatmind-postgres psql -U jchatmind -d jchatmind
+
+-- 然后在 psql 中执行：
+CREATE EXTENSION IF NOT EXISTS vector;
+CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
+
+CREATE TABLE IF NOT EXISTS agent (
+    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    name VARCHAR(255) NOT NULL,
+    description TEXT,
+    system_prompt TEXT,
+    model VARCHAR(100) NOT NULL DEFAULT 'deepseek-chat',
+    allowed_tools JSONB DEFAULT '[]',
+    allowed_kbs JSONB DEFAULT '[]',
+    chat_options JSONB DEFAULT '{"temperature":0.7,"topP":1.0,"messageLength":10}',
+    created_at TIMESTAMP NOT NULL DEFAULT NOW(),
+    updated_at TIMESTAMP NOT NULL DEFAULT NOW()
+);
+
+CREATE TABLE IF NOT EXISTS chat_session (
+    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    agent_id UUID NOT NULL REFERENCES agent(id) ON DELETE CASCADE,
+    title VARCHAR(255),
+    metadata JSONB DEFAULT '{}',
+    created_at TIMESTAMP NOT NULL DEFAULT NOW(),
+    updated_at TIMESTAMP NOT NULL DEFAULT NOW()
+);
+
+CREATE TABLE IF NOT EXISTS chat_message (
+    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    session_id UUID NOT NULL REFERENCES chat_session(id) ON DELETE CASCADE,
+    role VARCHAR(20) NOT NULL,
+    content TEXT,
+    metadata JSONB DEFAULT '{}',
+    created_at TIMESTAMP NOT NULL DEFAULT NOW(),
+    updated_at TIMESTAMP NOT NULL DEFAULT NOW()
+);
+
+CREATE INDEX IF NOT EXISTS idx_chat_session_agent ON chat_session(agent_id);
+CREATE INDEX IF NOT EXISTS idx_chat_message_session ON chat_message(session_id);
+CREATE INDEX IF NOT EXISTS idx_chat_message_created ON chat_message(created_at);
+```
+
+### 5. 配置 API Key
+
+编辑 `jchatmind/src/main/resources/application.yaml`，替换 API Key：
+
+```yaml
+spring:
+  ai:
+    deepseek:
+      api-key: sk-your-deepseek-key     # ← 替换
+    zhipuai:
+      api-key: your-zhipu-key           # ← 替换（可选）
+```
+
+> 至少配置一个模型。数据库连接已指向 Docker 容器，默认无需修改。
+
+### 6. 启动后端
+
+```bash
+cd jchatmind
+./mvnw spring-boot:run        # Windows: mvnw.cmd spring-boot:run
+```
+
+启动成功标志：
+```
+Started JchatmindApplication in X.XXX seconds
+```
+
+验证：`curl http://localhost:8080/health` → `ok`
+
+### 7. 启动前端
+
+```bash
+cd ui
+npm install
+npm run dev
+```
+
+访问 `http://localhost:5173`，前端通过 `http.ts` 中 `BASE_URL` 直连后端 `localhost:8080/api`。
+
+---
+
+## 项目结构
+
+```
+JChatMind/
+├── jchatmind/                    # 后端 (Spring Boot 3.5)
+│   ├── pom.xml
+│   ├── mvnw / mvnw.cmd           # Maven Wrapper
+│   └── src/main/
+│       ├── java/com/kama/jchatmind/
+│       │   ├── JchatmindApplication.java
+│       │   ├── agent/            # Agent 核心引擎
+│       │   │   ├── JChatMind.java           # Think-Execute 循环
+│       │   │   ├── JChatMindFactory.java    # Agent 工厂
+│       │   │   ├── AgentState.java          # 状态枚举
+│       │   │   └── tools/                  # 工具集
+│       │   ├── config/           # 配置 (多模型/CORS/异步)
+│       │   ├── controller/       # REST 控制器
+│       │   ├── service/          # 业务服务层 (Facade)
+│       │   ├── mapper/           # MyBatis 数据访问
+│       │   ├── converter/        # 实体<->DTO<->VO 转换
+│       │   ├── model/            # 数据模型
+│       │   │   ├── entity/       # 数据库实体
+│       │   │   ├── dto/          # 数据传输对象
+│       │   │   ├── vo/           # 视图对象
+│       │   │   ├── request/      # 请求对象
+│       │   │   └── response/     # 响应对象
+│       │   ├── event/            # Spring 事件驱动
+│       │   ├── exception/        # 全局异常处理
+│       │   └── message/          # SSE 消息模型
+│       └── resources/
+│           ├── application.yaml
+│           └── mapper/           # MyBatis XML 映射
+├── ui/                           # 前端 (React 19 + Vite 7)
+│   ├── package.json
+│   └── src/
+│       ├── api/                  # API 请求层
+│       ├── components/           # UI 组件
+│       │   ├── views/AgentChatView.tsx       # 对话视图
+│       │   ├── modals/AddAgentModal.tsx      # Agent 配置弹窗
+│       │   └── tabs/                        # 侧边栏标签页
+│       ├── hooks/                # 自定义 Hooks
+│       ├── contexts/             # React Context
+│       ├── layout/               # 布局组件
+│       └── types/                # TypeScript 类型
+├── TEMP/docker/jchatmind/        # Docker 编排
+│   └── docker-compose.yml
+└── README.md
+```
+
+---
+
+## API 接口
+
+| 方法 | 路径 | 说明 |
+|------|------|------|
+| `GET` | `/api/agents` | 获取所有智能体 |
+| `POST` | `/api/agents` | 创建智能体 |
+| `PATCH` | `/api/agents/{id}` | 更新智能体 |
+| `DELETE` | `/api/agents/{id}` | 删除智能体 |
+| `GET` | `/api/chat-sessions` | 获取所有聊天会话 |
+| `POST` | `/api/chat-sessions` | 创建聊天会话 |
+| `GET` | `/api/chat-sessions/agent/{agentId}` | 按 Agent 获取会话 |
+| `DELETE` | `/api/chat-sessions/{id}` | 删除聊天会话 |
+| `GET` | `/api/chat-messages/session/{sessionId}` | 获取会话消息 |
+| `POST` | `/api/chat-messages` | 创建消息（触发 Agent） |
+| `GET` | `/api/tools` | 获取可选工具列表 |
+| `GET` | `/sse/connect/{chatSessionId}` | SSE 连接 |
+
+---
+
+## 面试要点
+
+### Agent Loop (ReAct 模式)
+
+```
+用户发送消息
+  → ChatEventListener 异步触发
+    → JChatMindFactory.create(agentId, sessionId)
+      → JChatMind.run()
+        → for i = 1..20:
+          → think()     # LLM 决策：直接回答 or 调用工具？
+          → execute()   # 执行工具，结果注入上下文
+          → 检查 terminate → 结束
+```
+
+### 工具调用机制
+
+- **固定工具** (FIXED)：`TerminateTool` — 所有 Agent 都有，用于结束任务
+- **可选工具** (OPTIONAL)：`DataBaseTools` — 允许 Agent 执行 SELECT 查询
+- 手动接管 Spring AI 的 `internalToolExecutionEnabled = false`，由 `ToolCallingManager` 显式执行
+
+### 技术亮点
+
+1. **多模型注册表**：`ChatClientRegistry` 基于 Bean 名称动态切换 LLM
+2. **SSE 实时推送**：Agent 思考/执行/完成状态实时送达前端
+3. **事件驱动**：`ChatEvent` → `@Async` → Agent Loop，不阻塞 HTTP 线程
+4. **滑动窗口记忆**：`MessageWindowChatMemory` + PostgreSQL 持久化
+5. **分层架构**：Controller → FacadeService → Mapper，职责清晰
+
+---
+
+## Docker 常用命令
+
+```bash
+# 启动基础设施
+cd TEMP/docker/jchatmind && docker compose up -d
+
+# 查看状态
+docker compose ps
+
+# 查看日志
+docker compose logs -f postgres
+docker compose logs -f ollama
+
+# 停止服务
+docker compose down
+
+# 停止并清除数据
+docker compose down -v
+```
+
+---
+
+## 版本说明
+
+| 分支 | 说明 |
+|------|------|
+| `main` | 完整版（含 RAG 知识库） |
+| `beta` | **精简版**（当前）— 保留核心 Agent + Tool Calling，移除 RAG |
