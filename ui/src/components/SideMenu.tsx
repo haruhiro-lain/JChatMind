@@ -1,21 +1,16 @@
 import React, { useState } from "react";
 import { RobotOutlined } from "@ant-design/icons";
 import { Tabs, type TabsProps } from "antd";
-import { useNavigate } from "react-router-dom";
 import AgentTabContent from "./tabs/AgentTabContent.tsx";
 import AddAgentModal from "./modals/AddAgentModal.tsx";
 import ChatTabContent from "./tabs/ChatTabContent.tsx";
-import KnowledgeBaseTabContent from "./tabs/KnowledgeBaseTabContent.tsx";
-import AddKnowledgeBaseModal from "./modals/AddKnowledgeBaseModal.tsx";
 import { useAgents } from "../hooks/useAgents.ts";
-import { useKnowledgeBases } from "../hooks/useKnowledgeBases.ts";
 
 interface SideMenuProps {
   children?: React.ReactNode;
 }
 
 const SideMenu: React.FC<SideMenuProps> = () => {
-  const navigate = useNavigate();
 
   const [isAddAgentModalOpen, setIsAddAgentModalOpen] = useState(false);
   const toggleAddAgentModal = () => {
@@ -27,25 +22,14 @@ const SideMenu: React.FC<SideMenuProps> = () => {
     import("../api/api.ts").AgentVO | null
   >(null);
 
-  /**
-   * 添加知识库模态框状态
-   */
-  const [isAddKnowledgeBaseModalOpen, setIsAddKnowledgeBaseModalOpen] =
-    useState(false);
-  const toggleAddKnowledgeBaseModal = () => {
-    setIsAddKnowledgeBaseModalOpen(!isAddKnowledgeBaseModalOpen);
-  };
   const { agents, createAgentHandle, deleteAgentHandle, updateAgentHandle } =
     useAgents();
 
   const [activeKey, setActiveKey] = useState(() => {
     if (location.pathname.startsWith("/agent")) return "agent";
-    if (location.pathname.startsWith("/knowledge-base")) return "knowledgeBase";
     if (location.pathname.startsWith("/chat")) return "chat";
     return "agent";
   });
-
-  const { knowledgeBases, createKnowledgeBaseHandle } = useKnowledgeBases();
 
   // 处理标签页切换
   const handleTabChange = (key: string) => {
@@ -74,19 +58,6 @@ const SideMenu: React.FC<SideMenuProps> = () => {
       label: <span className="select-none">聊天记录</span>,
       children: <ChatTabContent />,
     },
-    {
-      key: "knowledgeBase",
-      label: <span className="select-none">知识库</span>,
-      children: (
-        <KnowledgeBaseTabContent
-          knowledgeBases={knowledgeBases}
-          onCreateKnowledgeBaseClick={toggleAddKnowledgeBaseModal}
-          onSelectKnowledgeBase={(knowledgeBaseId) => {
-            navigate(`/knowledge-base/${knowledgeBaseId}`);
-          }}
-        />
-      ),
-    },
   ];
 
   return (
@@ -113,11 +84,6 @@ const SideMenu: React.FC<SideMenuProps> = () => {
         createAgentHandle={createAgentHandle}
         updateAgentHandle={updateAgentHandle}
         editingAgent={editingAgent}
-      />
-      <AddKnowledgeBaseModal
-        open={isAddKnowledgeBaseModalOpen}
-        onClose={toggleAddKnowledgeBaseModal}
-        createKnowledgeBaseHandle={createKnowledgeBaseHandle}
       />
     </div>
   );

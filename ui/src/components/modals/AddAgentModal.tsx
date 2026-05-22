@@ -10,7 +10,6 @@ import {
   getOptionalTools,
   type ToolVO,
 } from "../../api/api.ts";
-import { useKnowledgeBases } from "../../hooks/useKnowledgeBases.ts";
 
 interface AddAgentModalProps {
   open: boolean;
@@ -26,10 +25,7 @@ interface AddAgentModalProps {
 const menuItems = [
   { key: "base", label: "基础设置" },
   { key: "model", label: "模型设置" },
-  { key: "knowledge", label: "知识库设置" },
-  // { key: "mcp", label: "MCP 服务器" },
   { key: "tools", label: "工具调用" },
-  // { key: "memory", label: "全局记忆" },
 ];
 
 const AddAgentModal: React.FC<AddAgentModalProps> = ({
@@ -41,9 +37,6 @@ const AddAgentModal: React.FC<AddAgentModalProps> = ({
 }) => {
   // 菜单项
   const [selectedKey, setSelectedKey] = useState<string>("base");
-
-  // 获取知识库列表
-  const { knowledgeBases } = useKnowledgeBases();
 
   // 工具列表
   const [tools, setTools] = useState<ToolVO[]>([]);
@@ -307,103 +300,6 @@ const AddAgentModal: React.FC<AddAgentModalProps> = ({
               </div>
             )}
 
-            {selectedKey === "knowledge" && (
-              <div>
-                <div className="mb-4">
-                  <label className="block text-gray-700 font-medium mb-3">
-                    知识库
-                  </label>
-                  <p className="text-sm text-gray-500 mb-4">
-                    选择智能体可以访问的知识库，支持多选（最多10个）
-                  </p>
-                  {knowledgeBases.length === 0 ? (
-                    <div className="text-center py-8 text-gray-500">
-                      <p>暂无知识库，请先创建知识库</p>
-                    </div>
-                  ) : (
-                    <div className="space-y-3">
-                      {knowledgeBases.map((kb) => {
-                        const kbId = kb.knowledgeBaseId;
-                        const isSelected = formData.allowedKbs?.includes(kbId);
-                        return (
-                          <div
-                            key={kbId}
-                            className={`border rounded-lg p-4 cursor-pointer transition-all hover:border-blue-400 hover:bg-blue-50 ${
-                              isSelected
-                                ? "border-blue-500 bg-blue-50"
-                                : "border-gray-200"
-                            }`}
-                            onClick={() => {
-                              const currentKbs = formData.allowedKbs || [];
-                              if (isSelected) {
-                                setFormData({
-                                  ...formData,
-                                  allowedKbs: currentKbs.filter(
-                                    (k) => k !== kbId,
-                                  ),
-                                });
-                              } else {
-                                if (currentKbs.length >= 10) {
-                                  return; // 最多选择10个
-                                }
-                                setFormData({
-                                  ...formData,
-                                  allowedKbs: [...currentKbs, kbId],
-                                });
-                              }
-                            }}
-                          >
-                            <div className="flex items-start gap-2">
-                              <Checkbox
-                                checked={isSelected}
-                                onChange={(e) => {
-                                  e.stopPropagation();
-                                  const currentKbs = formData.allowedKbs || [];
-                                  if (e.target.checked) {
-                                    if (currentKbs.length >= 10) {
-                                      return; // 最多选择10个
-                                    }
-                                    setFormData({
-                                      ...formData,
-                                      allowedKbs: [...currentKbs, kbId],
-                                    });
-                                  } else {
-                                    setFormData({
-                                      ...formData,
-                                      allowedKbs: currentKbs.filter(
-                                        (k) => k !== kbId,
-                                      ),
-                                    });
-                                  }
-                                }}
-                                className="mr-3"
-                              />
-                              <div className="flex-1">
-                                <div className="flex items-center mb-1">
-                                  <span className="font-medium text-gray-900">
-                                    {kb.name}
-                                  </span>
-                                </div>
-                                {kb.description && (
-                                  <p className="text-sm text-gray-600">
-                                    {kb.description}
-                                  </p>
-                                )}
-                              </div>
-                            </div>
-                          </div>
-                        );
-                      })}
-                    </div>
-                  )}
-                </div>
-                <div>
-                  <label className="block text-gray-700 font-medium mb-1">
-                    检索设置
-                  </label>
-                </div>
-              </div>
-            )}
             {selectedKey === "tools" && (
               <div>
                 <div className="mb-4">
