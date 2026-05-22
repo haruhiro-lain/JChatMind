@@ -1,0 +1,5 @@
+{
+  "yaml.schemas": {
+    ".vscode/empty-schema.json": ["jchatmind/src/main/resources/application.yaml"]
+  }
+}

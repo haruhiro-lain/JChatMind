@@ -1,6 +1,6 @@
 package com.kama.jchatmind.agent.tools;
 
-import org.springframework.stereotype.Component;
+//import org.springframework.stereotype.Component;
 
 // 注释 @Component 注解，暂不将 DirectAnswerTool 注册为 Spring Bean
 // @Component

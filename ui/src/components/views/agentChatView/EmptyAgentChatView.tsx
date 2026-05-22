@@ -119,10 +119,10 @@ const EmptyAgentChatView: React.FC<DefaultAgentChatViewProps> = ({
                 </div>
                 <div>
                   <Title level={5} className="mb-1">
-                    知识问答
+                    工具调用
                   </Title>
                   <Text type="secondary">
-                    基于知识库进行问答，获取准确的信息
+                    Agent 可自主调用工具完成任务，如数据库查询
                   </Text>
                 </div>
               </Space>

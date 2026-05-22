@@ -2,13 +2,13 @@ spring:
   application:
     name: jchatmind
   datasource:
-    url: jdbc:postgresql://localhost:5432/jchatmind
-    username: postgres
-    password: 123456
+    url: jdbc:postgresql://localhost:15432/jchatmind
+    username: jchatmind
+    password: jchatmind123
     driver-class-name: org.postgresql.Driver
   ai:
     deepseek:
-      api-key: your-api-key
+      api-key: sk-48a2aeebcc1d4cfbaddaf8a4005071ef
       base-url: https://api.deepseek.com
       chat:
         options:

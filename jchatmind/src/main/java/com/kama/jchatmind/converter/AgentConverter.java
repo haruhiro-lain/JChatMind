@@ -8,6 +8,7 @@ import com.kama.jchatmind.model.entity.Agent;
 import com.kama.jchatmind.model.request.CreateAgentRequest;
 import com.kama.jchatmind.model.request.UpdateAgentRequest;
 import com.kama.jchatmind.model.vo.AgentVO;
+import java.util.List;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Component;
 import org.springframework.util.Assert;
@@ -44,6 +45,11 @@ public class AgentConverter {
         Assert.notNull(agent.getChatOptions(), "Chat options cannot be null");
         Assert.notNull(agent.getModel(), "Model cannot be null");
 
+        List<String> allowedKbs = null;
+        if (agent.getAllowedKbs() != null) {
+            allowedKbs = objectMapper.readValue(agent.getAllowedKbs(), new TypeReference<List<String>>() {});
+        }
+
         return AgentDTO.builder()
                 .id(agent.getId())
                 .name(agent.getName())
@@ -51,7 +57,7 @@ public class AgentConverter {
                 .systemPrompt(agent.getSystemPrompt())
                 .model(AgentDTO.ModelType.fromModelName(agent.getModel()))
                 .allowedTools(objectMapper.readValue(agent.getAllowedTools(), new TypeReference<>(){}))
-                .allowedKbs(agent.getAllowedKbs() != null ? objectMapper.readValue(agent.getAllowedKbs(), new TypeReference<List<String>>(){}) : null)
+                .allowedKbs(allowedKbs)
                 .chatOptions(objectMapper.readValue(agent.getChatOptions(), AgentDTO.ChatOptions.class))
                 .createdAt(agent.getCreatedAt())
                 .updatedAt(agent.getUpdatedAt())
