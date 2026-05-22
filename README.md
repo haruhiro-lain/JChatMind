@@ -5,6 +5,85 @@
 
 ---
 
+## 快速启动 (5 步)
+
+### 前置条件
+- **JDK 17+** | **Maven** (IDEA 自带) | **Node.js 22+** | **Docker Desktop**
+
+### 1. 启动 PostgreSQL
+
+```bash
+cd TEMP/docker/jchatmind
+docker compose up -d postgres
+```
+
+> Windows 若端口 5432 被保留，已配置为 15432:5432 映射。
+
+### 2. 初始化数据库
+
+在 `psql` 中执行（或用 DataGrip 连接 `localhost:15432`，用户 `jchatmind` / 密码 `jchatmind123`）：
+
+```sql
+CREATE EXTENSION IF NOT EXISTS vector;
+CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
+
+CREATE TABLE agent (
+    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    name VARCHAR(255) NOT NULL, description TEXT, system_prompt TEXT,
+    model VARCHAR(100) DEFAULT 'deepseek-chat',
+    allowed_tools JSONB DEFAULT '[]', allowed_kbs JSONB DEFAULT '[]',
+    chat_options JSONB DEFAULT '{"temperature":0.7,"topP":1.0,"messageLength":10}',
+    created_at TIMESTAMP DEFAULT NOW(), updated_at TIMESTAMP DEFAULT NOW()
+);
+CREATE TABLE chat_session (
+    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    agent_id UUID REFERENCES agent(id) ON DELETE CASCADE,
+    title VARCHAR(255), metadata JSONB DEFAULT '{}',
+    created_at TIMESTAMP DEFAULT NOW(), updated_at TIMESTAMP DEFAULT NOW()
+);
+CREATE TABLE chat_message (
+    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    session_id UUID REFERENCES chat_session(id) ON DELETE CASCADE,
+    role VARCHAR(20) NOT NULL, content TEXT, metadata JSONB DEFAULT '{}',
+    created_at TIMESTAMP DEFAULT NOW(), updated_at TIMESTAMP DEFAULT NOW()
+);
+```
+
+### 3. 配置 API Key
+
+编辑 `jchatmind/src/main/resources/application.yaml`，填入 DeepSeek API Key：
+
+```yaml
+spring:
+  ai:
+    deepseek:
+      api-key: sk-your-key-here    # ← 替换为你的 Key
+```
+
+### 4. 启动后端
+
+```bash
+cd jchatmind
+set JAVA_HOME=D:\Environment\Java\jdk17   # Windows, 指向你的 JDK 17 路径
+mvnw.cmd spring-boot:run                   # macOS/Linux: ./mvnw spring-boot:run
+```
+
+验证：`curl http://localhost:8080/api/agents` → 返回 JSON
+
+### 5. 启动前端
+
+```bash
+cd ui
+npm install
+npm run dev
+```
+
+访问 `http://127.0.0.1:15173/`，开始使用。
+
+> 若端口 5173 被 Windows 保留，`vite.config.ts` 已配置为 `127.0.0.1:15173`。
+
+---
+
 ## 架构总览
 
 ```
@@ -40,11 +119,11 @@
                                             │
 ┌───────────────────────────────────────────┼──────────────┐
 │                    基础设施 (Docker)        │              │
-│  ┌─────────────────────┐  ┌──────────────┴──────────┐   │
-│  │ PostgreSQL 16        │  │  Ollama (Embedding)     │   │
-│  │ + pgvector 向量扩展   │  │  bge-m3 嵌入模型        │   │
-│  │ Port: 5432           │  │  Port: 11434            │   │
-│  └─────────────────────┘  └─────────────────────────┘   │
+│  ┌─────────────────────┐                                │
+│  │ PostgreSQL 16        │                                │
+│  │ + pgvector 向量扩展   │                                │
+│  │ Port: 15432          │                                │
+│  └─────────────────────┘                                │
 │                                                          │
 │  ┌──────────────────────────────────────────────────┐   │
 │  │  外部 LLM API (DeepSeek / 智谱 GLM-4.6)           │   │
@@ -87,139 +166,6 @@ chat_message (聊天消息)
 ├── content
 └── metadata (JSONB) — toolCalls / toolResponse
 ```
-
----
-
-## 快速开始
-
-### 前置要求
-
-| 工具 | 最低版本 | 说明 |
-|------|---------|------|
-| JDK | 17+ | 后端编译运行 |
-| Maven | 3.6+ | IDEA 自带即可 |
-| Node.js | 22+ | 前端开发 |
-| Docker + Compose | 24+ | PostgreSQL + Ollama 容器化 |
-| Git | 任意 | 克隆仓库 |
-
-### 1. 克隆并切换分支
-
-```bash
-git clone <repo-url>
-cd JChatMind
-git checkout beta          # 精简版分支
-```
-
-### 2. 一键启动 Docker 基础设施
-
-```bash
-cd TEMP/docker/jchatmind
-docker compose up -d
-```
-
-启动后验证：
-
-```bash
-# 检查容器状态
-docker compose ps
-# 期望：jchatmind-postgres (healthy) + jchatmind-ollama (healthy)
-```
-
-### 3. 拉取嵌入模型（首次）
-
-```bash
-docker exec -it jchatmind-ollama ollama pull bge-m3
-```
-
-> 模型约 1.2GB，仅需执行一次。后续 Ollama 数据卷持久化。
-
-### 4. 初始化数据库
-
-连接 PostgreSQL 执行建表 SQL：
-
-```sql
--- 通过 docker exec 执行
-docker exec -i jchatmind-postgres psql -U jchatmind -d jchatmind
-
--- 然后在 psql 中执行：
-CREATE EXTENSION IF NOT EXISTS vector;
-CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
-
-CREATE TABLE IF NOT EXISTS agent (
-    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
-    name VARCHAR(255) NOT NULL,
-    description TEXT,
-    system_prompt TEXT,
-    model VARCHAR(100) NOT NULL DEFAULT 'deepseek-chat',
-    allowed_tools JSONB DEFAULT '[]',
-    allowed_kbs JSONB DEFAULT '[]',
-    chat_options JSONB DEFAULT '{"temperature":0.7,"topP":1.0,"messageLength":10}',
-    created_at TIMESTAMP NOT NULL DEFAULT NOW(),
-    updated_at TIMESTAMP NOT NULL DEFAULT NOW()
-);
-
-CREATE TABLE IF NOT EXISTS chat_session (
-    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
-    agent_id UUID NOT NULL REFERENCES agent(id) ON DELETE CASCADE,
-    title VARCHAR(255),
-    metadata JSONB DEFAULT '{}',
-    created_at TIMESTAMP NOT NULL DEFAULT NOW(),
-    updated_at TIMESTAMP NOT NULL DEFAULT NOW()
-);
-
-CREATE TABLE IF NOT EXISTS chat_message (
-    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
-    session_id UUID NOT NULL REFERENCES chat_session(id) ON DELETE CASCADE,
-    role VARCHAR(20) NOT NULL,
-    content TEXT,
-    metadata JSONB DEFAULT '{}',
-    created_at TIMESTAMP NOT NULL DEFAULT NOW(),
-    updated_at TIMESTAMP NOT NULL DEFAULT NOW()
-);
-
-CREATE INDEX IF NOT EXISTS idx_chat_session_agent ON chat_session(agent_id);
-CREATE INDEX IF NOT EXISTS idx_chat_message_session ON chat_message(session_id);
-CREATE INDEX IF NOT EXISTS idx_chat_message_created ON chat_message(created_at);
-```
-
-### 5. 配置 API Key
-
-编辑 `jchatmind/src/main/resources/application.yaml`，替换 API Key：
-
-```yaml
-spring:
-  ai:
-    deepseek:
-      api-key: sk-your-deepseek-key     # ← 替换
-    zhipuai:
-      api-key: your-zhipu-key           # ← 替换（可选）
-```
-
-> 至少配置一个模型。数据库连接已指向 Docker 容器，默认无需修改。
-
-### 6. 启动后端
-
-```bash
-cd jchatmind
-./mvnw spring-boot:run        # Windows: mvnw.cmd spring-boot:run
-```
-
-启动成功标志：
-```
-Started JchatmindApplication in X.XXX seconds
-```
-
-验证：`curl http://localhost:8080/health` → `ok`
-
-### 7. 启动前端
-
-```bash
-cd ui
-npm install
-npm run dev
-```
-
-访问 `http://localhost:5173`，前端通过 `http.ts` 中 `BASE_URL` 直连后端 `localhost:8080/api`。
 
 ---
 
@@ -327,22 +273,26 @@ JChatMind/
 ## Docker 常用命令
 
 ```bash
-# 启动基础设施
-cd TEMP/docker/jchatmind && docker compose up -d
+cd TEMP/docker/jchatmind
+
+# 启动 PostgreSQL（beta 精简版无需 Ollama）
+docker compose up -d postgres
 
 # 查看状态
 docker compose ps
 
 # 查看日志
 docker compose logs -f postgres
-docker compose logs -f ollama
 
-# 停止服务
+# 进入 psql
+docker exec -it jchatmind-postgres psql -U jchatmind -d jchatmind
+
+# 停止
 docker compose down
-
-# 停止并清除数据
-docker compose down -v
 ```
+
+> PostgreSQL 映射端口: `15432`（Windows 避免与系统端口冲突）
+> 数据库: `jchatmind` | 用户/密码: `jchatmind` / `jchatmind123`
 
 ---
 
@@ -350,5 +300,5 @@ docker compose down -v
 
 | 分支 | 说明 |
 |------|------|
-| `main` | 完整版（含 RAG 知识库） |
-| `beta` | **精简版**（当前）— 保留核心 Agent + Tool Calling，移除 RAG |
+| `main` | 完整版（含 RAG 知识库 + Ollama 嵌入模型） |
+| `beta` | **精简版**（当前）— 核心 Agent + Tool Calling，无需 Ollama |
