@@ -34,6 +34,7 @@ public class AgentConverter {
                 .allowedTools(objectMapper.writeValueAsString(agentDTO.getAllowedTools()))
                 .allowedKbs(agentDTO.getAllowedKbs() != null ? objectMapper.writeValueAsString(agentDTO.getAllowedKbs()) : "[]")
                 .chatOptions(objectMapper.writeValueAsString(agentDTO.getChatOptions()))
+                .apiKey(agentDTO.getApiKey())
                 .createdAt(agentDTO.getCreatedAt())
                 .updatedAt(agentDTO.getUpdatedAt())
                 .build();
@@ -59,6 +60,7 @@ public class AgentConverter {
                 .allowedTools(objectMapper.readValue(agent.getAllowedTools(), new TypeReference<>(){}))
                 .allowedKbs(allowedKbs)
                 .chatOptions(objectMapper.readValue(agent.getChatOptions(), AgentDTO.ChatOptions.class))
+                .apiKey(agent.getApiKey())
                 .createdAt(agent.getCreatedAt())
                 .updatedAt(agent.getUpdatedAt())
                 .build();
@@ -74,6 +76,7 @@ public class AgentConverter {
                 .allowedTools(dto.getAllowedTools())
                 .allowedKbs(dto.getAllowedKbs())
                 .chatOptions(dto.getChatOptions())
+                .apiKey(dto.getApiKey())
                 .build();
     }
 
@@ -95,6 +98,7 @@ public class AgentConverter {
                 .allowedTools(request.getAllowedTools())
                 .allowedKbs(request.getAllowedKbs())
                 .chatOptions(request.getChatOptions())
+                .apiKey(request.getApiKey())
                 .build();
     }
 
@@ -122,6 +126,9 @@ public class AgentConverter {
         }
         if (request.getChatOptions() != null) {
             dto.setChatOptions(request.getChatOptions());
+        }
+        if (request.getApiKey() != null) {
+            dto.setApiKey(request.getApiKey());
         }
     }
 }

@@ -70,7 +70,8 @@ public class ChatMessageFacadeServiceImpl implements ChatMessageFacadeService {
         publisher.publishEvent(new ChatEvent(
                         request.getAgentId(),
                         chatMessage.getSessionId(),
-                        chatMessage.getContent()
+                        chatMessage.getContent(),
+                        request.getApiKey()
                 )
         );
         // 返回生成的 chatMessageId

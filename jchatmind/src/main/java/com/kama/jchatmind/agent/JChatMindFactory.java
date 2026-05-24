@@ -3,6 +3,7 @@ package com.kama.jchatmind.agent;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.kama.jchatmind.agent.tools.Tool;
 import com.kama.jchatmind.config.ChatClientRegistry;
+import com.kama.jchatmind.config.DynamicChatClientFactory;
 import com.kama.jchatmind.converter.AgentConverter;
 import com.kama.jchatmind.converter.ChatMessageConverter;
 import com.kama.jchatmind.mapper.AgentMapper;
@@ -31,6 +32,7 @@ public class JChatMindFactory {
 
     private static final Logger log = LoggerFactory.getLogger(JChatMindFactory.class);
     private final ChatClientRegistry chatClientRegistry;
+    private final DynamicChatClientFactory dynamicChatClientFactory;
     private final SseService sseService;
     private final AgentMapper agentMapper;
     private final AgentConverter agentConverter;
@@ -43,6 +45,7 @@ public class JChatMindFactory {
 
     public JChatMindFactory(
             ChatClientRegistry chatClientRegistry,
+            DynamicChatClientFactory dynamicChatClientFactory,
             SseService sseService,
             AgentMapper agentMapper,
             AgentConverter agentConverter,
@@ -51,6 +54,7 @@ public class JChatMindFactory {
             ChatMessageConverter chatMessageConverter
     ) {
         this.chatClientRegistry = chatClientRegistry;
+        this.dynamicChatClientFactory = dynamicChatClientFactory;
         this.sseService = sseService;
         this.agentMapper = agentMapper;
         this.agentConverter = agentConverter;
@@ -165,9 +169,18 @@ public class JChatMindFactory {
             Agent agent,
             List<Message> memory,
             List<ToolCallback> toolCallbacks,
-            String chatSessionId
+            String chatSessionId,
+            String apiKey
     ) {
-        ChatClient chatClient = chatClientRegistry.get(agent.getModel());
+        ChatClient chatClient;
+        if (apiKey != null && !apiKey.isBlank()) {
+            // 用户提供了自定义 API Key，使用动态工厂创建
+            log.info("使用用户自定义 API Key 创建 ChatClient，模型: {}", agent.getModel());
+            chatClient = dynamicChatClientFactory.create(agent.getModel(), apiKey);
+        } else {
+            // 使用预设的 ChatClient
+            chatClient = chatClientRegistry.get(agent.getModel());
+        }
         if (Objects.isNull(chatClient)) {
             throw new IllegalStateException("未找到对应的 ChatClient: " + agent.getModel());
         }
@@ -189,11 +202,20 @@ public class JChatMindFactory {
 
     /**
      * 创建一个 JChatMind 实例
+     *
+     * @param agentId       Agent ID
+     * @param chatSessionId 聊天会话 ID
+     * @param apiKey        用户自定义 API Key（可选，为空时使用预设 Key）
      */
-    public JChatMind create(String agentId, String chatSessionId) {
+    public JChatMind create(String agentId, String chatSessionId, String apiKey) {
         Agent agent = loadAgent(agentId);
         AgentDTO agentConfig = toAgentConfig(agent);
         List<Message> memory = loadMemory(chatSessionId);
+
+        // 优先使用 Agent 中配置的 apiKey，其次使用消息中携带的 apiKey
+        String effectiveApiKey = (agent.getApiKey() != null && !agent.getApiKey().isBlank())
+                ? agent.getApiKey()
+                : apiKey;
 
         // 解析 agent 支持的工具调用
         List<Tool> runtimeTools = resolveRuntimeTools(agentConfig);
@@ -204,7 +226,8 @@ public class JChatMindFactory {
                 agent,
                 memory,
                 toolCallbacks,
-                chatSessionId
+                chatSessionId,
+                effectiveApiKey
         );
     }
 }

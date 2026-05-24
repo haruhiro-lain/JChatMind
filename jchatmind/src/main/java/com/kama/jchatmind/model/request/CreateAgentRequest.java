@@ -14,4 +14,5 @@ public class CreateAgentRequest {
     private List<String> allowedTools;
     private List<String> allowedKbs;
     private AgentDTO.ChatOptions chatOptions;
+    private String apiKey;
 }

@@ -1,6 +1,409 @@
 @import "tailwindcss";
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
 
-/* 修复 Ant Design Tabs 在 flex 布局中的滚动问题 */
+/* Tailwind v4 自定义深色模式变体：使用 data-theme 属性 */
+@custom-variant dark (&:where([data-theme="dark"], [data-theme="dark"] *));
+
+/* ========== 全局基础样式 ========== */
+:root {
+  --color-bg: #ffffff;
+  --color-bg-secondary: #f8f9fa;
+  --color-bg-tertiary: #f1f3f5;
+  --color-text: #1a1a2e;
+  --color-text-secondary: #6b7280;
+  --color-text-tertiary: #9ca3af;
+  --color-border: #e5e7eb;
+  --color-border-light: #f3f4f6;
+  --color-accent: #4f46e5;
+  --color-accent-hover: #4338ca;
+  --color-accent-light: #eef2ff;
+  --color-card-shadow: 0 1px 3px rgba(0, 0, 0, 0.06), 0 1px 2px rgba(0, 0, 0, 0.04);
+  --color-card-shadow-hover: 0 4px 12px rgba(0, 0, 0, 0.08), 0 2px 4px rgba(0, 0, 0, 0.04);
+
+  /* 过渡动画 */
+  --theme-transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+/* ========== 深色主题 — VA-11 Hall-A 赛博朋克风格 ========== */
+[data-theme="dark"] {
+  /* 背景层级：底部暗蓝渐变 -> 半透明卡片 */
+  --color-bg: #090d17;
+  --color-bg-secondary: #0e1422f2;
+  --color-bg-tertiary: #141b2d;
+  --color-bg-surface: rgba(9, 13, 24, 0.68);
+
+  /* 文字层级 */
+  --color-text: #ecf1fa;
+  --color-text-secondary: #8ba4c0;
+  --color-text-tertiary: #5a7090;
+
+  /* 霓虹青为主强调色 */
+  --color-accent: #00e5ff;
+  --color-accent-hover: #00cee8;
+  --color-accent-light: rgba(0, 229, 255, 0.08);
+  --color-accent-glow: rgba(0, 229, 255, 0.25);
+
+  /* 粉紫为辅助强调色 */
+  --color-accent-pink: #ff6bcb;
+  --color-accent-pink-light: rgba(255, 107, 203, 0.08);
+  --color-accent-pink-glow: rgba(255, 107, 203, 0.25);
+
+  /* 边框和分割线 */
+  --color-border: rgba(0, 229, 255, 0.15);
+  --color-border-light: rgba(0, 229, 255, 0.08);
+
+  /* 阴影替换为霓虹光晕 */
+  --color-card-shadow: 0 0 8px rgba(0, 229, 255, 0.06), 0 1px 3px rgba(0, 0, 0, 0.4);
+  --color-card-shadow-hover: 0 0 16px rgba(0, 229, 255, 0.12), 0 2px 6px rgba(0, 0, 0, 0.5);
+
+  /* 背景渐变 */
+  --bg-gradient: linear-gradient(180deg, rgba(14, 20, 34, 0.95) 0%, #090d17 100%);
+
+  /* 过渡动画 */
+  --theme-transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+/* 深色模式下全局效果 */
+[data-theme="dark"] body {
+  background: var(--bg-gradient);
+  position: relative;
+}
+
+/* CRT 扫描线效果 */
+[data-theme="dark"] body::after {
+  content: "";
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 9999;
+  background: repeating-linear-gradient(
+    0deg,
+    transparent,
+    transparent 2px,
+    rgba(0, 229, 255, 0.015) 2px,
+    rgba(0, 229, 255, 0.015) 4px
+  );
+}
+
+/* 全局过渡 */
+html {
+  transition: var(--theme-transition);
+}
+
+body {
+  transition: var(--theme-transition);
+}
+
+/* ========== Ant Design 深色覆盖 ========== */
+[data-theme="dark"] .ant-tabs-tab {
+  color: var(--color-text-secondary) !important;
+  transition: color 0.2s;
+}
+
+[data-theme="dark"] .ant-tabs-tab:hover {
+  color: var(--color-accent) !important;
+}
+
+[data-theme="dark"] .ant-tabs-tab-active .ant-tabs-tab-btn {
+  color: var(--color-accent) !important;
+  text-shadow: 0 0 8px var(--color-accent-glow);
+}
+
+[data-theme="dark"] .ant-tabs-ink-bar {
+  background: var(--color-accent) !important;
+  box-shadow: 0 0 8px var(--color-accent-glow);
+}
+
+[data-theme="dark"] .ant-btn-primary {
+  background: var(--color-accent-light) !important;
+  border-color: var(--color-accent-glow) !important;
+  color: var(--color-accent) !important;
+  text-shadow: 0 0 4px var(--color-accent-glow);
+}
+
+[data-theme="dark"] .ant-btn-primary:hover {
+  background: rgba(0, 229, 255, 0.15) !important;
+  border-color: var(--color-accent) !important;
+  box-shadow: 0 0 12px var(--color-accent-glow);
+}
+
+[data-theme="dark"] .ant-modal-content {
+  background: var(--color-bg-secondary) !important;
+  border: 1px solid var(--color-border) !important;
+  box-shadow: 0 0 20px rgba(0, 229, 255, 0.1);
+}
+
+/* 深色模式下强制覆盖 Ant Design 组件 CSS 变量（解决弹窗边框浅色问题） */
+[data-theme="dark"] .ant-modal-css-var {
+  --ant-modal-content-bg: var(--color-bg-secondary) !important;
+  --ant-color-border: var(--color-border) !important;
+  --ant-color-border-secondary: var(--color-border-light) !important;
+  --ant-color-split: var(--color-border-light) !important;
+  --ant-color-bg-container: var(--color-bg-secondary) !important;
+  --ant-color-bg-elevated: var(--color-bg-secondary) !important;
+  --ant-color-bg-layout: var(--color-bg) !important;
+  --ant-color-text: var(--color-text) !important;
+  --ant-color-text-secondary: var(--color-text-secondary) !important;
+  --ant-color-text-tertiary: var(--color-text-tertiary) !important;
+  --ant-color-icon: var(--color-text-secondary) !important;
+  --ant-color-icon-hover: var(--color-accent) !important;
+  --ant-color-bg-text-hover: var(--color-accent-light) !important;
+  --ant-modal-title-color: var(--color-text) !important;
+}
+
+/* 全局深色模式 - 覆盖所有 Ant Design 容器 */
+[data-theme="dark"] .css-var-root {
+  --ant-modal-content-bg: var(--color-bg-secondary) !important;
+  --ant-color-border: var(--color-border) !important;
+  --ant-color-border-secondary: var(--color-border-light) !important;
+  --ant-color-split: var(--color-border-light) !important;
+  --ant-color-bg-container: var(--color-bg-secondary) !important;
+  --ant-color-bg-elevated: var(--color-bg-secondary) !important;
+  --ant-color-bg-layout: var(--color-bg) !important;
+  --ant-color-text: var(--color-text) !important;
+  --ant-color-text-secondary: var(--color-text-secondary) !important;
+  --ant-color-text-tertiary: var(--color-text-tertiary) !important;
+  --ant-color-icon: var(--color-text-secondary) !important;
+  --ant-color-icon-hover: var(--color-accent) !important;
+  --ant-color-bg-text-hover: var(--color-accent-light) !important;
+  --ant-modal-title-color: var(--color-text) !important;
+}
+
+[data-theme="dark"] .ant-modal-header {
+  background: transparent !important;
+  border-bottom: 1px solid var(--color-border) !important;
+}
+
+[data-theme="dark"] .ant-modal-title {
+  color: var(--color-text) !important;
+}
+
+[data-theme="dark"] .ant-modal-body {
+  background: var(--color-bg-secondary) !important;
+}
+
+[data-theme="dark"] .ant-modal-close {
+  color: var(--color-text-secondary) !important;
+}
+
+[data-theme="dark"] .ant-modal-close:hover {
+  color: var(--color-accent) !important;
+}
+
+/* 弹窗内所有文字 */
+[data-theme="dark"] .ant-modal-body label,
+[data-theme="dark"] .ant-modal-body .text-gray-700 {
+  color: var(--color-text) !important;
+}
+
+[data-theme="dark"] .ant-modal-body .text-gray-600 {
+  color: var(--color-text-secondary) !important;
+}
+
+[data-theme="dark"] .ant-modal-body .text-gray-400 {
+  color: var(--color-text-tertiary) !important;
+}
+
+[data-theme="dark"] .ant-modal-body .text-gray-500 {
+  color: var(--color-text-tertiary) !important;
+}
+
+/* 弹窗内白色/浅色背景强制覆盖 */
+[data-theme="dark"] .ant-modal-body .bg-white {
+  background: var(--color-bg-secondary) !important;
+}
+
+[data-theme="dark"] .ant-modal-body .bg-gray-50 {
+  background: var(--color-bg-tertiary) !important;
+}
+
+[data-theme="dark"] .ant-modal-body .bg-gray-100 {
+  background: var(--color-bg-tertiary) !important;
+}
+
+/* 弹窗内所有浅色边框强制覆盖为暗色 */
+[data-theme="dark"] .ant-modal-body {
+  --tw-border-opacity: 1;
+}
+
+[data-theme="dark"] .ant-modal-body [class*="border-gray-200"] {
+  border-color: var(--color-border) !important;
+}
+[data-theme="dark"] .ant-modal-body [class*="border-gray-100"] {
+  border-color: var(--color-border) !important;
+}
+
+/* 直接针对 AddAgentModal 的左侧分隔线 */
+[data-theme="dark"] .ant-modal-body > div > div:first-child {
+  border-right-color: var(--color-border) !important;
+}
+
+/* 弹窗内 hover */
+[data-theme="dark"] .ant-modal-body .hover\:bg-gray-100:hover {
+  background: var(--color-accent-light) !important;
+}
+
+[data-theme="dark"] .ant-modal-body .hover\:border-blue-400:hover {
+  border-color: var(--color-accent) !important;
+}
+
+[data-theme="dark"] .ant-modal-body .hover\:bg-blue-50:hover {
+  background: var(--color-accent-light) !important;
+}
+
+/* 弹窗内选中状态 */
+[data-theme="dark"] .ant-modal-body .bg-blue-50 {
+  background: var(--color-accent-light) !important;
+}
+
+[data-theme="dark"] .ant-modal-body .border-blue-500 {
+  border-color: var(--color-accent) !important;
+}
+
+[data-theme="dark"] .ant-input,
+[data-theme="dark"] .ant-input-password {
+  background: var(--color-bg-tertiary) !important;
+  border-color: var(--color-border) !important;
+  color: var(--color-text) !important;
+}
+
+[data-theme="dark"] .ant-input:focus,
+[data-theme="dark"] .ant-input-password:focus {
+  border-color: var(--color-accent) !important;
+  box-shadow: 0 0 8px var(--color-accent-glow) !important;
+}
+
+[data-theme="dark"] .ant-select-selector {
+  background: var(--color-bg-tertiary) !important;
+  border-color: var(--color-border) !important;
+  color: var(--color-text) !important;
+}
+
+[data-theme="dark"] .ant-select-focused .ant-select-selector {
+  border-color: var(--color-accent) !important;
+  box-shadow: 0 0 8px var(--color-accent-glow) !important;
+}
+
+[data-theme="dark"] .ant-select-dropdown {
+  background: var(--color-bg-secondary) !important;
+  border: 1px solid var(--color-border) !important;
+}
+
+[data-theme="dark"] .ant-select-item {
+  color: var(--color-text) !important;
+}
+
+[data-theme="dark"] .ant-select-item-option-selected {
+  background: var(--color-accent-light) !important;
+  color: var(--color-accent) !important;
+}
+
+[data-theme="dark"] .ant-select-item-option-active {
+  background: rgba(0, 229, 255, 0.05) !important;
+}
+
+[data-theme="dark"] .ant-popconfirm .ant-popover-inner {
+  background: var(--color-bg-secondary) !important;
+  border: 1px solid var(--color-border) !important;
+}
+
+[data-theme="dark"] .ant-popconfirm .ant-popover-message-title {
+  color: var(--color-text) !important;
+}
+
+[data-theme="dark"] .ant-sender {
+  background: var(--color-bg-tertiary) !important;
+  border-color: var(--color-border) !important;
+  color: var(--color-text) !important;
+}
+
+[data-theme="dark"] .ant-sender:focus-within {
+  border-color: var(--color-accent) !important;
+  box-shadow: 0 0 10px rgba(0, 229, 255, 0.15) !important;
+}
+
+[data-theme="dark"] .ant-sender textarea {
+  color: var(--color-text) !important;
+}
+
+/* 深色滚动条 */
+[data-theme="dark"] ::-webkit-scrollbar-thumb {
+  background: rgba(0, 229, 255, 0.2);
+  border-radius: 3px;
+}
+
+[data-theme="dark"] ::-webkit-scrollbar-thumb:hover {
+  background: rgba(0, 229, 255, 0.35);
+}
+
+/* 消息气泡深色 */
+[data-theme="dark"] .ant-bubble-content {
+  background: var(--color-bg-tertiary) !important;
+  color: var(--color-text) !important;
+}
+
+/* Checkbox / Switch 深色 */
+[data-theme="dark"] .ant-switch-checked {
+  background: var(--color-accent) !important;
+}
+
+/* Divider */
+[data-theme="dark"] .ant-divider {
+  border-color: var(--color-border) !important;
+}
+
+/* 侧边栏卡片内 Ant Design 文字按钮颜色强制覆盖 */
+[data-theme="dark"] .ant-btn-text {
+  color: var(--color-text) !important;
+}
+
+[data-theme="dark"] .ant-btn-text:hover {
+  color: var(--color-accent) !important;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  color: var(--color-text);
+  background: var(--color-bg);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  line-height: 1.6;
+}
+
+/* 深色模式下的 body 使用渐变背景 */
+[data-theme="dark"] body {
+  background: var(--bg-gradient);
+}
+
+/* ========== 滚动条美化 ========== */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #d1d5db;
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #9ca3af;
+}
+
+/* ========== Ant Design 全局覆盖 ========== */
 .ant-tabs {
   display: flex;
   flex-direction: column;
@@ -22,12 +425,109 @@
   overflow: hidden;
 }
 
-/* 隐藏滚动条但保持滚动功能 */
+/* Tabs 导航样式覆盖 */
+.ant-tabs-nav {
+  margin-bottom: 0 !important;
+}
+
+.ant-tabs-tab {
+  padding: 8px 16px !important;
+  font-family: 'Inter', sans-serif;
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--color-text-secondary) !important;
+}
+
+.ant-tabs-tab-active .ant-tabs-tab-btn {
+  color: var(--color-accent) !important;
+}
+
+.ant-tabs-ink-bar {
+  background: var(--color-accent) !important;
+}
+
+/* Button 样式覆盖 */
+.ant-btn {
+  font-family: 'Inter', sans-serif;
+  font-weight: 500;
+  border-radius: 8px;
+  box-shadow: none !important;
+}
+
+.ant-btn-primary {
+  background: var(--color-accent) !important;
+  border-color: var(--color-accent) !important;
+}
+
+.ant-btn-primary:hover {
+  background: var(--color-accent-hover) !important;
+  border-color: var(--color-accent-hover) !important;
+}
+
+/* Select 样式覆盖 */
+.ant-select-selector {
+  border-radius: 8px !important;
+  font-family: 'Inter', sans-serif;
+}
+
+/* Card 样式覆盖 */
+.ant-card {
+  border-radius: 12px !important;
+  border: 1px solid var(--color-border) !important;
+  box-shadow: var(--color-card-shadow);
+}
+
+/* Modal 样式覆盖 */
+.ant-modal-content {
+  border-radius: 12px !important;
+}
+
+.ant-modal-header {
+  border-radius: 12px 12px 0 0 !important;
+}
+
+/* Input 样式覆盖 */
+.ant-input,
+.ant-input-password {
+  border-radius: 8px !important;
+  font-family: 'Inter', sans-serif;
+}
+
+/* Sender 组件 (Ant Design X) 样式 */
+.ant-sender {
+  border-radius: 12px !important;
+  border: 1px solid var(--color-border) !important;
+  box-shadow: var(--color-card-shadow);
+  transition: box-shadow 0.2s ease, border-color 0.2s ease;
+}
+
+.ant-sender:focus-within {
+  border-color: var(--color-accent) !important;
+  box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1) !important;
+}
+
+/* ========== 工具类 ========== */
 .scrollbar-hide {
-  -ms-overflow-style: none; /* IE and Edge */
-  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none;
+  scrollbar-width: none;
 }
 
 .scrollbar-hide::-webkit-scrollbar {
-  display: none; /* Chrome, Safari and Opera */
+  display: none;
 }
+
+/* 卡片悬停效果 */
+.card-hover {
+  transition: all 0.2s ease;
+}
+
+.card-hover:hover {
+  box-shadow: var(--color-card-shadow-hover);
+  transform: translateY(-1px);
+}
+
+/* 代码字体 */
+.font-mono {
+  font-family: 'JetBrains Mono', 'Fira Code', monospace;
+}
+

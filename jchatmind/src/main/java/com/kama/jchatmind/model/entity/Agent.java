@@ -30,6 +30,9 @@ public class Agent {
     // JSON String
     private String chatOptions;
 
+    /** 用户自定义 API Key（可选），为空时使用预设 Key */
+    private String apiKey;
+
     private LocalDateTime createdAt;
 
     private LocalDateTime updatedAt;

@@ -1,11 +1,12 @@
 import React, { useMemo } from "react";
-import { Button, Divider, Dropdown, Modal } from "antd";
+import { Button, Dropdown, Modal } from "antd";
 import type { MenuProps } from "antd";
 import {
   PlusOutlined,
   EditOutlined,
   DeleteOutlined,
   MoreOutlined,
+  RobotOutlined,
 } from "@ant-design/icons";
 import type { AgentVO } from "../../api/api.ts";
 import { formatDateTime, getAgentEmoji } from "../../utils";
@@ -77,20 +78,19 @@ const AgentTabContent: React.FC<AgentTabContentProps> = ({
   return (
     <div className="flex flex-col h-full">
       <Button
-        color="geekblue"
-        variant="filled"
+        type="primary"
         icon={<PlusOutlined />}
         onClick={onCreateAgentClick}
-        className="w-full"
+        className="w-full mb-3 h-9 rounded-lg text-[13px] font-medium"
       >
-        智能体助手
+        新建助手
       </Button>
-      <Divider />
-      <div className="flex-1 overflow-y-auto bg-gray-50 rounded-lg p-1.5">
+      <div className="flex-1 overflow-y-auto rounded-xl bg-gray-50/50 dark:bg-[#0e1422]/60 p-2 transition-colors duration-300">
         {agents.length === 0 ? (
-          <div className="flex flex-col items-center justify-center h-full text-gray-400">
-            <p className="text-sm">暂无智能体</p>
-            <p className="text-xs mt-1">点击上方按钮添加</p>
+          <div className="flex flex-col items-center justify-center h-full text-gray-300 dark:text-[#3a5070]">
+            <RobotOutlined className="text-3xl mb-3 opacity-50" />
+            <p className="text-[13px] font-medium">暂无智能体</p>
+            <p className="text-[11px] mt-1">点击上方按钮添加</p>
           </div>
         ) : (
           <div className="space-y-1.5">
@@ -101,23 +101,23 @@ const AgentTabContent: React.FC<AgentTabContentProps> = ({
                 <div
                   key={agent.id}
                   onClick={() => onSelectAgent(agent.id)}
-                  className="w-full px-3 py-3 rounded-lg bg-white cursor-pointer transition-all hover:bg-gray-100 hover:shadow-sm group relative"
+                  className="w-full px-3.5 py-3 rounded-xl bg-white dark:bg-[#0e1422]/70 cursor-pointer card-hover border border-gray-100 dark:border-[rgba(0,229,255,0.22)] group relative transition-colors duration-300 hover:dark:border-[rgba(0,229,255,0.4)] hover:dark:shadow-[0_0_12px_rgba(0,229,255,0.08)]"
                 >
                   <div className="flex items-start gap-3">
-                    <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-yellow-200 to-orange-200 flex items-center justify-center shrink-0 text-lg mt-0.5">
+                    <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-indigo-50 to-purple-50 dark:from-[rgba(0,229,255,0.1)] dark:to-[rgba(255,107,203,0.1)] flex items-center justify-center shrink-0 text-lg border border-indigo-100 dark:border-[rgba(0,229,255,0.15)]">
                       {agent.emoji}
                     </div>
                     <div className="flex-1 min-w-0">
-                      <div className="font-medium text-gray-900 truncate">
+                      <div className="font-semibold text-[13px] text-gray-900 dark:text-[#ecf1fa] truncate leading-tight">
                         {agent.name}
                       </div>
                       {agent.description && (
-                        <div className="text-xs text-gray-500 mt-1 line-clamp-1">
+                        <div className="text-[11px] text-gray-400 dark:text-[#5a7090] mt-1 line-clamp-1 leading-relaxed">
                           {agent.description}
                         </div>
                       )}
                       {agent.updatedAt && (
-                        <div className="text-xs text-gray-400 mt-1">
+                        <div className="text-[10px] text-gray-300 dark:text-[#3a5070] mt-1.5 font-medium">
                           {formatDateTime(agent.updatedAt)}
                         </div>
                       )}
@@ -126,7 +126,7 @@ const AgentTabContent: React.FC<AgentTabContentProps> = ({
                       <div
                         onClick={(e) => e.stopPropagation()}
                         onContextMenu={(e) => e.stopPropagation()}
-                        className="opacity-0 group-hover:opacity-100 transition-opacity shrink-0"
+                        className="shrink-0"
                       >
                         <Dropdown
                           menu={{ items: menuItems }}
@@ -138,7 +138,7 @@ const AgentTabContent: React.FC<AgentTabContentProps> = ({
                             size="small"
                             icon={<MoreOutlined />}
                             onClick={(e) => e.stopPropagation()}
-                            className="text-gray-400 hover:text-gray-600"
+                            className="text-gray-300 dark:text-[#ecf1fa] hover:text-gray-500 dark:hover:text-[#00e5ff] cursor-pointer"
                           />
                         </Dropdown>
                       </div>

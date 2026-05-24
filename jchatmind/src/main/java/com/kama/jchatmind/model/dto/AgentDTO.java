@@ -28,6 +28,9 @@ public class AgentDTO {
 
     private ChatOptions chatOptions;
 
+    /** 用户自定义 API Key（可选），为空时使用预设 Key */
+    private String apiKey;
+
     private LocalDateTime createdAt;
 
     private LocalDateTime updatedAt;
@@ -35,7 +38,8 @@ public class AgentDTO {
     @Getter
     @AllArgsConstructor
     public enum ModelType {
-        DEEPSEEK_CHAT("deepseek-chat"),
+        DEEPSEEK_PRO("deepseek-pro"),
+        DEEPSEEK_FLASH("deepseek-flash"),
         GLM_4_6("glm-4.6");
 
         @JsonValue
@@ -46,6 +50,10 @@ public class AgentDTO {
                 if (type.modelName.equals(modelName)) {
                     return type;
                 }
+            }
+            // 向后兼容：旧的 "deepseek-chat" 映射为 "deepseek-pro"
+            if ("deepseek-chat".equals(modelName)) {
+                return DEEPSEEK_PRO;
             }
             throw new IllegalArgumentException("Unknown model type: " + modelName);
         }

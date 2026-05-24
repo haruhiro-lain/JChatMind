@@ -2,7 +2,9 @@ import React, { useCallback, useEffect, useState } from "react";
 import { useParams, useNavigate, useLocation } from "react-router-dom";
 import { message as antdMessage } from "antd";
 import AgentChatHistory from "./agentChatView/AgentChatHistory.tsx";
-import AgentChatInput from "./agentChatView/AgentChatInput.tsx";
+import AgentChatInput, {
+  type SendMessageData,
+} from "./agentChatView/AgentChatInput.tsx";
 import {
   createChatMessage,
   createChatSession,
@@ -53,9 +55,8 @@ const AgentChatView: React.FC = () => {
     getChatMessages().then();
   }, [chatSessionId, getChatMessages]);
 
-  const handleSendMessage = async (value: string | { text: string }) => {
-    // 处理 Sender 组件可能传递的不同格式
-    const message = typeof value === "string" ? value : value.text;
+  const handleSendMessage = async (data: SendMessageData) => {
+    const message = data.text;
 
     console.log(message);
 
@@ -78,7 +79,6 @@ const AgentChatView: React.FC = () => {
         // 导航到新创建的会话
         navigate(`/chat/${response.chatSessionId}`, {
           replace: true,
-          // 携带初始化消息
           state: {
             init: false,
             initMessage: message,
@@ -191,7 +191,7 @@ const AgentChatView: React.FC = () => {
         agentStatusText={agentStatusText}
         agentStatusType={agentStatusType}
       />
-      <div className="border-t border-gray-200 p-4 bg-white">
+      <div className="border-t border-gray-100 dark:border-[rgba(0,229,255,0.2)] p-4 bg-white dark:bg-[#090d17]/90 transition-colors duration-300">
         <AgentChatInput onSend={handleSendMessage} />
       </div>
     </div>

@@ -8,7 +8,7 @@ export interface ChatOptions {
   messageLength?: number;
 }
 
-export type ModelType = "deepseek-chat" | "glm-4.6";
+export type ModelType = "deepseek-pro" | "deepseek-flash" | "glm-4.6";
 
 export interface CreateAgentRequest {
   name: string;
@@ -18,6 +18,8 @@ export interface CreateAgentRequest {
   allowedTools?: string[];
   allowedKbs?: string[];
   chatOptions?: ChatOptions;
+  /** 自定义 API Key，为空则用系统预设 */
+  apiKey?: string;
 }
 
 export interface UpdateAgentRequest {
@@ -28,6 +30,8 @@ export interface UpdateAgentRequest {
   allowedTools?: string[];
   allowedKbs?: string[];
   chatOptions?: ChatOptions;
+  /** 自定义 API Key，为空则用系统预设 */
+  apiKey?: string;
 }
 
 export interface CreateAgentResponse {
@@ -43,6 +47,7 @@ export interface AgentVO {
   allowedTools?: string[];
   allowedKbs?: string[];
   chatOptions?: ChatOptions;
+  apiKey?: string;
   createdAt?: string;
   updatedAt?: string;
 }
@@ -182,6 +187,8 @@ export interface CreateChatMessageRequest {
   role: MessageType;
   content: string;
   metadata?: MetaData;
+  /** 用户自定义 API Key（可选），为空则使用后端预设 Key */
+  apiKey?: string;
 }
 
 export interface CreateChatMessageResponse {

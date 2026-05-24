@@ -24,4 +24,6 @@ public class AgentVO {
     private List<String> allowedKbs;
 
     private AgentDTO.ChatOptions chatOptions;
+
+    private String apiKey;
 }

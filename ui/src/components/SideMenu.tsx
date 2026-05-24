@@ -39,7 +39,7 @@ const SideMenu: React.FC<SideMenuProps> = () => {
   const items: TabsProps["items"] = [
     {
       key: "agent",
-      label: <span className="select-none">智能体助手</span>,
+      label: <span className="select-none text-[13px]">助手</span>,
       children: (
         <AgentTabContent
           agents={agents}
@@ -55,27 +55,37 @@ const SideMenu: React.FC<SideMenuProps> = () => {
     },
     {
       key: "chat",
-      label: <span className="select-none">聊天记录</span>,
+      label: <span className="select-none text-[13px]">会话</span>,
       children: <ChatTabContent />,
     },
   ];
 
   return (
-    <div className="px-4 flex flex-col h-full">
-      <div className="h-14 w-full flex items-center border-b border-gray-200">
-        <div className="flex items-center gap-2.5 mx-4">
-          <RobotOutlined className="text-xl text-indigo-600" />
-          <div className="text-lg font-semibold select-none text-gray-900">
-            JChatMind
+    <div className="flex flex-col h-full">
+      {/* Logo 区域 */}
+      <div className="h-14 w-full flex items-center px-5 border-b border-gray-100 dark:border-[rgba(0,229,255,0.2)] transition-colors duration-300">
+        <div className="flex items-center gap-2.5">
+          <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center shadow-sm">
+            <RobotOutlined className="text-white text-base" />
+          </div>
+          <div className="flex flex-col leading-tight">
+            <span className="text-[15px] font-semibold text-gray-900 dark:text-[#ecf1fa] tracking-tight">
+              JChatMind
+            </span>
+            <span className="text-[10px] text-gray-400 dark:text-[#5a7090] font-medium tracking-wide">
+              AI AGENT PLATFORM
+            </span>
           </div>
         </div>
       </div>
-      <div className="flex-1 min-h-0 flex flex-col">
+
+      {/* Tabs 区域 */}
+      <div className="flex-1 min-h-0 flex flex-col px-4">
         <Tabs
           activeKey={activeKey}
           onChange={handleTabChange}
           items={items}
-          // className="h-full flex flex-col [&_.ant-tabs-content-holder]:flex-1 [&_.ant-tabs-content-holder]:min-h-0 [&_.ant-tabs-content]:h-full [&_.ant-tabs-tabpane]:h-full"
+          className="pt-3"
         />
       </div>
       <AddAgentModal

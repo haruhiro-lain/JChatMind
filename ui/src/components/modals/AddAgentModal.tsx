@@ -46,7 +46,7 @@ const AddAgentModal: React.FC<AddAgentModalProps> = ({
     name: "智能体助手",
     description: "",
     systemPrompt: "你是一个很有用的智能体助手",
-    model: "deepseek-chat",
+    model: "deepseek-pro",
     allowedTools: [],
     allowedKbs: [],
     chatOptions: {
@@ -54,6 +54,7 @@ const AddAgentModal: React.FC<AddAgentModalProps> = ({
       topP: 1.0,
       messageLength: 20,
     },
+    apiKey: "",
   });
 
   const [createAgentLoading, setCreateAgentLoading] = useState(false);
@@ -73,6 +74,7 @@ const AddAgentModal: React.FC<AddAgentModalProps> = ({
           topP: 1.0,
           messageLength: 10,
         },
+        apiKey: editingAgent.apiKey || "",
       });
     } else {
       // 重置表单
@@ -80,7 +82,7 @@ const AddAgentModal: React.FC<AddAgentModalProps> = ({
         name: "agent",
         description: "",
         systemPrompt: "",
-        model: "deepseek-chat",
+        model: "deepseek-pro",
         allowedTools: [],
         allowedKbs: [],
         chatOptions: {
@@ -88,6 +90,7 @@ const AddAgentModal: React.FC<AddAgentModalProps> = ({
           topP: 1.0,
           messageLength: 10,
         },
+        apiKey: "",
       });
     }
   }, [editingAgent, open]);
@@ -118,7 +121,7 @@ const AddAgentModal: React.FC<AddAgentModalProps> = ({
       centered
     >
       <div className="flex h-[500px]">
-        <div className="w-[150px] h-full border-r border-gray-200 pr-2">
+        <div className="w-[150px] h-full border-r border-gray-200 dark:border-[rgba(0,229,255,0.22)] pr-2">
           <div className="flex flex-col gap-0.5 select-none cursor-pointer">
             {menuItems.map((item) => {
               const isSelected = selectedKey === item.key;
@@ -126,7 +129,7 @@ const AddAgentModal: React.FC<AddAgentModalProps> = ({
                 <React.Fragment key={item.key}>
                   <div
                     onClick={() => setSelectedKey(item.key)}
-                    className={`px-3 py-2 rounded-lg hover:bg-gray-100 ${isSelected ? "bg-gray-100 text-gray-900 font-medium" : "text-gray-600"}`}
+                    className={`px-3 py-2 rounded-lg hover:bg-gray-100 dark:hover:bg-[rgba(0,229,255,0.06)] ${isSelected ? "bg-gray-100 dark:bg-[rgba(0,229,255,0.08)] text-gray-900 dark:text-[#ecf1fa] font-medium" : "text-gray-600 dark:text-[#8ba4c0]"}`}
                   >
                     {item.label}
                   </div>
@@ -168,7 +171,7 @@ const AddAgentModal: React.FC<AddAgentModalProps> = ({
                 </div>
                 <div className="mb-3">
                   <label className="block text-gray-700 font-medium mb-1">
-                    提示词
+                    提示词?
                   </label>
                   <TextArea
                     placeholder="默认提示词"
@@ -190,12 +193,16 @@ const AddAgentModal: React.FC<AddAgentModalProps> = ({
                   <Select
                     options={[
                       {
-                        value: "deepseek-chat",
-                        label: "deepseek-chat",
+                        value: "deepseek-pro",
+                        label: "DeepSeek V4 Pro",
+                      },
+                      {
+                        value: "deepseek-flash",
+                        label: "DeepSeek V4 Flash",
                       },
                       {
                         value: "glm-4.6",
-                        label: "glm-4.6",
+                        label: "GLM-4.6 (智谱)",
                       },
                     ]}
                     placeholder="请选择模型"
@@ -205,6 +212,21 @@ const AddAgentModal: React.FC<AddAgentModalProps> = ({
                       setFormData({ ...formData, model: value })
                     }
                   />
+                </div>
+                <div className="mb-4">
+                  <label className="block text-gray-700 font-medium mb-2">
+                    API Key（可选）
+                  </label>
+                  <Input.Password
+                    placeholder="输入自定义 API Key，留空使用系统预设"
+                    value={formData.apiKey || ""}
+                    onChange={(e) =>
+                      setFormData({ ...formData, apiKey: e.target.value })
+                    }
+                  />
+                  <p className="text-xs text-gray-400 mt-1 mb-4">
+                    该助手将使用此 Key 调用模型，留空则使用系统预设 Key
+                  </p>
                 </div>
                 <div className="mb-4">
                   <label className="block text-gray-700 font-medium mb-2">
@@ -242,7 +264,7 @@ const AddAgentModal: React.FC<AddAgentModalProps> = ({
                     <div>
                       <div className="flex items-center justify-between mb-2">
                         <label className="block text-sm text-gray-600">
-                          Top P（核采样）
+                          Top P（核采样）?
                           <span className="text-gray-400 ml-1 text-xs">
                             (0.0 - 1.0)
                           </span>
@@ -307,7 +329,7 @@ const AddAgentModal: React.FC<AddAgentModalProps> = ({
                     工具调用
                   </label>
                   <p className="text-sm text-gray-500 mb-4">
-                    选择智能体可以使用的工具，支持多选
+                    选择智能体可以使用的工具，支持多�?
                   </p>
                   {tools.length === 0 ? (
                     <div className="text-center py-8 text-gray-500">
@@ -322,10 +344,10 @@ const AddAgentModal: React.FC<AddAgentModalProps> = ({
                         return (
                           <div
                             key={toolId}
-                            className={`border rounded-lg p-4 cursor-pointer transition-all hover:border-blue-400 hover:bg-blue-50 ${
+                            className={`border dark:border-[rgba(0,229,255,0.22)] rounded-lg p-4 cursor-pointer transition-all hover:border-blue-400 dark:hover:border-[rgba(0,229,255,0.35)] hover:bg-blue-50 dark:hover:bg-[rgba(0,229,255,0.06)] ${
                               isSelected
-                                ? "border-blue-500 bg-blue-50"
-                                : "border-gray-200"
+                                ? "border-blue-500 dark:border-[#00e5ff] bg-blue-50 dark:bg-[rgba(0,229,255,0.08)]"
+                                : "border-gray-200 dark:border-[rgba(0,229,255,0.22)]"
                             }`}
                             onClick={() => {
                               const currentTools = formData.allowedTools || [];

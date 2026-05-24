@@ -198,7 +198,7 @@ const AgentChatHistory: React.FC<AgentChatHistoryProps> = ({
   return (
     <div 
       ref={scrollContainerRef}
-      className="flex-1 px-16 pt-4 overflow-y-scroll"
+      className="flex-1 px-6 md:px-16 pt-6 overflow-y-scroll"
     >
       {messages.map((message) => {
         return (
