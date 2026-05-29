@@ -24,8 +24,6 @@ public class AgentDTO {
 
     private List<String> allowedTools;
 
-    private List<String> allowedKbs;
-
     private ChatOptions chatOptions;
 
     /** 用户自定义 API Key（可选），为空时使用预设 Key */

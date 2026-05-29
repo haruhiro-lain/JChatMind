@@ -188,7 +188,6 @@ const defaultForm = (): CreateAgentRequest => ({
   systemPrompt: "你是一个很有用的智能体助手",
   model: "deepseek-pro" as ModelType,
   allowedTools: [],
-  allowedKbs: [],
   chatOptions: { temperature: 0.7, topP: 1.0, messageLength: 20 },
   apiKey: "",
 });
@@ -207,7 +206,6 @@ watch(() => props.open, (val) => {
         systemPrompt: props.editingAgent.systemPrompt || "",
         model: props.editingAgent.model,
         allowedTools: props.editingAgent.allowedTools || [],
-        allowedKbs: props.editingAgent.allowedKbs || [],
         chatOptions: props.editingAgent.chatOptions || { temperature: 0.7, topP: 1.0, messageLength: 10 },
         apiKey: props.editingAgent.apiKey || "",
       };

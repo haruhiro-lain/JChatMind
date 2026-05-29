@@ -16,7 +16,6 @@ export interface CreateAgentRequest {
   systemPrompt?: string;
   model: ModelType;
   allowedTools?: string[];
-  allowedKbs?: string[];
   chatOptions?: ChatOptions;
   /** 自定义 API Key，为空则用系统预设 */
   apiKey?: string;
@@ -28,7 +27,6 @@ export interface UpdateAgentRequest {
   systemPrompt?: string;
   model?: ModelType;
   allowedTools?: string[];
-  allowedKbs?: string[];
   chatOptions?: ChatOptions;
   /** 自定义 API Key，为空则用系统预设 */
   apiKey?: string;
@@ -45,7 +43,6 @@ export interface AgentVO {
   systemPrompt?: string;
   model: ModelType;
   allowedTools?: string[];
-  allowedKbs?: string[];
   chatOptions?: ChatOptions;
   apiKey?: string;
   createdAt?: string;

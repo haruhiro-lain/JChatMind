@@ -32,7 +32,6 @@ public class AgentConverter {
                 .systemPrompt(agentDTO.getSystemPrompt())
                 .model(agentDTO.getModel().getModelName())
                 .allowedTools(objectMapper.writeValueAsString(agentDTO.getAllowedTools()))
-                .allowedKbs(agentDTO.getAllowedKbs() != null ? objectMapper.writeValueAsString(agentDTO.getAllowedKbs()) : "[]")
                 .chatOptions(objectMapper.writeValueAsString(agentDTO.getChatOptions()))
                 .apiKey(agentDTO.getApiKey())
                 .createdAt(agentDTO.getCreatedAt())
@@ -46,11 +45,6 @@ public class AgentConverter {
         Assert.notNull(agent.getChatOptions(), "Chat options cannot be null");
         Assert.notNull(agent.getModel(), "Model cannot be null");
 
-        List<String> allowedKbs = null;
-        if (agent.getAllowedKbs() != null) {
-            allowedKbs = objectMapper.readValue(agent.getAllowedKbs(), new TypeReference<List<String>>() {});
-        }
-
         return AgentDTO.builder()
                 .id(agent.getId())
                 .name(agent.getName())
@@ -58,7 +52,6 @@ public class AgentConverter {
                 .systemPrompt(agent.getSystemPrompt())
                 .model(AgentDTO.ModelType.fromModelName(agent.getModel()))
                 .allowedTools(objectMapper.readValue(agent.getAllowedTools(), new TypeReference<>(){}))
-                .allowedKbs(allowedKbs)
                 .chatOptions(objectMapper.readValue(agent.getChatOptions(), AgentDTO.ChatOptions.class))
                 .apiKey(agent.getApiKey())
                 .createdAt(agent.getCreatedAt())
@@ -74,7 +67,6 @@ public class AgentConverter {
                 .systemPrompt(dto.getSystemPrompt())
                 .model(dto.getModel())
                 .allowedTools(dto.getAllowedTools())
-                .allowedKbs(dto.getAllowedKbs())
                 .chatOptions(dto.getChatOptions())
                 .apiKey(dto.getApiKey())
                 .build();
@@ -96,7 +88,6 @@ public class AgentConverter {
                 .systemPrompt(request.getSystemPrompt())
                 .model(AgentDTO.ModelType.fromModelName(request.getModel()))
                 .allowedTools(request.getAllowedTools())
-                .allowedKbs(request.getAllowedKbs())
                 .chatOptions(request.getChatOptions())
                 .apiKey(request.getApiKey())
                 .build();
@@ -120,9 +111,6 @@ public class AgentConverter {
         }
         if (request.getAllowedTools() != null) {
             dto.setAllowedTools(request.getAllowedTools());
-        }
-        if (request.getAllowedKbs() != null) {
-            dto.setAllowedKbs(request.getAllowedKbs());
         }
         if (request.getChatOptions() != null) {
             dto.setChatOptions(request.getChatOptions());
