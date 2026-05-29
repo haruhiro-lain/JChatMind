@@ -1,4 +1,4 @@
-import { message } from "antd";
+import { message } from "ant-design-vue";
 
 // API 响应类型定义，匹配后端 ApiResponse 结构
 export interface ApiResponse<T = unknown> {

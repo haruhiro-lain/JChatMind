@@ -96,6 +96,13 @@
             <artifactId>spring-ai-starter-model-zhipuai</artifactId>
         </dependency>
 
+        <!-- LSP (Language Server Protocol) 支持 -->
+        <dependency>
+            <groupId>org.eclipse.lsp4j</groupId>
+            <artifactId>org.eclipse.lsp4j</artifactId>
+            <version>0.23.1</version>
+        </dependency>
+
     </dependencies>
     <build>
         <plugins>

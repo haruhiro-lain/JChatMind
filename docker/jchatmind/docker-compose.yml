@@ -1,0 +1,52 @@
+services:
+  # ==================== PostgreSQL 数据库 ====================
+  postgres:
+    image: docker.1ms.run/pgvector/pgvector:pg16
+    container_name: jchatmind-postgres
+    environment:
+      POSTGRES_DB: jchatmind
+      POSTGRES_USER: jchatmind
+      POSTGRES_PASSWORD: jchatmind123
+    ports:
+      - "15432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ../../TEMP/init.sql:/docker-entrypoint-initdb.d/init.sql
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U jchatmind -d jchatmind"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+    restart: unless-stopped
+
+  # ==================== Spring Boot 后端 ====================
+  backend:
+    build:
+      context: ../..
+      dockerfile: docker/jchatmind/Dockerfile.backend
+    container_name: jchatmind-backend
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/jchatmind
+      SPRING_DATASOURCE_USERNAME: jchatmind
+      SPRING_DATASOURCE_PASSWORD: jchatmind123
+    ports:
+      - "8080:8080"
+    depends_on:
+      postgres:
+        condition: service_healthy
+    restart: unless-stopped
+
+  # ==================== React 前端 (nginx) ====================
+  frontend:
+    build:
+      context: ../..
+      dockerfile: docker/jchatmind/Dockerfile.frontend
+    container_name: jchatmind-frontend
+    ports:
+      - "15173:80"
+    depends_on:
+      - backend
+    restart: unless-stopped
+
+volumes:
+  postgres_data:

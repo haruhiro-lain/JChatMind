@@ -1,0 +1,23 @@
+# ==================== 第一阶段：构建 ====================
+# 使用 Docker Hub 镜像代理（国内环境加速，备选: docker.m.daocloud.io, docker.1ms.run）
+FROM docker.1ms.run/library/maven:3.9-eclipse-temurin-17 AS builder
+
+WORKDIR /app
+
+# 复制 Maven 配置（利用 Docker 缓存层，依赖变化时才重新下载）
+COPY jchatmind/pom.xml jchatmind/mvnw jchatmind/mvnw.cmd ./
+COPY jchatmind/.mvn .mvn
+RUN ./mvnw dependency:resolve -DskipTests -q
+
+# 复制源码并构建
+COPY jchatmind/src ./src
+RUN ./mvnw package -DskipTests -q
+
+# ==================== 第二阶段：运行 ====================
+FROM docker.1ms.run/library/eclipse-temurin:17-jre
+
+WORKDIR /app
+COPY --from=builder /app/target/*.jar app.jar
+
+EXPOSE 8080
+ENTRYPOINT ["java", "-jar", "app.jar"]

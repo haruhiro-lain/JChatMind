@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { ref } from "vue";
 import {
   type AgentVO,
   createAgent,
@@ -10,21 +10,14 @@ import {
 } from "../api/api.ts";
 
 export function useAgents() {
-  const [agents, setAgents] = useState<AgentVO[]>([]);
-
-  useEffect(() => {
-    async function fetchData() {
-      const resp = await getAgents();
-      setAgents(resp.agents);
-    }
-
-    fetchData().then();
-  }, []);
+  const agents = ref<AgentVO[]>([]);
 
   async function refreshAgents() {
     const resp = await getAgents();
-    setAgents(resp.agents);
+    agents.value = resp.agents;
   }
+
+  refreshAgents();
 
   async function createAgentHandle(agent: CreateAgentRequest) {
     await createAgent(agent);
