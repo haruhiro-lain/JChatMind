@@ -4,5 +4,8 @@
 # IDE
 .idea/
 
+# macOS
+.DS_Store
+
 # temporary workspace for AI collaboration
 TEMP/
