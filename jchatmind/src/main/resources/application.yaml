@@ -22,4 +22,3 @@ spring:
 mybatis:
   type-aliases-package: com.kama.jchatmind.model.entity
   mapper-locations: classpath:mapper/*.xml
-  type-handlers-package: com.kama.jchatmind.typehandler
