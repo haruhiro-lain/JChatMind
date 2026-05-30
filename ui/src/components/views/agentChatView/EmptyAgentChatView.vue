@@ -71,7 +71,7 @@
       <div class="px-4 pb-4 pt-4">
         <div class="flex items-center gap-2">
           <a-textarea
-            v-model:value="message"
+            v-model:value="messageText"
             placeholder="输入消息开始对话..."
             :auto-size="{ minRows: 1, maxRows: 6 }"
             @keydown.enter.exact.prevent="handleSend"
