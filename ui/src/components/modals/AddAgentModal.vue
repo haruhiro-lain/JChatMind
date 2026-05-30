@@ -251,6 +251,7 @@ function toggleTool(toolName: string) {
   }
 }
 
+const importLoading = ref(false);
 const cardAvatarFileName = ref<string | null>(null);
 
 async function handleImportCard(file: File): Promise<boolean> {
