@@ -29,6 +29,8 @@ services:
       SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/jchatmind
       SPRING_DATASOURCE_USERNAME: jchatmind
       SPRING_DATASOURCE_PASSWORD: jchatmind123
+    env_file:
+      - ../../.env
     ports:
       - "8080:8080"
     volumes:

@@ -9,3 +9,7 @@
 
 # temporary workspace for AI collaboration
 TEMP/
+
+# 本地敏感配置（API Key 等）
+.env
+.env.local

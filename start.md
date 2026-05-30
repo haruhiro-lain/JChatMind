@@ -32,16 +32,18 @@ Password: jchatmind123
 
 ### AI API 配置
 
-在 `jchatmind/src/main/resources/application.yaml` 中配置：
+项目根目录下创建 `.env` 文件（参考 `.env.example`）：
 
-```yaml
-spring:
-  ai:
-    deepseek:
-      api-key: your-deepseek-api-key
-    zhipuai:
-      api-key: your-zhipuai-api-key
+```bash
+# 复制模板
+cp .env.example .env
+
+# 编辑 .env 填入你的 API Key
+DEEPSEEK_API_KEY=sk-your-key-here
+ZHIPUAI_API_KEY=your-zhipuai-key    # 可选
 ```
+
+> `.env` 已加入 `.gitignore`，不会被提交到 Git。Docker Compose 会自动加载该文件。
 
 ## 启动方式
 
