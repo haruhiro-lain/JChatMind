@@ -76,7 +76,7 @@
             :auto-size="{ minRows: 1, maxRows: 6 }"
             @keydown.enter.exact.prevent="handleSend"
           />
-          <a-button type="primary" :loading="loading" :disabled="!message.trim() || !effectiveAgentId" @click="handleSend">
+          <a-button type="primary" :loading="loading" :disabled="!messageText.trim() || !effectiveAgentId" @click="handleSend">
             发送
           </a-button>
         </div>

@@ -11,7 +11,7 @@
       </div>
 
       <!-- 空状态 -->
-      <div v-else-if="chatSessions.length === 0" class="flex flex-col items-center justify-center h-full text-gray-300 dark:text-gray-600">
+      <div v-else-if="(chatSessions || []).length === 0" class="flex flex-col items-center justify-center h-full text-gray-300 dark:text-gray-600">
         <MessageOutlined class="text-3xl mb-3 opacity-50" />
         <p class="text-[13px] font-medium">暂无会话记录</p>
         <p class="text-[11px] mt-1">点击上方按钮创建</p>

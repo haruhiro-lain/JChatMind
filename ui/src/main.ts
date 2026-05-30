@@ -6,6 +6,6 @@ import router from "./router";
 import "./index.css";
 
 const app = createApp(App);
-app.use(Antd, { locale: zhCN });
+app.use(Antd, { locale: zhCN as any });
 app.use(router);
 app.mount("#root");

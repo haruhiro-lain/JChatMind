@@ -87,7 +87,7 @@
                       {{ formData.chatOptions?.temperature?.toFixed(1) }}
                     </span>
                   </div>
-                  <a-slider :min="0" :max="2" :step="0.1" v-model:value="formData.chatOptions.temperature" />
+                  <a-slider :min="0" :max="2" :step="0.1" v-model:value="formData.chatOptions!.temperature" />
                 </div>
                 <div>
                   <div class="flex items-center justify-between mb-2">
@@ -98,7 +98,7 @@
                       {{ formData.chatOptions?.topP?.toFixed(1) }}
                     </span>
                   </div>
-                  <a-slider :min="0" :max="1" :step="0.1" v-model:value="formData.chatOptions.topP" />
+                  <a-slider :min="0" :max="1" :step="0.1" v-model:value="formData.chatOptions!.topP" />
                 </div>
                 <div>
                   <div class="flex items-center justify-between mb-2">
@@ -109,7 +109,7 @@
                       {{ formData.chatOptions?.messageLength }}
                     </span>
                   </div>
-                  <a-slider :min="1" :max="100" :step="1" v-model:value="formData.chatOptions.messageLength" />
+                  <a-slider :min="1" :max="100" :step="1" v-model:value="formData.chatOptions!.messageLength" />
                 </div>
               </div>
             </div>

@@ -18,8 +18,7 @@
 
     <!-- 深色/浅色切换 -->
     <button :class="buttonClass" @click="$emit('toggleTheme')" :title="isDark ? '切换到浅色模式' : '切换到深色模式'">
-      <SunOutlined v-if="isDark" />
-      <MoonOutlined v-else />
+      <BulbOutlined :class="isDark ? 'text-yellow-400' : ''" />
     </button>
   </div>
 </template>
@@ -30,8 +29,7 @@ import {
   MenuUnfoldOutlined,
   VerticalAlignTopOutlined,
   VerticalAlignBottomOutlined,
-  SunOutlined,
-  MoonOutlined,
+  BulbOutlined,
 } from "@ant-design/icons-vue";
 
 defineProps<{
