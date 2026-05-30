@@ -32,6 +32,19 @@
         <div class="px-4 pb-4 overflow-y-auto h-full">
           <!-- 基础设置 -->
           <template v-if="selectedKey === 'base'">
+            <!-- 角色卡导入 -->
+            <div v-if="!isEditMode" class="mb-3">
+              <a-upload
+                :show-upload-list="false"
+                :before-upload="handleImportCard"
+                accept=".png,.json"
+              >
+                <a-button :loading="importLoading">
+                  <template #icon><UploadOutlined /></template>
+                  导入角色卡 (PNG/JSON)
+                </a-button>
+              </a-upload>
+            </div>
             <div class="mb-3">
               <label class="block text-gray-700 dark:text-[#ecf1fa] font-medium mb-1">名称</label>
               <a-input v-model:value="formData.name" placeholder="请输入智能体名称" />
@@ -42,7 +55,7 @@
             </div>
             <div class="mb-3">
               <label class="block text-gray-700 dark:text-[#ecf1fa] font-medium mb-1">提示词</label>
-              <a-textarea v-model:value="formData.systemPrompt" placeholder="默认提示词" :rows="11" />
+              <a-textarea v-model:value="formData.systemPrompt" placeholder="默认提示词" :rows="10" />
             </div>
           </template>
 
@@ -150,10 +163,10 @@
 
 <script setup lang="ts">
 import { ref, watch, onMounted } from "vue";
-import { SaveOutlined } from "@ant-design/icons-vue";
+import { SaveOutlined, UploadOutlined } from "@ant-design/icons-vue";
 import { message } from "ant-design-vue";
 import type { CreateAgentRequest, UpdateAgentRequest, AgentVO, ModelType } from "../../api/api";
-import { getOptionalTools, type ToolVO } from "../../api/api";
+import { getOptionalTools, importCard, type ToolVO } from "../../api/api";
 
 const props = defineProps<{
   open: boolean;
@@ -235,6 +248,25 @@ function toggleTool(toolName: string) {
   } else {
     formData.value.allowedTools = [...current, toolName];
   }
+}
+
+const importLoading = ref(false);
+
+async function handleImportCard(file: File): Promise<boolean> {
+  importLoading.value = true;
+  try {
+    const card = await importCard(file);
+    formData.value.name = card.name || "未命名角色";
+    formData.value.description = card.description || "";
+    formData.value.systemPrompt = card.systemPrompt || "";
+    message.success(`已导入角色卡: ${card.name}`);
+  } catch (e: unknown) {
+    const msg = e instanceof Error ? e.message : "导入失败";
+    message.error(msg);
+  } finally {
+    importLoading.value = false;
+  }
+  return false; // 阻止 a-upload 自动上传
 }
 
 async function handleSubmit() {

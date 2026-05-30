@@ -1,4 +1,4 @@
-import { get, post, patch, del } from "./http.ts";
+import { get, post, patch, del, BASE_URL } from "./http.ts";
 import type { ChatMessageVO, MessageType } from "../types";
 
 // 类型定义
@@ -84,6 +84,31 @@ export async function updateAgent(
   request: UpdateAgentRequest,
 ): Promise<void> {
   return patch<void>(`/agents/${agentId}`, request);
+}
+
+/**
+ * 导入角色卡（上传 PNG / JSON 文件）
+ */
+export interface ImportCardResponse {
+  name: string;
+  description?: string;
+  systemPrompt: string;
+  firstMessage?: string;
+}
+
+export async function importCard(file: File): Promise<ImportCardResponse> {
+  const formData = new FormData();
+  formData.append("file", file);
+
+  const resp = await fetch(`${BASE_URL}/agents/import-card`, {
+    method: "POST",
+    body: formData,
+  });
+  const json = await resp.json();
+  if (json.code !== 200) {
+    throw new Error(json.message || "导入失败");
+  }
+  return json.data;
 }
 
 /**

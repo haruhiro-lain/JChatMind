@@ -1,14 +1,22 @@
 package com.kama.jchatmind.controller;
 
+import com.kama.jchatmind.card.CardData;
+import com.kama.jchatmind.card.CharacterCardParser;
 import com.kama.jchatmind.model.common.ApiResponse;
 import com.kama.jchatmind.model.request.CreateAgentRequest;
 import com.kama.jchatmind.model.request.UpdateAgentRequest;
 import com.kama.jchatmind.model.response.CreateAgentResponse;
 import com.kama.jchatmind.model.response.GetAgentsResponse;
+import com.kama.jchatmind.model.response.ImportCardResponse;
 import com.kama.jchatmind.service.AgentFacadeService;
 import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
+
+@Slf4j
 @RestController
 @RequestMapping("/api")
 @AllArgsConstructor
@@ -40,5 +48,27 @@ public class AgentController {
     public ApiResponse<Void> updateAgent(@PathVariable String agentId, @RequestBody UpdateAgentRequest request) {
         agentFacadeService.updateAgent(agentId, request);
         return ApiResponse.success();
+    }
+
+    /**
+     * 导入角色卡（PNG / JSON），解析并返回预览数据。
+     * 前端确认后调用 POST /api/agents 完成创建。
+     */
+    @PostMapping("/agents/import-card")
+    public ApiResponse<ImportCardResponse> importCard(@RequestParam("file") MultipartFile file) {
+        try {
+            CardData card = CharacterCardParser.parse(file.getBytes());
+            String systemPrompt = CharacterCardParser.buildSystemPrompt(card);
+
+            return ApiResponse.success(ImportCardResponse.builder()
+                    .name(card.getName())
+                    .description(card.getDescription())
+                    .systemPrompt(systemPrompt)
+                    .firstMessage(card.getFirstMessage())
+                    .build());
+        } catch (IOException e) {
+            log.error("角色卡解析失败", e);
+            throw new RuntimeException("角色卡解析失败: " + e.getMessage());
+        }
     }
 }
