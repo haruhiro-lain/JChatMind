@@ -6,6 +6,7 @@ import router from "./router";
 import "./index.css";
 
 const app = createApp(App);
-app.use(Antd, { locale: zhCN as any });
+// @ts-expect-error ant-design-vue 4 locale typing issue
+app.use(Antd, { locale: zhCN });
 app.use(router);
 app.mount("#root");
