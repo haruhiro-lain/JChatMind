@@ -31,6 +31,8 @@ services:
       SPRING_DATASOURCE_PASSWORD: jchatmind123
     ports:
       - "8080:8080"
+    volumes:
+      - avatar_data:/app/uploads/avatars
     depends_on:
       postgres:
         condition: service_healthy
@@ -50,3 +52,4 @@ services:
 
 volumes:
   postgres_data:
+  avatar_data:
