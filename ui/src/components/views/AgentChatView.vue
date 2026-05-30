@@ -10,6 +10,8 @@
   <div v-else class="flex flex-col h-full">
     <AgentChatHistory
       :messages="messages"
+      :agent-name="currentAgent?.name"
+      :agent-avatar="currentAgent?.avatar"
       :display-agent-status="displayAgentStatus"
       :agent-status-text="agentStatusText"
       :agent-status-type="agentStatusType"
@@ -19,7 +21,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, watch, onUnmounted } from "vue";
+import { ref, watch, computed, onUnmounted } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import { message } from "ant-design-vue";
 import AgentChatHistory from "./agentChatView/AgentChatHistory.vue";
@@ -35,6 +37,10 @@ const route = useRoute();
 const router = useRouter();
 const { agents } = useAgents();
 const { refreshChatSessions } = useChatSessions();
+
+const currentAgent = computed(() =>
+  agents.value.find((a) => a.id === agentId.value)
+);
 
 const loading = ref(false);
 const messages = ref<ChatMessageVO[]>([]);
