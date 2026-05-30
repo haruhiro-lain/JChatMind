@@ -19,6 +19,8 @@ export interface CreateAgentRequest {
   chatOptions?: ChatOptions;
   /** 自定义 API Key，为空则用系统预设 */
   apiKey?: string;
+  /** 头像路径（如 /avatars/xxx.png） */
+  avatar?: string;
 }
 
 export interface UpdateAgentRequest {
@@ -45,6 +47,7 @@ export interface AgentVO {
   allowedTools?: string[];
   chatOptions?: ChatOptions;
   apiKey?: string;
+  avatar?: string;
   createdAt?: string;
   updatedAt?: string;
 }
@@ -94,6 +97,8 @@ export interface ImportCardResponse {
   description?: string;
   systemPrompt: string;
   firstMessage?: string;
+  /** 头像文件名，前端创建 Agent 时传入 */
+  avatarFileName?: string;
 }
 
 export async function importCard(file: File): Promise<ImportCardResponse> {

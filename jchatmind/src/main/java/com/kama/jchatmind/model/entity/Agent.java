@@ -30,6 +30,9 @@ public class Agent {
     /** 用户自定义 API Key（可选），为空时使用预设 Key */
     private String apiKey;
 
+    /** 头像文件名（如 a1b2c3d4.png），存储在 uploads/avatars/ 下 */
+    private String avatar;
+
     private LocalDateTime createdAt;
 
     private LocalDateTime updatedAt;

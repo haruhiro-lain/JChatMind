@@ -225,6 +225,7 @@ watch(() => props.open, (val) => {
     } else {
       isEditMode.value = false;
       formData.value = defaultForm();
+      cardAvatarFileName.value = null;
     }
     selectedKey.value = "base";
   }
@@ -250,7 +251,7 @@ function toggleTool(toolName: string) {
   }
 }
 
-const importLoading = ref(false);
+const cardAvatarFileName = ref<string | null>(null);
 
 async function handleImportCard(file: File): Promise<boolean> {
   importLoading.value = true;
@@ -259,6 +260,7 @@ async function handleImportCard(file: File): Promise<boolean> {
     formData.value.name = card.name || "未命名角色";
     formData.value.description = card.description || "";
     formData.value.systemPrompt = card.systemPrompt || "";
+    cardAvatarFileName.value = card.avatarFileName || null;
     message.success(`已导入角色卡: ${card.name}`);
   } catch (e: unknown) {
     const msg = e instanceof Error ? e.message : "导入失败";
@@ -276,10 +278,16 @@ async function handleSubmit() {
   }
   createAgentLoading.value = true;
   try {
+    const request = {
+      ...formData.value,
+      avatar: cardAvatarFileName.value
+        ? `/avatars/${cardAvatarFileName.value}`
+        : undefined,
+    };
     if (isEditMode.value && props.editingAgent) {
-      emit("update", props.editingAgent.id, { ...formData.value });
+      emit("update", props.editingAgent.id, request);
     } else {
-      emit("create", { ...formData.value });
+      emit("create", request);
     }
   } finally {
     createAgentLoading.value = false;

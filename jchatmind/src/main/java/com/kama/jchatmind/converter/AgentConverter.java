@@ -34,6 +34,7 @@ public class AgentConverter {
                 .allowedTools(objectMapper.writeValueAsString(agentDTO.getAllowedTools()))
                 .chatOptions(objectMapper.writeValueAsString(agentDTO.getChatOptions()))
                 .apiKey(agentDTO.getApiKey())
+                .avatar(agentDTO.getAvatar())
                 .createdAt(agentDTO.getCreatedAt())
                 .updatedAt(agentDTO.getUpdatedAt())
                 .build();
@@ -54,6 +55,7 @@ public class AgentConverter {
                 .allowedTools(objectMapper.readValue(agent.getAllowedTools(), new TypeReference<>(){}))
                 .chatOptions(objectMapper.readValue(agent.getChatOptions(), AgentDTO.ChatOptions.class))
                 .apiKey(agent.getApiKey())
+                .avatar(agent.getAvatar())
                 .createdAt(agent.getCreatedAt())
                 .updatedAt(agent.getUpdatedAt())
                 .build();
@@ -69,6 +71,7 @@ public class AgentConverter {
                 .allowedTools(dto.getAllowedTools())
                 .chatOptions(dto.getChatOptions())
                 .apiKey(dto.getApiKey())
+                .avatar(dto.getAvatar())
                 .build();
     }
 
@@ -90,6 +93,7 @@ public class AgentConverter {
                 .allowedTools(request.getAllowedTools())
                 .chatOptions(request.getChatOptions())
                 .apiKey(request.getApiKey())
+                .avatar(request.getAvatar())
                 .build();
     }
 

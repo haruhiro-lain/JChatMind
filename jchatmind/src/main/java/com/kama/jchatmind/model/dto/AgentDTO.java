@@ -29,6 +29,9 @@ public class AgentDTO {
     /** 用户自定义 API Key（可选），为空时使用预设 Key */
     private String apiKey;
 
+    /** 头像访问路径（如 /avatars/a1b2c3d4.png） */
+    private String avatar;
+
     private LocalDateTime createdAt;
 
     private LocalDateTime updatedAt;

@@ -52,19 +52,32 @@ public class AgentController {
 
     /**
      * 导入角色卡（PNG / JSON），解析并返回预览数据。
+     * PNG 文件同时保存为头像。
      * 前端确认后调用 POST /api/agents 完成创建。
      */
     @PostMapping("/agents/import-card")
     public ApiResponse<ImportCardResponse> importCard(@RequestParam("file") MultipartFile file) {
         try {
-            CardData card = CharacterCardParser.parse(file.getBytes());
+            byte[] data = file.getBytes();
+            CardData card = CharacterCardParser.parse(data);
             String systemPrompt = CharacterCardParser.buildSystemPrompt(card);
+
+            // 如果是 PNG，保存为头像
+            String avatarFileName = null;
+            String originalFilename = file.getOriginalFilename();
+            if (originalFilename != null && originalFilename.toLowerCase().endsWith(".png")) {
+                avatarFileName = java.util.UUID.randomUUID().toString() + ".png";
+                java.nio.file.Path uploadDir = java.nio.file.Path.of("uploads/avatars");
+                java.nio.file.Files.createDirectories(uploadDir);
+                java.nio.file.Files.write(uploadDir.resolve(avatarFileName), data);
+            }
 
             return ApiResponse.success(ImportCardResponse.builder()
                     .name(card.getName())
                     .description(card.getDescription())
                     .systemPrompt(systemPrompt)
                     .firstMessage(card.getFirstMessage())
+                    .avatarFileName(avatarFileName)
                     .build());
         } catch (IOException e) {
             log.error("角色卡解析失败", e);

@@ -21,4 +21,7 @@ public class ImportCardResponse {
 
     /** 首条消息（可选） */
     private String firstMessage;
+
+    /** 头像文件名（PNG 角色卡上传后保存的文件名，如 a1b2c3d4.png） */
+    private String avatarFileName;
 }

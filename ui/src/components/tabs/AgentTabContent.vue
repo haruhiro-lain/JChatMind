@@ -20,8 +20,9 @@
             @click="$emit('selectAgent', agent.id)"
           >
             <div class="flex items-start gap-3">
-              <div class="w-9 h-9 rounded-xl bg-gradient-to-br from-blue-50 to-indigo-50 flex items-center justify-center shrink-0 border border-blue-100">
-                <span class="text-lg">{{ agent.emoji }}</span>
+              <div class="w-9 h-9 rounded-xl bg-gradient-to-br from-blue-50 to-indigo-50 flex items-center justify-center shrink-0 border border-blue-100 overflow-hidden">
+                <img v-if="agent.avatar" :src="agent.avatar" class="w-full h-full object-cover" :alt="agent.name" />
+                <span v-else class="text-lg">{{ agent.emoji }}</span>
               </div>
               <div class="flex-1 min-w-0">
                 <div class="font-semibold text-[13px] text-gray-900 dark:text-[#ecf1fa] truncate leading-tight">

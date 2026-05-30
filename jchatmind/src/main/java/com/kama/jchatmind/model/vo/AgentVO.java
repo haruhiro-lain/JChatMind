@@ -24,4 +24,7 @@ public class AgentVO {
     private AgentDTO.ChatOptions chatOptions;
 
     private String apiKey;
+
+    /** 头像访问路径 */
+    private String avatar;
 }

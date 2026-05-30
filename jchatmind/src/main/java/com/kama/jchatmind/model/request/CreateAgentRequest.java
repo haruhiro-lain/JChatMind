@@ -14,4 +14,6 @@ public class CreateAgentRequest {
     private List<String> allowedTools;
     private AgentDTO.ChatOptions chatOptions;
     private String apiKey;
+    /** 头像访问路径（如 /avatars/xxx.png） */
+    private String avatar;
 }
