@@ -1,5 +1,8 @@
 export type MessageType = "user" | "assistant" | "system" | "tool";
 
+/** 对话模式：Ask（问答）/ Agent（智能体）/ Plan（规划） */
+export type ChatMode = "ask" | "agent" | "plan";
+
 export interface ToolCall {
   id: string;
   type: string;

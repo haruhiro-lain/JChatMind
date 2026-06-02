@@ -2,5 +2,6 @@
   "yaml.schemas": {
     ".vscode/empty-schema.json": ["jchatmind/src/main/resources/application.yaml"]
   },
-  "java.compile.nullAnalysis.mode": "automatic"
+  "java.compile.nullAnalysis.mode": "automatic",
+  "github.copilot.chat.modernization.enabled": false
 }

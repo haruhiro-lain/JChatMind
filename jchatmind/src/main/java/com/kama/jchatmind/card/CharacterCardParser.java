@@ -56,22 +56,30 @@ public class CharacterCardParser {
 
     @SuppressWarnings("unchecked")
     private static CardData parsePng(byte[] data) throws IOException {
-        try (ByteArrayInputStream bis = new ByteArrayInputStream(data);
-             ImageInputStream iis = ImageIO.createImageInputStream(bis)) {
+        ByteArrayInputStream bis = new ByteArrayInputStream(data);
+        ImageInputStream iis = ImageIO.createImageInputStream(bis);
 
+        try {
             // 方法 A: 走 ImageIO 元数据（跨平台兼容性好）
-            String charaBase64 = extractViaImageIO(iis);
-            if (charaBase64 != null) {
-                return parseCharaJson(charaBase64);
+            if (iis != null) {
+                String charaBase64 = extractViaImageIO(iis);
+                if (charaBase64 != null) {
+                    return parseCharaJson(charaBase64);
+                }
             }
 
             // 方法 B: 回退原始字节扫描（ImageIO 在某些 JDK 上不支持 png 插件的 tEXt 读取）
-            charaBase64 = extractViaRawScan(data);
+            String charaBase64 = extractViaRawScan(data);
             if (charaBase64 != null) {
                 return parseCharaJson(charaBase64);
             }
 
             throw new IOException("PNG 文件中未找到角色卡元数据（缺少 tEXt:chara 块）");
+        } finally {
+            if (iis != null) {
+                iis.close();
+            }
+            bis.close();
         }
     }
 
@@ -144,7 +152,12 @@ public class CharacterCardParser {
 
     @SuppressWarnings("unchecked")
     private static CardData parseCharaJson(String base64) throws IOException {
-        byte[] decoded = Base64.getDecoder().decode(base64);
+        byte[] decoded;
+        try {
+            decoded = Base64.getDecoder().decode(base64);
+        } catch (IllegalArgumentException e) {
+            throw new IOException("角色卡 Base64 解码失败: " + e.getMessage(), e);
+        }
         Map<String, Object> json;
 
         // 尝试 UTF-8，失败回退 ISO-8859-1

@@ -3,7 +3,7 @@ package com.kama.jchatmind.model.dto;
 import lombok.Builder;
 import lombok.Data;
 
-import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 
 @Data
 @Builder
@@ -16,9 +16,9 @@ public class ChatSessionDTO {
 
     private MetaData metadata;
 
-    private LocalDateTime createdAt;
+    private OffsetDateTime createdAt;
 
-    private LocalDateTime updatedAt;
+    private OffsetDateTime updatedAt;
 
     @Data
     public static class MetaData {

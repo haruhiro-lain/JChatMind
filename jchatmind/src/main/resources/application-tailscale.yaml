@@ -1,0 +1,4 @@
+# 台式机数据库配置（Tailscale 组网）
+spring:
+  datasource:
+    url: jdbc:postgresql://100.99.85.73:15432/jchatmind

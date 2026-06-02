@@ -16,7 +16,7 @@ import com.kama.jchatmind.service.ChatSessionFacadeService;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -87,7 +87,7 @@ public class ChatSessionFacadeServiceImpl implements ChatSessionFacadeService {
             ChatSession chatSession = chatSessionConverter.toEntity(chatSessionDTO);
             
             // 设置创建时间和更新时间
-            LocalDateTime now = LocalDateTime.now();
+            OffsetDateTime now = OffsetDateTime.now();
             chatSession.setCreatedAt(now);
             chatSession.setUpdatedAt(now);
             
@@ -137,11 +137,11 @@ public class ChatSessionFacadeServiceImpl implements ChatSessionFacadeService {
             // 将更新后的 ChatSessionDTO 转换回 ChatSession 实体
             ChatSession updatedChatSession = chatSessionConverter.toEntity(chatSessionDTO);
             
-            // 保留原有的 ID、agentId 和创建时间
+            // 保留原有的 ID 和创建时间；agentId 由 request 决定
             updatedChatSession.setId(existingChatSession.getId());
-            updatedChatSession.setAgentId(existingChatSession.getAgentId());
+            updatedChatSession.setAgentId(request.getAgentId() != null ? request.getAgentId() : existingChatSession.getAgentId());
             updatedChatSession.setCreatedAt(existingChatSession.getCreatedAt());
-            updatedChatSession.setUpdatedAt(LocalDateTime.now());
+            updatedChatSession.setUpdatedAt(OffsetDateTime.now());
             
             // 更新数据库
             int result = chatSessionMapper.updateById(updatedChatSession);

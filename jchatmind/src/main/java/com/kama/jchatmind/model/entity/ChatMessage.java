@@ -1,6 +1,6 @@
 package com.kama.jchatmind.model.entity;
 
-import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 
 import lombok.Builder;
 import lombok.Data;
@@ -22,9 +22,9 @@ public class ChatMessage {
     // JSON String
     private String metadata;
 
-    private LocalDateTime createdAt;
+    private OffsetDateTime createdAt;
 
-    private LocalDateTime updatedAt;
+    private OffsetDateTime updatedAt;
 
     @Override
     public boolean equals(Object that) {

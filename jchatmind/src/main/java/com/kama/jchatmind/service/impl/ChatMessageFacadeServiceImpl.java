@@ -17,7 +17,7 @@ import lombok.AllArgsConstructor;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -110,7 +110,7 @@ public class ChatMessageFacadeServiceImpl implements ChatMessageFacadeService {
             ChatMessage chatMessage = chatMessageConverter.toEntity(chatMessageDTO);
 
             // 设置创建时间和更新时间
-            LocalDateTime now = LocalDateTime.now();
+            OffsetDateTime now = OffsetDateTime.now();
             chatMessage.setCreatedAt(now);
             chatMessage.setUpdatedAt(now);
             // 插入数据库，ID 由数据库自动生成
@@ -146,7 +146,7 @@ public class ChatMessageFacadeServiceImpl implements ChatMessageFacadeService {
                 .content(updatedContent)
                 .metadata(existingChatMessage.getMetadata())
                 .createdAt(existingChatMessage.getCreatedAt())
-                .updatedAt(LocalDateTime.now())
+                .updatedAt(OffsetDateTime.now())
                 .build();
 
         // 更新数据库
@@ -197,7 +197,7 @@ public class ChatMessageFacadeServiceImpl implements ChatMessageFacadeService {
             updatedChatMessage.setSessionId(existingChatMessage.getSessionId());
             updatedChatMessage.setRole(existingChatMessage.getRole());
             updatedChatMessage.setCreatedAt(existingChatMessage.getCreatedAt());
-            updatedChatMessage.setUpdatedAt(LocalDateTime.now());
+            updatedChatMessage.setUpdatedAt(OffsetDateTime.now());
 
             // 更新数据库
             int result = chatMessageMapper.updateById(updatedChatMessage);

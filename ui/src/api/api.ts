@@ -153,6 +153,7 @@ export interface GetChatSessionResponse {
 
 export interface UpdateChatSessionRequest {
   title?: string;
+  agentId?: string;
 }
 
 /**

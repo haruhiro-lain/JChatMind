@@ -5,6 +5,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.multipart.MaxUploadSizeExceededException;
+import org.springframework.web.multipart.MultipartException;
 import org.springframework.web.servlet.resource.NoResourceFoundException;
 
 @RestControllerAdvice
@@ -16,6 +18,24 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(BizException.class)
     public ApiResponse<Void> handleBizException(BizException e) {
         return ApiResponse.error(e.getMessage());
+    }
+
+    /**
+     * 处理文件上传大小超限
+     */
+    @ExceptionHandler(MaxUploadSizeExceededException.class)
+    public ApiResponse<Void> handleMaxUploadSize(MaxUploadSizeExceededException e) {
+        log.warn("文件上传超过大小限制", e);
+        return ApiResponse.error("文件过大，请确保文件大小不超过 50MB");
+    }
+
+    /**
+     * 处理文件上传异常
+     */
+    @ExceptionHandler(MultipartException.class)
+    public ApiResponse<Void> handleMultipartException(MultipartException e) {
+        log.warn("文件上传异常", e);
+        return ApiResponse.error("文件上传失败: " + e.getMessage());
     }
 
     /**

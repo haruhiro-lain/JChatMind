@@ -6,6 +6,7 @@ import org.springframework.ai.deepseek.DeepSeekChatOptions;
 import org.springframework.ai.deepseek.api.DeepSeekApi;
 import org.springframework.ai.zhipuai.ZhiPuAiChatModel;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -37,8 +38,9 @@ public class MultiChatClientConfig {
         return ChatClient.create(chatModel);
     }
 
-    // ZhiPu AI
+    // ZhiPu AI（仅当配置了 API Key 时才启用）
     @Bean("glm-4.6")
+    @ConditionalOnExpression("not '${spring.ai.zhipuai.api-key:}'.isEmpty()")
     public ChatClient zhiPuAiChatClient(ZhiPuAiChatModel zhiPuAiChatModel) {
         return ChatClient.create(zhiPuAiChatModel);
     }

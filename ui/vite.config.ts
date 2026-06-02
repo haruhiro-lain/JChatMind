@@ -9,8 +9,8 @@ export default defineConfig({
     port: 15173,
     host: '127.0.0.1',
     proxy: {
-      '/api': 'http://localhost:8080',
-      '/avatars': 'http://localhost:8080',
+      '/api': 'http://127.0.0.1:8080',
+      '/avatars': 'http://127.0.0.1:8080',
     },
   },
 });

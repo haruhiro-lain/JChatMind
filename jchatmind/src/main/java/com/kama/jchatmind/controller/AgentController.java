@@ -9,12 +9,11 @@ import com.kama.jchatmind.model.response.CreateAgentResponse;
 import com.kama.jchatmind.model.response.GetAgentsResponse;
 import com.kama.jchatmind.model.response.ImportCardResponse;
 import com.kama.jchatmind.service.AgentFacadeService;
+import com.kama.jchatmind.exception.BizException;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-
-import java.io.IOException;
 
 @Slf4j
 @RestController
@@ -79,9 +78,9 @@ public class AgentController {
                     .firstMessage(card.getFirstMessage())
                     .avatarFileName(avatarFileName)
                     .build());
-        } catch (IOException e) {
+        } catch (Exception e) {
             log.error("角色卡解析失败", e);
-            throw new RuntimeException("角色卡解析失败: " + e.getMessage());
+            throw new BizException("角色卡解析失败: " + e.getMessage());
         }
     }
 }

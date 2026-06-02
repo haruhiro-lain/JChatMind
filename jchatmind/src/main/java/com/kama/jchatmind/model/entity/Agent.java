@@ -1,6 +1,6 @@
 package com.kama.jchatmind.model.entity;
 
-import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 
 import lombok.Builder;
 import lombok.Data;
@@ -33,9 +33,9 @@ public class Agent {
     /** 头像文件名（如 a1b2c3d4.png），存储在 uploads/avatars/ 下 */
     private String avatar;
 
-    private LocalDateTime createdAt;
+    private OffsetDateTime createdAt;
 
-    private LocalDateTime updatedAt;
+    private OffsetDateTime updatedAt;
 
     @Override
     public boolean equals(Object that) {

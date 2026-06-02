@@ -6,7 +6,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.Getter;
 
-import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 import java.util.List;
 
 @Data
@@ -32,9 +32,9 @@ public class AgentDTO {
     /** 头像访问路径（如 /avatars/a1b2c3d4.png） */
     private String avatar;
 
-    private LocalDateTime createdAt;
+    private OffsetDateTime createdAt;
 
-    private LocalDateTime updatedAt;
+    private OffsetDateTime updatedAt;
 
     @Getter
     @AllArgsConstructor

@@ -10,8 +10,8 @@
         <result property="role" column="role" jdbcType="VARCHAR"/>
         <result property="content" column="content" jdbcType="VARCHAR"/>
         <result property="metadata" column="metadata" jdbcType="VARCHAR"/>
-        <result property="createdAt" column="created_at" jdbcType="TIMESTAMP"/>
-        <result property="updatedAt" column="updated_at" jdbcType="TIMESTAMP"/>
+        <result property="createdAt" column="created_at" jdbcType="TIMESTAMP_WITH_TIMEZONE"/>
+        <result property="updatedAt" column="updated_at" jdbcType="TIMESTAMP_WITH_TIMEZONE"/>
     </resultMap>
 
     <sql id="Base_Column_List">

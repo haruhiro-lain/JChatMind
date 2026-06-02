@@ -76,5 +76,8 @@ public class ChatSessionConverter {
         if (request.getTitle() != null) {
             dto.setTitle(request.getTitle());
         }
+        if (request.getAgentId() != null) {
+            dto.setAgentId(request.getAgentId());
+        }
     }
 }

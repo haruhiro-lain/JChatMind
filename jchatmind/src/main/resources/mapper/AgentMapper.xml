@@ -14,8 +14,8 @@
         <result property="chatOptions" column="chat_options" jdbcType="VARCHAR"/>
         <result property="apiKey" column="api_key" jdbcType="VARCHAR"/>
         <result property="avatar" column="avatar" jdbcType="VARCHAR"/>
-        <result property="createdAt" column="created_at" jdbcType="TIMESTAMP"/>
-        <result property="updatedAt" column="updated_at" jdbcType="TIMESTAMP"/>
+        <result property="createdAt" column="created_at" jdbcType="TIMESTAMP_WITH_TIMEZONE"/>
+        <result property="updatedAt" column="updated_at" jdbcType="TIMESTAMP_WITH_TIMEZONE"/>
     </resultMap>
 
     <sql id="Base_Column_List">

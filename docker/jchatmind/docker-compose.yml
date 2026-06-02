@@ -11,7 +11,6 @@ services:
       - "15432:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
-      - ../../TEMP/init.sql:/docker-entrypoint-initdb.d/init.sql
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U jchatmind -d jchatmind"]
       interval: 5s

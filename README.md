@@ -5,10 +5,23 @@
 
 ---
 
-## 快速启动 (5 步)
+## 项目概述
+
+| 模块 | 技术栈 | 端口 |
+|------|--------|------|
+| 后端 (`jchatmind/`) | Spring Boot 3.5.8 + Java 17 + MyBatis + PostgreSQL | `8080` |
+| 前端 (`ui/`) | React 19 + TypeScript + Vite + Ant Design + Tailwind CSS | `15173` |
+
+---
+
+## 快速启动
 
 ### 前置条件
-- **JDK 17+** | **Maven** (IDEA 自带) | **Node.js 22+** | **Docker Desktop**
+
+- **JDK 17+**
+- **Maven**（项目自带 Maven Wrapper，无需额外安装）
+- **Node.js**（推荐 18+）
+- **Docker Desktop**（用于运行 PostgreSQL）
 
 ### 1. 启动 PostgreSQL
 
@@ -49,9 +62,24 @@ CREATE TABLE chat_message (
 );
 ```
 
+> 初始化 SQL 脚本也可在 `TEMP/init.sql` 中找到。
+
 ### 3. 配置 API Key
 
-编辑 `jchatmind/src/main/resources/application.yaml`，填入 DeepSeek API Key：
+**方式一：通过 `.env` 文件（推荐，Docker Compose 自动加载）**
+
+```bash
+# 复制模板
+cp .env.example .env
+
+# 编辑 .env 填入你的 API Key
+DEEPSEEK_API_KEY=sk-your-key-here
+ZHIPUAI_API_KEY=your-zhipuai-key    # 可选
+```
+
+> `.env` 已加入 `.gitignore`，不会被提交到 Git。
+
+**方式二：直接编辑 `application.yaml`**
 
 ```yaml
 spring:
@@ -62,11 +90,17 @@ spring:
 
 ### 4. 启动后端
 
+**命令行启动：**
+
 ```bash
 cd jchatmind
 set JAVA_HOME=D:\Environment\Java\jdk17   # Windows, 指向你的 JDK 17 路径
 mvnw.cmd spring-boot:run                   # macOS/Linux: ./mvnw spring-boot:run
 ```
+
+**IDE 一键启动：**
+
+在 IntelliJ IDEA / VS Code 中直接运行入口类：`com.kama.jchatmind.JchatmindApplication`
 
 验证：`curl http://localhost:8080/api/agents` → 返回 JSON
 
@@ -74,13 +108,34 @@ mvnw.cmd spring-boot:run                   # macOS/Linux: ./mvnw spring-boot:run
 
 ```bash
 cd ui
-npm install
+npm install    # 首次运行需安装依赖
 npm run dev
 ```
 
 访问 `http://127.0.0.1:15173/`，开始使用。
 
 > 若端口 5173 被 Windows 保留，`vite.config.ts` 已配置为 `127.0.0.1:15173`。
+
+---
+
+## 🔥 热修改支持
+
+| 端 | 方案 | 说明 |
+|----|------|------|
+| **后端** | spring-boot-devtools | 修改 Java 代码后重新编译，应用自动重启（LiveReload 端口 `35729`） |
+| **前端** | Vite HMR | 修改 React 组件/样式后浏览器自动局部更新，无需刷新 |
+
+### 后端热重载触发方式
+
+1. 在 IDE 中修改 `.java` 文件
+2. 重新编译（IDE 自动编译 或 执行 `mvn compile`）
+3. DevTools 检测到 `target/classes` 变更后自动重启应用
+
+### 前端热重载触发方式
+
+1. 修改 `.tsx` / `.ts` / `.css` 文件
+2. 保存文件（`Ctrl+S`）
+3. 浏览器自动更新，组件状态保留
 
 ---
 
@@ -293,6 +348,22 @@ docker compose down
 
 > PostgreSQL 映射端口: `15432`（Windows 避免与系统端口冲突）
 > 数据库: `jchatmind` | 用户/密码: `jchatmind` / `jchatmind123`
+
+---
+
+## 常见问题
+
+### 后端启动报数据库连接失败
+
+检查 PostgreSQL 是否运行在 `localhost:15432`，数据库 `jchatmind` 是否已创建。
+
+### 前端启动报端口占用
+
+修改 `ui/vite.config.ts` 中的 `server.port` 配置。
+
+### 前端请求后端接口跨域
+
+开发环境下 Vite 已配置代理，接口请求会自动转发到后端 `8080` 端口。
 
 ---
 

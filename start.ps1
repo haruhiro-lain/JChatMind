@@ -16,8 +16,20 @@ $dockerAvailable = $false
 try {
     $dockerVersion = docker --version 2>$null
     if ($LASTEXITCODE -eq 0) {
-        $dockerAvailable = $true
         Write-Host "[Docker] $dockerVersion" -ForegroundColor Green
+        # 检查 Docker 守护进程是否在运行
+        docker info 2>$null | Out-Null
+        if ($LASTEXITCODE -ne 0) {
+            Write-Host ""
+            Write-Host "============================================" -ForegroundColor Red
+            Write-Host "  Docker Desktop 未运行！" -ForegroundColor Red
+            Write-Host "  请先启动 Docker Desktop，然后重新运行此脚本。" -ForegroundColor Yellow
+            Write-Host "============================================" -ForegroundColor Red
+            Write-Host ""
+            Read-Host "按 Enter 退出"
+            exit 1
+        }
+        $dockerAvailable = $true
     }
 } catch { }
 
@@ -55,13 +67,29 @@ if ($dockerAvailable -and $composeAvailable -and (Test-Path $composeFile)) {
 
     Push-Location $rootDir
     try {
+        # 先停止并清理可能残留的旧容器（避免端口冲突）
+        Write-Host "   清理旧容器..." -ForegroundColor DarkGray
+        cmd /c "docker compose -f docker/jchatmind/docker-compose.yml down --remove-orphans 2>&1" | Out-Null
+
+        # 捕获 docker compose 输出以便在失败时显示错误
+        $composeFileArg = "docker/jchatmind/docker-compose.yml"
         if ($doRebuild) {
-            docker compose -f "docker/jchatmind/docker-compose.yml" up -d --build
+            $composeOutput = cmd /c "docker compose -f $composeFileArg up -d --build 2>&1"
         } else {
-            docker compose -f "docker/jchatmind/docker-compose.yml" up -d
+            $composeOutput = cmd /c "docker compose -f $composeFileArg up -d 2>&1"
         }
+        Write-Host $composeOutput
+
         if ($LASTEXITCODE -ne 0) {
-            throw "docker compose up 失败"
+            Write-Host ""
+            Write-Host "============================================" -ForegroundColor Red
+            Write-Host "  docker compose up 失败！" -ForegroundColor Red
+            Write-Host "  常见原因：" -ForegroundColor Yellow
+            Write-Host "  1. 端口冲突：检查 15432/8080/15173 是否被占用" -ForegroundColor DarkGray
+            Write-Host "  2. 镜像拉取失败：检查 docker.1ms.run 代理是否可达" -ForegroundColor DarkGray
+            Write-Host "  3. Maven/npm 构建失败：检查网络和依赖" -ForegroundColor DarkGray
+            Write-Host "============================================" -ForegroundColor Red
+            throw "docker compose up 失败，请查看上方错误信息"
         }
     } finally {
         Pop-Location
@@ -82,12 +110,20 @@ if ($dockerAvailable -and $composeAvailable -and (Test-Path $composeFile)) {
     Write-Host "   等待完成（${waited}秒）" -ForegroundColor Green
 
     Write-Host "[3/3] 打开浏览器..." -ForegroundColor Yellow
-    Start-Process "http://127.0.0.1:15173/"
+    # 检查前端是否已经可访问，避免重复打开浏览器
+    try {
+        $alreadyRunning = (Test-NetConnection -ComputerName "127.0.0.1" -Port 15173 -WarningAction SilentlyContinue -ErrorAction SilentlyContinue).TcpTestSucceeded
+    } catch { $alreadyRunning = $false }
+    if ($alreadyRunning) {
+        Write-Host "   ⚠ 前端已在运行，跳过打开浏览器" -ForegroundColor Yellow
+    } else {
+        Start-Process "http://127.0.0.1:15173/"
+    }
 
     Write-Host ""
     Write-Host "============================================" -ForegroundColor Cyan
     Write-Host "  前端地址: http://127.0.0.1:15173" -ForegroundColor White
-    Write-Host "  后端地址: http://localhost:8080" -ForegroundColor White
+    Write-Host "  后端地址: http://127.0.0.1:8080" -ForegroundColor White
     Write-Host "============================================" -ForegroundColor Cyan
     Write-Host ""
     Write-Host "常用命令:" -ForegroundColor Yellow
@@ -112,14 +148,14 @@ if ($dockerAvailable) {
 }
 Write-Host ""
 
-# ========== 配置 JDK 17 ==========
-$jdk17Path = "D:\Environment\Java\jdk17"
-if (Test-Path "$jdk17Path\bin\java.exe") {
-    $env:JAVA_HOME = $jdk17Path
-    $env:Path = "$jdk17Path\bin;$env:Path"
-    Write-Host "[JDK] 已切换到 JDK 17: $jdk17Path" -ForegroundColor Green
+# ========== 配置 JDK 21 ==========
+$jdk21Path = "D:\Environment\Java\jdk21"
+if (Test-Path "$jdk21Path\bin\java.exe") {
+    $env:JAVA_HOME = $jdk21Path
+    $env:Path = "$jdk21Path\bin;$env:Path"
+    Write-Host "[JDK] 已切换到 JDK 21: $jdk21Path" -ForegroundColor Green
 } else {
-    Write-Host "[警告] JDK 17 未在 $jdk17Path 找到，将使用系统默认 Java" -ForegroundColor Yellow
+    Write-Host "[警告] JDK 21 未在 $jdk21Path 找到，将使用系统默认 Java" -ForegroundColor Yellow
 }
 Write-Host ""
 
@@ -143,14 +179,14 @@ try {
         $majorVersion = 0
     }
 
-    if ($majorVersion -lt 17) {
-        Write-Host "[错误] Java 版本过低（当前: $majorVersion），请安装 JDK 17+" -ForegroundColor Red
+    if ($majorVersion -lt 21) {
+        Write-Host "[错误] Java 版本过低（当前: $majorVersion），请安装 JDK 21+" -ForegroundColor Red
         Read-Host "按 Enter 退出"
         exit 1
     }
     Write-Host "   ✓ Java 版本检查通过" -ForegroundColor Green
 } catch {
-    Write-Host "[错误] 未找到 Java，请安装 JDK 17+" -ForegroundColor Red
+    Write-Host "[错误] 未找到 Java，请安装 JDK 21+" -ForegroundColor Red
     Read-Host "按 Enter 退出"
     exit 1
 }
@@ -208,12 +244,21 @@ Write-Host "   等待前端启动（5秒）..."
 Start-Sleep -Seconds 5
 
 # 打开浏览器
-Write-Host "   ▶ 打开浏览器..." -ForegroundColor Cyan
-Start-Process "http://127.0.0.1:15173/"
+Write-Host "   ▶ 检查前端状态..." -ForegroundColor Cyan
+# 检查前端是否已经可访问，避免重复打开浏览器
+try {
+    $alreadyRunning = (Test-NetConnection -ComputerName "127.0.0.1" -Port 15173 -WarningAction SilentlyContinue -ErrorAction SilentlyContinue).TcpTestSucceeded
+} catch { $alreadyRunning = $false }
+if ($alreadyRunning) {
+    Write-Host "   ⚠ 前端已在运行，跳过打开浏览器" -ForegroundColor Yellow
+} else {
+    Write-Host "   ▶ 打开浏览器..." -ForegroundColor Cyan
+    Start-Process "http://127.0.0.1:15173/"
+}
 
 Write-Host ""
 Write-Host "============================================" -ForegroundColor Cyan
-Write-Host "  后端地址: http://localhost:8080" -ForegroundColor White
+Write-Host "  后端地址: http://127.0.0.1:8080" -ForegroundColor White
 Write-Host "  前端地址: http://127.0.0.1:15173" -ForegroundColor White
 Write-Host "============================================" -ForegroundColor Cyan
 Write-Host "  按任意键关闭此窗口（服务不受影响）"

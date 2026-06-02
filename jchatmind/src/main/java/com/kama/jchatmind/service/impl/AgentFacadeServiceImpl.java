@@ -15,7 +15,7 @@ import com.kama.jchatmind.service.AgentFacadeService;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -54,7 +54,7 @@ public class AgentFacadeServiceImpl implements AgentFacadeService {
             Agent agent = agentConverter.toEntity(agentDTO);
             
             // 设置创建时间和更新时间
-            LocalDateTime now = LocalDateTime.now();
+            OffsetDateTime now = OffsetDateTime.now();
             agent.setCreatedAt(now);
             agent.setUpdatedAt(now);
             
@@ -107,7 +107,7 @@ public class AgentFacadeServiceImpl implements AgentFacadeService {
             // 保留原有的 ID 和创建时间
             updatedAgent.setId(existingAgent.getId());
             updatedAgent.setCreatedAt(existingAgent.getCreatedAt());
-            updatedAgent.setUpdatedAt(LocalDateTime.now());
+            updatedAgent.setUpdatedAt(OffsetDateTime.now());
             
             // 更新数据库
             int result = agentMapper.updateById(updatedAgent);
