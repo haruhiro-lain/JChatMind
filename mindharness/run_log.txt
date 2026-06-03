@@ -1,0 +1,47 @@
+﻿[INFO] Scanning for projects...
+[INFO] 
+[INFO] ------------------------< com.kama:mindharness >------------------------
+[INFO] Building mindharness 0.0.1-SNAPSHOT
+[INFO]   from pom.xml
+[INFO] --------------------------------[ jar ]---------------------------------
+[INFO] 
+[INFO] >>> spring-boot:3.5.8:run (default-cli) > test-compile @ mindharness >>>
+[INFO] 
+[INFO] --- resources:3.3.1:resources (default-resources) @ mindharness ---
+[INFO] Copying 4 resources from src\main\resources to target\classes
+[INFO] Copying 4 resources from src\main\resources to target\classes
+[INFO] 
+[INFO] --- compiler:3.14.1:compile (default-compile) @ mindharness ---
+[INFO] Nothing to compile - all classes are up to date.
+[INFO] 
+[INFO] --- resources:3.3.1:testResources (default-testResources) @ mindharness ---
+[INFO] skip non existing resourceDirectory D:\Code\Project\JChatMind\mindharness\src\test\resources
+[INFO] 
+[INFO] --- compiler:3.14.1:testCompile (default-testCompile) @ mindharness ---
+[INFO] Nothing to compile - all classes are up to date.
+[INFO] 
+[INFO] <<< spring-boot:3.5.8:run (default-cli) < test-compile @ mindharness <<<
+[INFO] 
+[INFO] 
+[INFO] --- spring-boot:3.5.8:run (default-cli) @ mindharness ---
+[INFO] Attaching agents: []
+
+  .   ____          _            __ _ _
+ /\\ / ___'_ __ _ _(_)_ __  __ _ \ \ \ \
+( ( )\___ | '_ | '_| | '_ \/ _` | \ \ \ \
+ \\/  ___)| |_)| | | | | || (_| |  ) ) ) )
+  '  |____| .__|_| |_|_| |_\__, | / / / /
+ =========|_|==============|___/=/_/_/_/
+
+ :: Spring Boot ::                (v3.5.8)
+
+2026-06-02T14:31:03.689+08:00  INFO 11032 --- [mindharness] [  restartedMain] c.k.mindharness.MindHarnessApplication   : Starting MindHarnessApplication using Java 17.0.18 with PID 11032 (D:\Code\Project\JChatMind\mindharness\target\classes started by surface in D:\Code\Project\JChatMind\mindharness)
+2026-06-02T14:31:03.689+08:00  INFO 11032 --- [mindharness] [  restartedMain] c.k.mindharness.MindHarnessApplication   : The following 1 profile is active: "tailscale"
+2026-06-02T14:31:03.785+08:00  INFO 11032 --- [mindharness] [  restartedMain] .e.DevToolsPropertyDefaultsPostProcessor : Devtools property defaults active! Set 'spring.devtools.add-properties' to 'false' to disable
+2026-06-02T14:31:03.785+08:00  INFO 11032 --- [mindharness] [  restartedMain] .e.DevToolsPropertyDefaultsPostProcessor : For additional web related logging consider setting the 'logging.level.web' property to 'DEBUG'
+2026-06-02T14:31:07.205+08:00  INFO 11032 --- [mindharness] [  restartedMain] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat initialized with port 8080 (http)
+2026-06-02T14:31:07.227+08:00  INFO 11032 --- [mindharness] [  restartedMain] o.apache.catalina.core.StandardService   : Starting service [Tomcat]
+2026-06-02T14:31:07.227+08:00  INFO 11032 --- [mindharness] [  restartedMain] o.apache.catalina.core.StandardEngine    : Starting Servlet engine: [Apache Tomcat/10.1.49]
+2026-06-02T14:31:07.306+08:00  INFO 11032 --- [mindharness] [  restartedMain] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring embedded WebApplicationContext
+2026-06-02T14:31:07.306+08:00  INFO 11032 --- [mindharness] [  restartedMain] w.s.c.ServletWebServerApplicationContext : Root WebApplicationContext: initialization completed in 3519 ms
+2026-06-02T14:31:08.245+08:00  INFO 11032 --- [mindharness] [  restartedMain] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Starting...

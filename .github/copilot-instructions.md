@@ -1,4 +1,4 @@
-# Copilot Instructions for JChatMind
+﻿# Copilot Instructions for MindHarness
 
 ## Java Version
 - This project targets **Java 17** intentionally. Do NOT suggest upgrading the Java runtime version.

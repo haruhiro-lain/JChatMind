@@ -1,4 +1,4 @@
-# JChatMind 开发 TODO
+﻿# MindHarness 开发 TODO
 
 > 基于 `beta` 分支从 `main` 拉出后的精简框架阶段提交记录整理。  
 > 时间线：2026-05-22 ~ 2026-05-29
@@ -11,9 +11,9 @@
 - [x] 删除 `KnowledgeBase` / `Document` / `ChunkBgeM3` 相关的 Controller、Service、Mapper、Converter、Model
 - [x] 删除 `MarkdownParser`、`RagService`、`EmailService` 及对应实现
 - [x] 删除非核心工具：`KnowledgeTools`、`EmailTools`、`FileSystemTools`
-- [x] 删除 `JChatMindV1` / `JChatMindV2` 示例文件
-- [x] 修改 `JChatMindFactory`：移除 KnowledgeBase 依赖，简化知识库解析逻辑
-- [x] 修改 `JChatMind`：移除 `availableKbs` 字段，简化 `think()` 提示词
+- [x] 删除 `MindHarnessV1` / `MindHarnessV2` 示例文件
+- [x] 修改 `MindHarnessFactory`：移除 KnowledgeBase 依赖，简化知识库解析逻辑
+- [x] 修改 `MindHarness`：移除 `availableKbs` 字段，简化 `think()` 提示词
 - [x] 修改 `AgentConverter`：`allowedKbs` 改为可选字段
 - [x] 修改 `pom.xml`：移除 `flexmark`、`spring-boot-starter-mail` 依赖
 - [x] 修改 `application.yaml`：移除 mail 和 document-storage 配置
@@ -24,21 +24,21 @@
 - [x] 删除 `KnowledgeBaseView`、`KnowledgeBaseTabContent`、`AddKnowledgeBaseModal` 组件
 - [x] 精简 `api.ts`：移除知识库/文档相关 API 函数和类型定义
 - [x] 精简 `types/index.ts`：移除 KnowledgeBase 相关类型
-- [x] 精简 `JChatMindLayout`：移除知识库路由
+- [x] 精简 `MindHarnessLayout`：移除知识库路由
 - [x] 精简 `SideMenu`：移除知识库标签页，清理未使用的 import
 - [x] 精简 `AddAgentModal`：移除知识库设置面板
 - [x] 保留核心 UI：智能体管理 + 聊天会话 + Agent 对话视图
 
 ### 1.3 清理残留
-- [x] 删除 `jchatmind/output.txt`（测试输出文件）
+- [x] 删除 `mindharness/output.txt`（测试输出文件）
 - [x] 删除 `examples/` 测试页面和重复技术博客
 - [x] 删除 Demo/禁用工具：`CityTool`、`DateTool`、`WeatherTool`、`DirectAnswerTool`
 - [x] 删除 RAG 遗留代码和空目录（`PgVectorTypeHandler`、`contexts/`、`hooks/`）
 - [x] 删除 `.DS_Store` 并加入 `.gitignore`
-- [x] 删除空测试类 `JChatMindTests.java`
+- [x] 删除空测试类 `MindHarnessTests.java`
 - [x] 删除 `TEMP/` 临时目录
 - [x] 移除 `allowedKbs` 遗留字段
-- [x] 修复 `JchatmindApplication.java` 重复 import
+- [x] 修复 `MindharnessApplication.java` 重复 import
 - [x] 确认 `.gitignore` 正确排除 `TEMP/` 和 `target/` 目录
 
 ---
@@ -243,7 +243,7 @@ document.storage.path: uploads/documents
 **4. 工具注册（ToolFacadeService）**
 
 - 新增 `getFileSystemTools()` / `getEmailTools()` / `getHttpRequestTool()`
-- `JChatMindFactory.build()` 中根据 `agent.allowed_tools` JSON 数组动态挂载
+- `MindHarnessFactory.build()` 中根据 `agent.allowed_tools` JSON 数组动态挂载
 - 例如 `["dataBaseTool","knowledgeTool","emailTool"]` → 生成对应的 `ToolCallback` 列表
 
 **5. 验证方式**
@@ -274,7 +274,7 @@ document.storage.path: uploads/documents
   → POST /api/chat-messages { ..., chatMode: "plan" }
   → CreateChatMessageRequest.chatMode 字段（新增）
   → ChatMessage 实体存入 DB（chat_mode 列）
-  → JChatMind.think() 读取 chatMode 分支
+  → MindHarness.think() 读取 chatMode 分支
 ```
 
 **2. 三种模式行为**
@@ -302,7 +302,7 @@ IDLE → PLANNING (LLM 生成计划)
 
 - 当对话轮次 > 20 时，取最早的 10 轮调用 ChatModel 生成摘要
 - 摘要存入 `ChatMemory` 的 System Message，替换旧消息
-- 实现为 `SummaryMemoryAugmenter` 类，注入 `JChatMind.think()`
+- 实现为 `SummaryMemoryAugmenter` 类，注入 `MindHarness.think()`
 
 **5. 向量记忆 (Vector Memory)**
 
@@ -394,7 +394,7 @@ IDLE → PLANNING (LLM 生成计划)
 
 **3. 数据库备份**
 
-- `docker/jchatmind/backup.sh`：`pg_dump` → 保留 7 天
+- `docker/mindharness/backup.sh`：`pg_dump` → 保留 7 天
 - `docker-compose.yml` 新增 `backup` 服务（cron 每日执行）
 
 **4. 性能压测**
@@ -552,9 +552,9 @@ model/vo/
 #### 5.1.4 核心代码 — KnowledgeTools
 
 ```java
-package com.kama.jchatmind.agent.tools;
+package com.kama.mindharness.agent.tools;
 
-import com.kama.jchatmind.service.RagService;
+import com.kama.mindharness.service.RagService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import java.util.List;
@@ -612,7 +612,7 @@ public class KnowledgeTools implements Tool {
 #### 5.1.5 核心代码 — RagService
 
 ```java
-package com.kama.jchatmind.service;
+package com.kama.mindharness.service;
 
 import java.util.List;
 import java.util.Map;
@@ -630,7 +630,7 @@ public interface RagService {
 ```
 
 ```java
-package com.kama.jchatmind.service.impl;
+package com.kama.mindharness.service.impl;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -716,11 +716,11 @@ public class RagServiceImpl implements RagService {
 }
 ```
 
-#### 5.1.6 JChatMindFactory 集成
+#### 5.1.6 MindHarnessFactory 集成
 
 ```java
 // 在 build() 方法中注入知识库 ID
-public JChatMind build() {
+public MindHarness build() {
     // ... 现有代码 ...
     
     // 获取 Agent 关联的知识库
@@ -733,7 +733,7 @@ public JChatMind build() {
 }
 ```
 
-#### 5.1.7 JChatMind.think() 提示词增强
+#### 5.1.7 MindHarness.think() 提示词增强
 
 ```java
 // think() 方法中已有 availableKbs，将其注入 System Prompt
@@ -904,7 +904,7 @@ spring:
 #### 5.3.3 EmailTools 实现
 
 ```java
-package com.kama.jchatmind.agent.tools;
+package com.kama.mindharness.agent.tools;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.mail.SimpleMailMessage;
@@ -995,7 +995,7 @@ public class CreateChatMessageRequest {
 ```
 
 ```java
-// JChatMind.think() 根据模式调整行为
+// MindHarness.think() 根据模式调整行为
 public void think() {
     switch (chatMode) {
         case "ask" -> {
@@ -1092,7 +1092,7 @@ public class VectorMemoryAugmenter {
 │  │ Agent ChatMessage ChatSession KB Document Tool    │   │
 │  └───────────────────────────────────────────────────┘   │
 │  ┌─────────────── Agent Loop Engine ─────────────────┐   │
-│  │  JChatMind ──→ ToolCallingManager                 │   │
+│  │  MindHarness ──→ ToolCallingManager                 │   │
 │  │     │           ┌──────────────────────────┐      │   │
 │  │     ├──────────→│ DataBaseTools (SQL查询)   │      │   │
 │  │     ├──────────→│ KnowledgeTools (RAG检索)  │      │   │

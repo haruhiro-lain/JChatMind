@@ -12,8 +12,8 @@ export interface RequestOptions extends RequestInit {
   params?: Record<string, string | number | boolean | null | undefined>;
 }
 
-// API 基础路径（可以根据环境变量配置）
-export const BASE_URL = "http://127.0.0.1:8080/api";
+// API 基础路径（开发环境走 Vite 代理，生产环境由 nginx 转发）
+export const BASE_URL = "/api";
 
 /**
  * 构建完整的 URL（包含查询参数）
@@ -68,16 +68,16 @@ async function request<T = unknown>(
   // 构建完整 URL
   const fullUrl = buildUrl(url, params);
 
-  // 设置默认请求头
-  const defaultHeaders: HeadersInit = {
-    "Content-Type": "application/json",
-    ...headers,
-  };
+  // 设置默认请求头（FormData 由浏览器自动设置 Content-Type 含 boundary）
+  const isFormData = restOptions.body instanceof FormData;
+  const effectiveHeaders: HeadersInit | undefined = isFormData
+    ? (headers ? { ...headers } : undefined)
+    : { "Content-Type": "application/json", ...headers };
 
   try {
     const response = await fetch(fullUrl, {
       ...restOptions,
-      headers: defaultHeaders,
+      ...(effectiveHeaders ? { headers: effectiveHeaders } : {}),
     });
 
     const apiResponse = await handleResponse<T>(response);
@@ -117,7 +117,7 @@ export function post<T = unknown>(
   return request<T>(url, {
     ...options,
     method: "POST",
-    body: data ? JSON.stringify(data) : undefined,
+    body: data instanceof FormData ? data : (data ? JSON.stringify(data) : undefined),
   });
 }
 

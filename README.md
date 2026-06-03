@@ -1,4 +1,4 @@
-# JChatMind — AI Agent 智能体聊天平台
+﻿# MindHarness — AI Agent 智能体聊天平台
 
 > 基于 **Spring AI + React** 的多模型 AI Agent 聊天系统，支持 Agent Loop（ReAct 模式）与工具调用。
 > 面向面试准备的精简版，保留核心架构：**Think-Execute 循环 + Tool Calling + ChatMemory + SSE 实时推送**。
@@ -9,7 +9,7 @@
 
 | 模块 | 技术栈 | 端口 |
 |------|--------|------|
-| 后端 (`jchatmind/`) | Spring Boot 3.5.8 + Java 17 + MyBatis + PostgreSQL | `8080` |
+| 后端 (`mindharness/`) | Spring Boot 3.5.8 + Java 17 + MyBatis + PostgreSQL | `8080` |
 | 前端 (`ui/`) | React 19 + TypeScript + Vite + Ant Design + Tailwind CSS | `15173` |
 
 ---
@@ -26,7 +26,7 @@
 ### 1. 启动 PostgreSQL
 
 ```bash
-cd TEMP/docker/jchatmind
+cd TEMP/docker/mindharness
 docker compose up -d postgres
 ```
 
@@ -34,7 +34,7 @@ docker compose up -d postgres
 
 ### 2. 初始化数据库
 
-在 `psql` 中执行（或用 DataGrip 连接 `localhost:15432`，用户 `jchatmind` / 密码 `jchatmind123`）：
+在 `psql` 中执行（或用 DataGrip 连接 `localhost:15432`，用户 `mindharness` / 密码 `mindharness123`）：
 
 ```sql
 CREATE EXTENSION IF NOT EXISTS vector;
@@ -93,14 +93,14 @@ spring:
 **命令行启动：**
 
 ```bash
-cd jchatmind
+cd mindharness
 set JAVA_HOME=D:\Environment\Java\jdk17   # Windows, 指向你的 JDK 17 路径
 mvnw.cmd spring-boot:run                   # macOS/Linux: ./mvnw spring-boot:run
 ```
 
 **IDE 一键启动：**
 
-在 IntelliJ IDEA / VS Code 中直接运行入口类：`com.kama.jchatmind.JchatmindApplication`
+在 IntelliJ IDEA / VS Code 中直接运行入口类：`com.kama.mindharness.MindharnessApplication`
 
 验证：`curl http://localhost:8080/api/agents` → 返回 JSON
 
@@ -159,12 +159,12 @@ npm run dev
 │  ┌───────────────────────────────────────┐│              │
 │  │          Agent 核心引擎                ││              │
 │  │  ┌─────────────────────────────────┐  ││              │
-│  │  │  JChatMind (Agent Loop)         │  ││              │
+│  │  │  MindHarness (Agent Loop)         │  ││              │
 │  │  │  IDLE → THINKING → EXECUTING    │  ││              │
 │  │  │  → FINISHED / ERROR             │  ││              │
 │  │  │  think() → execute() → 循环     │  ││              │
 │  │  └─────────────────────────────────┘  ││              │
-│  │  JChatMindFactory (Agent 工厂)        ││              │
+│  │  MindHarnessFactory (Agent 工厂)        ││              │
 │  │  ChatClientRegistry (多模型注册表)     ││              │
 │  │  ToolCallingManager (工具调用管理)     ││              │
 │  └───────────────────────────────────────┘│              │
@@ -227,16 +227,16 @@ chat_message (聊天消息)
 ## 项目结构
 
 ```
-JChatMind/
-├── jchatmind/                    # 后端 (Spring Boot 3.5)
+MindHarness/
+├── mindharness/                    # 后端 (Spring Boot 3.5)
 │   ├── pom.xml
 │   ├── mvnw / mvnw.cmd           # Maven Wrapper
 │   └── src/main/
-│       ├── java/com/kama/jchatmind/
-│       │   ├── JchatmindApplication.java
+│       ├── java/com/kama/mindharness/
+│       │   ├── MindharnessApplication.java
 │       │   ├── agent/            # Agent 核心引擎
-│       │   │   ├── JChatMind.java           # Think-Execute 循环
-│       │   │   ├── JChatMindFactory.java    # Agent 工厂
+│       │   │   ├── MindHarness.java           # Think-Execute 循环
+│       │   │   ├── MindHarnessFactory.java    # Agent 工厂
 │       │   │   ├── AgentState.java          # 状态枚举
 │       │   │   └── tools/                  # 工具集
 │       │   ├── config/           # 配置 (多模型/CORS/异步)
@@ -268,7 +268,7 @@ JChatMind/
 │       ├── contexts/             # React Context
 │       ├── layout/               # 布局组件
 │       └── types/                # TypeScript 类型
-├── TEMP/docker/jchatmind/        # Docker 编排
+├── TEMP/docker/mindharness/        # Docker 编排
 │   └── docker-compose.yml
 └── README.md
 ```
@@ -301,8 +301,8 @@ JChatMind/
 ```
 用户发送消息
   → ChatEventListener 异步触发
-    → JChatMindFactory.create(agentId, sessionId)
-      → JChatMind.run()
+    → MindHarnessFactory.create(agentId, sessionId)
+      → MindHarness.run()
         → for i = 1..20:
           → think()     # LLM 决策：直接回答 or 调用工具？
           → execute()   # 执行工具，结果注入上下文
@@ -328,7 +328,7 @@ JChatMind/
 ## Docker 常用命令
 
 ```bash
-cd TEMP/docker/jchatmind
+cd TEMP/docker/mindharness
 
 # 启动 PostgreSQL（beta 精简版无需 Ollama）
 docker compose up -d postgres
@@ -340,14 +340,14 @@ docker compose ps
 docker compose logs -f postgres
 
 # 进入 psql
-docker exec -it jchatmind-postgres psql -U jchatmind -d jchatmind
+docker exec -it mindharness-postgres psql -U mindharness -d mindharness
 
 # 停止
 docker compose down
 ```
 
 > PostgreSQL 映射端口: `15432`（Windows 避免与系统端口冲突）
-> 数据库: `jchatmind` | 用户/密码: `jchatmind` / `jchatmind123`
+> 数据库: `mindharness` | 用户/密码: `mindharness` / `mindharness123`
 
 ---
 
@@ -355,7 +355,7 @@ docker compose down
 
 ### 后端启动报数据库连接失败
 
-检查 PostgreSQL 是否运行在 `localhost:15432`，数据库 `jchatmind` 是否已创建。
+检查 PostgreSQL 是否运行在 `localhost:15432`，数据库 `mindharness` 是否已创建。
 
 ### 前端启动报端口占用
 

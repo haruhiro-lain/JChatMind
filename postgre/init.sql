@@ -1,4 +1,4 @@
--- JChatMind 数据库初始化脚本
+-- MindHarness 数据库初始化脚本
 -- 首次启动容器时自动执行
 
 CREATE EXTENSION IF NOT EXISTS vector;

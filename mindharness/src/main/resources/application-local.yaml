@@ -1,0 +1,4 @@
+# 本地数据库配置（默认）
+spring:
+  datasource:
+    url: jdbc:postgresql://127.0.0.1:15432/mindharness

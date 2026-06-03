@@ -1,4 +1,4 @@
-<template>
+﻿<template>
   <div class="flex flex-col h-full">
     <!-- Logo 区域 -->
     <div class="h-14 w-full flex items-center px-5 border-b border-gray-100 dark:border-[rgba(0,229,255,0.2)] transition-colors duration-300">
@@ -7,7 +7,7 @@
           <RobotOutlined class="text-white text-base" />
         </div>
         <div class="flex flex-col leading-tight">
-          <span class="text-[15px] font-semibold text-gray-900 dark:text-[#ecf1fa] tracking-tight">JChatMind</span>
+          <span class="text-[15px] font-semibold text-gray-900 dark:text-[#ecf1fa] tracking-tight">MindHarness</span>
           <span class="text-[10px] text-gray-400 dark:text-[#5a7090] font-medium tracking-wide">AI AGENT PLATFORM</span>
         </div>
       </div>

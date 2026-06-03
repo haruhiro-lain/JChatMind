@@ -1,10 +1,10 @@
-﻿# JChatMind 开发模式启动脚本 (PowerShell)
+﻿# MindHarness 开发模式启动脚本 (PowerShell)
 # 本地运行前后端，远程连接台式机数据库（Tailscale 组网）
 $ErrorActionPreference = "Stop"
-$Host.UI.RawUI.WindowTitle = "JChatMind 开发模式"
+$Host.UI.RawUI.WindowTitle = "MindHarness 开发模式"
 
 Write-Host "============================================" -ForegroundColor Cyan
-Write-Host "  JChatMind 开发模式（远程数据库）" -ForegroundColor Cyan
+Write-Host "  MindHarness 开发模式（远程数据库）" -ForegroundColor Cyan
 Write-Host "============================================" -ForegroundColor Cyan
 Write-Host ""
 
@@ -104,7 +104,7 @@ try {
 
 # ---- 检查 Maven Wrapper ----
 Write-Host "  [1.3] Maven Wrapper..." -ForegroundColor Gray
-$mvnwPath = Join-Path $rootDir "jchatmind\mvnw.cmd"
+$mvnwPath = Join-Path $rootDir "mindharness\mvnw.cmd"
 if (Test-Path $mvnwPath) {
     Write-Host "   ✓ mvnw.cmd 存在" -ForegroundColor Green
 } else {
@@ -145,8 +145,9 @@ Write-Host "============================================" -ForegroundColor Cyan
 
 $dbHost = "100.99.85.73"
 $dbPort = 15432
-$dbName = "jchatmind"
-$dbUser = "jchatmind"
+$dbName = "mindharness"
+$dbUser = "mindharness"
+$dbPassword = "mindharness123"
 
 Write-Host "  目标: ${dbHost}:${dbPort} (PostgreSQL, Tailscale 组网)" -ForegroundColor Gray
 
@@ -182,6 +183,165 @@ try {
     }
 } catch {
     Write-Host "   ✗ TCP 连接测试失败: $_" -ForegroundColor Red
+    $allChecksPassed = $false
+}
+
+# ---- PostgreSQL 用户名密码认证验证 ----
+Write-Host "  [2.3] 用户名密码认证 (${dbUser}@${dbHost}:${dbPort})..." -ForegroundColor Gray
+
+function Test-PostgresAuth {
+    param($hostName, $port, $dbName, $user, $password)
+    
+    # 尝试多个常见的 psql 安装路径
+    $psqlPaths = @(
+        "C:\Program Files\PostgreSQL\17\bin\psql.exe",
+        "C:\Program Files\PostgreSQL\16\bin\psql.exe",
+        "C:\Program Files\PostgreSQL\15\bin\psql.exe",
+        "C:\Program Files\PostgreSQL\14\bin\psql.exe"
+    )
+    
+    $psqlExe = $null
+    foreach ($p in $psqlPaths) {
+        if (Test-Path $p) { $psqlExe = $p; break }
+    }
+    
+    # 如果没找到 psql，尝试从 PATH 中找
+    if (-not $psqlExe) {
+        $fromPath = (Get-Command psql -ErrorAction SilentlyContinue).Source
+        if ($fromPath) { $psqlExe = $fromPath }
+    }
+    
+    if ($psqlExe) {
+        Write-Host "        使用: $psqlExe" -ForegroundColor Gray
+        
+        try {
+            $env:PGPASSWORD = $password
+            $result = & $psqlExe -h $hostName -p $port -U $user -d $dbName `
+                -c "SELECT 1 AS connected;" 2>&1
+            
+            if ($LASTEXITCODE -eq 0) {
+                Write-Host "   ✓ 数据库认证成功 — 用户名和密码正确" -ForegroundColor Green
+                return $true
+            } else {
+                $errorText = ($result | Out-String).Trim()
+                Write-Host "   ✗ 数据库认证失败！" -ForegroundColor Red
+                
+                if ($errorText -match "password authentication failed") {
+                    Write-Host "     密码错误！请确认 ${user} 用户的密码" -ForegroundColor Red
+                    Write-Host "     当前配置密码: ${password}" -ForegroundColor Gray
+                } elseif ($errorText -match "no pg_hba.conf entry") {
+                    Write-Host "     pg_hba.conf 拒绝连接 — 服务器未允许此 IP 的连接" -ForegroundColor Red
+                } elseif ($errorText -match "Connection refused|timeout|timed out") {
+                    Write-Host "     连接被拒绝或超时 — 请确认 PostgreSQL 正在运行" -ForegroundColor Red
+                } else {
+                    Write-Host "     错误详情: $errorText" -ForegroundColor Red
+                }
+                return $false
+            }
+        } catch {
+            Write-Host "   ✗ 认证测试执行异常: $_" -ForegroundColor Red
+            return $false
+        } finally {
+            $env:PGPASSWORD = $null
+        }
+    }
+    
+    # ---- 回退方案：使用 Maven 本地仓库中的 PostgreSQL JDBC 驱动 ----
+    $m2Repo = "$env:USERPROFILE\.m2\repository"
+    $pgJarPattern = "$m2Repo\org\postgresql\postgresql\*\postgresql-*.jar"
+    $pgJars = Get-ChildItem -Path $pgJarPattern -ErrorAction SilentlyContinue | Sort-Object LastWriteTime -Descending
+    
+    if (-not $pgJars) {
+        Write-Host "   ⚠ 未找到 psql.exe 或 JDBC 驱动，跳过认证测试" -ForegroundColor Yellow
+        Write-Host "     安装 PostgreSQL 或运行过一次 mvn 后可自动验证" -ForegroundColor Gray
+        return $true
+    }
+    
+    $pgJar = $pgJars[0].FullName
+    Write-Host "        使用 JDBC: $($pgJars[0].Name)" -ForegroundColor Gray
+    
+    # 检查 javac / java 是否可用
+    $javacCmd = (Get-Command javac -ErrorAction SilentlyContinue).Source
+    $javaCmd  = (Get-Command java  -ErrorAction SilentlyContinue).Source
+    if (-not $javacCmd -or -not $javaCmd) {
+        Write-Host "   ⚠ javac/java 不可用，跳过认证测试" -ForegroundColor Yellow
+        return $true
+    }
+    
+    # 生成临时 Java 测试类（catch Exception 而非仅 SQLException）
+    $javaCode = @"
+import java.sql.*;
+public class _PgAuthTest {
+    public static void main(String[] args) {
+        String url = "jdbc:postgresql://${hostName}:${port}/${dbName}?connectTimeout=5&socketTimeout=5";
+        try (Connection conn = DriverManager.getConnection(url, "${user}", "${password}")) {
+            System.out.println("OK");
+        } catch (Exception e) {
+            System.out.println("FAIL:" + e.getMessage().replace('\n',' ').replace('\r',' '));
+            e.printStackTrace();
+        }
+    }
+}
+"@
+    $tmpDir = Join-Path $rootDir "mindharness\target\tmp"
+    New-Item -ItemType Directory -Force -Path $tmpDir | Out-Null
+    $javaFile = Join-Path $tmpDir "_PgAuthTest.java"
+    # 使用 .NET 写入无 BOM 的 UTF-8（PowerShell 5.1 的 Set-Content UTF8 带 BOM，javac 不认）
+    [System.IO.File]::WriteAllText($javaFile, $javaCode, [System.Text.UTF8Encoding]::new($false))
+    try {
+        # 编译
+        $javacOutput = & javac -cp "$pgJar" -d "$tmpDir" "$javaFile" 2>&1
+        if ($LASTEXITCODE -ne 0) {
+            $compileError = ($javacOutput | Out-String).Trim()
+            Write-Host "   ⚠ JDBC 编译失败:" -ForegroundColor Yellow
+            if ($compileError) { Write-Host "     $compileError" -ForegroundColor Gray }
+            return $true
+        }
+        
+        # 运行
+        $javaOutput = & java -cp "$pgJar;$tmpDir" _PgAuthTest 2>&1
+        $outputStr = ($javaOutput | Out-String).Trim()
+        
+        if ($outputStr -eq "OK") {
+            Write-Host "   ✓ 数据库认证成功 — 用户名和密码正确" -ForegroundColor Green
+            return $true
+        } elseif ($outputStr -match "^FAIL:") {
+            $errMsg = $outputStr -replace "^FAIL:", "" 
+            $errMsg = ($errMsg -split "`n")[0].Trim()  # 只取第一行（异常消息）
+            Write-Host "   ✗ 数据库认证失败！" -ForegroundColor Red
+            
+            if ($errMsg -match "password authentication failed") {
+                Write-Host "     密码错误！请确认 ${user} 用户的密码" -ForegroundColor Red
+                Write-Host "     当前配置密码: ${password}" -ForegroundColor Gray
+            } elseif ($errMsg -match "no pg_hba.conf entry") {
+                Write-Host "     pg_hba.conf 拒绝连接 — 服务器未允许此 IP 的连接" -ForegroundColor Red
+            } elseif ($errMsg -match "Connection refused|timeout|timed out|connect") {
+                Write-Host "     连接被拒绝或超时 — 请确认 PostgreSQL 正在运行" -ForegroundColor Red
+            } else {
+                Write-Host "     错误详情: $errMsg" -ForegroundColor Red
+            }
+            return $false
+        } else {
+            # 未预期的输出，打印出来帮助排查
+            Write-Host "   ⚠ 认证测试返回意外结果:" -ForegroundColor Yellow
+            if ($outputStr) {
+                $outputStr -split "`n" | Select-Object -First 5 | ForEach-Object {
+                    Write-Host "     $_" -ForegroundColor Gray
+                }
+            }
+            return $true
+        }
+    } catch {
+        Write-Host "   ⚠ JDBC 认证测试异常: $_" -ForegroundColor Yellow
+        return $true
+    } finally {
+        # 清理临时文件
+        Remove-Item -Recurse -Force "$tmpDir\_PgAuthTest*" -ErrorAction SilentlyContinue
+    }
+}
+
+$authResult = Test-PostgresAuth -hostName $dbHost -port $dbPort -dbName $dbName -user $dbUser -password $dbPassword
+if (-not $authResult) {
     $allChecksPassed = $false
 }
 
@@ -286,7 +446,7 @@ Write-Host ""
 
 # 启动后端（tailscale profile）
 Write-Host "   ▶ 启动后端服务（Spring Boot，端口 8080，tailscale 配置）..." -ForegroundColor Cyan
-$backendCmd = 'cd /d "' + $rootDir + '\jchatmind" && title JChatMind 后端 && .\mvnw.cmd spring-boot:run "-DskipTests" "-Dspring-boot.run.profiles=tailscale"'
+$backendCmd = 'cd /d "' + $rootDir + '\mindharness" && title MindHarness 后端 && .\mvnw.cmd spring-boot:run "-DskipTests" "-Dspring-boot.run.profiles=tailscale"'
 $backendProc = Start-Process -FilePath "cmd.exe" -ArgumentList "/c", $backendCmd -PassThru
 
 Write-Host "   等待后端初始化（15秒）..."
@@ -294,7 +454,7 @@ Start-Sleep -Seconds 15
 
 # 启动前端
 Write-Host "   ▶ 启动前端服务（Vite，端口 15173）..." -ForegroundColor Cyan
-$frontendCmd = 'cd /d "' + $rootDir + '\ui" && title JChatMind 前端 && npm run dev'
+$frontendCmd = 'cd /d "' + $rootDir + '\ui" && title MindHarness 前端 && npm run dev'
 $frontendProc = Start-Process -FilePath "cmd.exe" -ArgumentList "/c", $frontendCmd -PassThru
 
 Write-Host "   等待前端启动（5秒）..."

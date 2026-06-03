@@ -1,0 +1,56 @@
+﻿services:
+  # ==================== PostgreSQL 数据库 ====================
+  postgres:
+    image: docker.m.daocloud.io/pgvector/pgvector:pg16
+    container_name: mindharness-postgres
+    environment:
+      POSTGRES_DB: mindharness
+      POSTGRES_USER: mindharness
+      POSTGRES_PASSWORD: mindharness123
+    ports:
+      - "15432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U mindharness -d mindharness"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+    restart: unless-stopped
+
+  # ==================== Spring Boot 后端 ====================
+  backend:
+    build:
+      context: ../..
+      dockerfile: docker/mindharness/Dockerfile.backend
+    container_name: mindharness-backend
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/mindharness
+      SPRING_DATASOURCE_USERNAME: mindharness
+      SPRING_DATASOURCE_PASSWORD: mindharness123
+    env_file:
+      - ../../.env
+    ports:
+      - "8080:8080"
+    volumes:
+      - avatar_data:/app/uploads/avatars
+    depends_on:
+      postgres:
+        condition: service_healthy
+    restart: unless-stopped
+
+  # ==================== React 前端 (nginx) ====================
+  frontend:
+    build:
+      context: ../..
+      dockerfile: docker/mindharness/Dockerfile.frontend
+    container_name: mindharness-frontend
+    ports:
+      - "15173:80"
+    depends_on:
+      - backend
+    restart: unless-stopped
+
+volumes:
+  postgres_data:
+  avatar_data:

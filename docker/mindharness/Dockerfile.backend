@@ -1,0 +1,25 @@
+﻿# ==================== 第一阶段：构建 ====================
+# 使用 Docker Hub 镜像代理（国内环境加速，备选: docker.m.daocloud.io, docker.1ms.run）
+FROM docker.m.daocloud.io/library/maven:3.9-eclipse-temurin-17 AS builder
+
+WORKDIR /app
+
+# 复制 Maven 配置（利用 Docker 缓存层，依赖变化时才重新下载）
+COPY mindharness/pom.xml mindharness/mvnw mindharness/mvnw.cmd ./
+COPY mindharness/.mvn .mvn
+# 使用阿里云镜像加速依赖下载（解决国内访问 Maven Central 不稳定的问题）
+COPY docker/mindharness/settings-docker.xml /root/.m2/settings.xml
+RUN ./mvnw dependency:resolve -DskipTests -q
+
+# 复制源码并构建
+COPY mindharness/src ./src
+RUN ./mvnw package -DskipTests -q
+
+# ==================== 第二阶段：运行 ====================
+FROM docker.m.daocloud.io/library/eclipse-temurin:17-jdk-alpine
+
+WORKDIR /app
+COPY --from=builder /app/target/*.jar app.jar
+
+EXPOSE 8080
+ENTRYPOINT ["java", "-jar", "app.jar"]

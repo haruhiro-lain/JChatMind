@@ -72,7 +72,7 @@
 import { ref, watch, computed, onUnmounted } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import { message } from "ant-design-vue";
-import { DownOutlined, CheckCircleFilled, SearchOutlined, RobotOutlined, BulbOutlined } from "@ant-design/icons-vue";
+import { DownOutlined, CheckCircleFilled } from "@ant-design/icons-vue";
 import AgentChatHistory from "./agentChatView/AgentChatHistory.vue";
 import AgentChatInput from "./agentChatView/AgentChatInput.vue";
 import EmptyAgentChatView from "./agentChatView/EmptyAgentChatView.vue";
@@ -90,12 +90,6 @@ const { refreshChatSessions } = useChatSessions();
 
 // ========== 模式 ==========
 const chatMode = ref<ChatMode>("agent");
-
-const modeOptions = [
-  { key: "ask" as ChatMode, label: "Ask", icon: SearchOutlined, desc: "快速问答，不调用工具" },
-  { key: "agent" as ChatMode, label: "Agent", icon: RobotOutlined, desc: "智能体自主调用工具完成任务" },
-  { key: "plan" as ChatMode, label: "Plan", icon: BulbOutlined, desc: "先生成计划，确认后再执行" },
-];
 
 // ========== 智能体 ==========
 const agentsWithEmoji = computed(() =>
@@ -158,10 +152,17 @@ function addMessage(message: ChatMessageVO) {
 
 async function fetchMessages() {
   if (!chatSessionId.value) return;
-  const resp = await getChatMessagesBySessionId(chatSessionId.value);
-  messages.value = resp.chatMessages;
-  const sessionResp = await getChatSession(chatSessionId.value);
-  agentId.value = sessionResp.chatSession.agentId;
+  try {
+    const resp = await getChatMessagesBySessionId(chatSessionId.value);
+    messages.value = resp.chatMessages;
+    const sessionResp = await getChatSession(chatSessionId.value);
+    agentId.value = sessionResp.chatSession.agentId;
+  } catch {
+    // 会话不存在或已删除，回到首页
+    message.warning("会话不存在");
+    chatSessionId.value = undefined;
+    router.replace("/");
+  }
 }
 
 watch(chatSessionId, (newId) => {

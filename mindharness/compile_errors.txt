@@ -1,0 +1,611 @@
+﻿[INFO] Scanning for projects...
+[INFO] 
+[INFO] ------------------------< com.kama:mindharness >------------------------
+[INFO] Building mindharness 0.0.1-SNAPSHOT
+[INFO]   from pom.xml
+[INFO] --------------------------------[ jar ]---------------------------------
+[INFO] 
+[INFO] --- resources:3.3.1:resources (default-resources) @ mindharness ---
+[INFO] Copying 4 resources from src\main\resources to target\classes
+[INFO] Copying 4 resources from src\main\resources to target\classes
+[INFO] 
+[INFO] --- compiler:3.14.1:compile (default-compile) @ mindharness ---
+[INFO] Recompiling the module because of changed source code.
+[INFO] Compiling 71 source files with javac [debug parameters release 17] to target\classes
+[INFO] /D:/Code/Project/JChatMind/mindharness/src/main/java/com/kama/mindharness/lsp/LspClient.java: D:\Code\Project\JChatMind\mindharness\src\main\java\com\kama\mindharness\lsp\LspClient.java使用了未经检查或不安全的操作。
+[INFO] /D:/Code/Project/JChatMind/mindharness/src/main/java/com/kama/mindharness/lsp/LspClient.java: 有关详细信息, 请使用 -Xlint:unchecked 重新编译。
+[INFO] -------------------------------------------------------------
+[ERROR] COMPILATION ERROR : 
+[INFO] -------------------------------------------------------------
+[ERROR] /D:/Code/Project/JChatMind/mindharness/src/main/java/com/kama/mindharness/MindHarnessApplication.java:[11,8] 类 MindharnessApplication 是公共的, 应在名为 MindharnessApplication.java 的文件中声明
+[ERROR] /D:/Code/Project/JChatMind/mindharness/src/main/java/com/kama/mindharness/agent/MindHarness.java:[139,13] 找不到符号
+  符号:   变量 log
+  位置: 类 com.kama.mindharness.agent.MindHarness
+[ERROR] /D:/Code/Project/JChatMind/mindharness/src/main/java/com/kama/mindharness/agent/MindHarness.java:[153,9] 找不到符号
+  符号:   变量 log
+  位置: 类 com.kama.mindharness.agent.MindHarness
+[ERROR] /D:/Code/Project/JChatMind/mindharness/src/main/java/com/kama/mindharness/agent/MindHarness.java:[164,23] 找不到符号
+  符号:   类 ChatMessageDTOBuilder
+  位置: 类 com.kama.mindharness.model.dto.ChatMessageDTO
+[ERROR] /D:/Code/Project/JChatMind/mindharness/src/main/java/com/kama/mindharness/agent/MindHarness.java:[164,70] 找不到符号
+  符号:   方法 builder()
+  位置: 类 com.kama.mindharness.model.dto.ChatMessageDTO
+[ERROR] /D:/Code/Project/JChatMind/mindharness/src/main/java/com/kama/mindharness/agent/MindHarness.java:[169,54] 找不到符号
+  符号:   方法 builder()
+  位置: 类 com.kama.mindharness.model.dto.ChatMessageDTO.MetaData
+[ERROR] /D:/Code/Project/JChatMind/mindharness/src/main/java/com/kama/mindharness/agent/MindHarness.java:[174,45] 找不到符号
+  符号:   方法 getChatMessageId()
+  位置: 类型为com.kama.mindharness.model.response.CreateChatMessageResponse的变量 chatMessage
+[ERROR] /D:/Code/Project/JChatMind/mindharness/src/main/java/com/kama/mindharness/agent/MindHarness.java:[182,58] 找不到符号
+  符号:   方法 builder()
+  位置: 类 com.kama.mindharness.model.dto.ChatMessageDTO.MetaData
+[ERROR] /D:/Code/Project/JChatMind/mindharness/src/main/java/com/kama/mindharness/agent/MindHarness.java:[187,49] 找不到符号
+  符号:   方法 getChatMessageId()
+  位置: 类型为com.kama.mindharness.model.response.CreateChatMessageResponse的变量 chatMessage
+[ERROR] /D:/Code/Project/JChatMind/mindharness/src/main/java/com/kama/mindharness/agent/MindHarness.java:[199,47] 找不到符号
+  符号:   方法 builder()
+  位置: 类 com.kama.mindharness.message.SseMessage
+[ERROR] /D:/Code/Project/JChatMind/mindharness/src/main/java/com/kama/mindharness/agent/MindHarness.java:[201,48] 找不到符号
+  符号:   方法 builder()
+  位置: 类 com.kama.mindharness.message.SseMessage.Payload
+[ERROR] /D:/Code/Project/JChatMind/mindharness/src/main/java/com/kama/mindharness/agent/MindHarness.java:[204,50] 找不到符号
+  符号:   方法 builder()
+  位置: 类 com.kama.mindharness.message.SseMessage.Metadata
+[ERROR] /D:/Code/Project/JChatMind/mindharness/src/main/java/com/kama/mindharness/agent/MindHarness.java:[205,51] 找不到符号
+  符号:   方法 getId()
+  位置: 类型为com.kama.mindharness.model.dto.ChatMessageDTO的变量 message
+[ERROR] /D:/Code/Project/JChatMind/mindharness/src/main/java/com/kama/mindharness/agent/MindHarness.java:[283,9] 找不到符号
+  符号:   变量 log
+  位置: 类 com.kama.mindharness.agent.MindHarness
+[ERROR] /D:/Code/Project/JChatMind/mindharness/src/main/java/com/kama/mindharness/agent/MindHarness.java:[293,13] 找不到符号
+  符号:   变量 log
+  位置: 类 com.kama.mindharness.agent.MindHarness
+[ERROR] /D:/Code/Project/JChatMind/mindharness/src/main/java/com/kama/mindharness/agent/MindHarness.java:[319,21] 找不到符号
+  符号:   变量 log
+  位置: 类 com.kama.mindharness.agent.MindHarness
+[ERROR] /D:/Code/Project/JChatMind/mindharness/src/main/java/com/kama/mindharness/agent/MindHarness.java:[325,13] 找不到符号
+  符号:   变量 log
+  位置: 类 com.kama.mindharness.agent.MindHarness
+[ERROR] /D:/Code/Project/JChatMind/mindharness/src/main/java/com/kama/mindharness/converter/ChatMessageConverter.java:[22,38] 找不到符号
+  符号:   方法 getRole()
+  位置: 类型为com.kama.mindharness.model.dto.ChatMessageDTO的变量 chatMessageDTO
+[ERROR] /D:/Code/Project/JChatMind/mindharness/src/main/java/com/kama/mindharness/converter/ChatMessageConverter.java:[24,27] 找不到符号
+  符号:   方法 builder()
+  位置: 类 com.kama.mindharness.model.entity.ChatMessage
+[ERROR] /D:/Code/Project/JChatMind/mindharness/src/main/java/com/kama/mindharness/converter/ChatMessageConverter.java:[25,35] 找不到符号
+  符号:   方法 getId()
+  位置: 类型为com.kama.mindharness.model.dto.ChatMessageDTO的变量 chatMessageDTO
+[ERROR] /D:/Code/Project/JChatMind/mindharness/src/main/java/com/kama/mindharness/converter/ChatMessageConverter.java:[26,42] 找不到符号
+  符号:   方法 getSessionId()
+  位置: 类型为com.kama.mindharness.model.dto.ChatMessageDTO的变量 chatMessageDTO
+[ERROR] /D:/Code/Project/JChatMind/mindharness/src/main/java/com/kama/mindharness/converter/ChatMessageConverter.java:[27,37] 找不到符号
+  符号:   方法 getRole()
+  位置: 类型为com.kama.mindharness.model.dto.ChatMessageDTO的变量 chatMessageDTO
+[ERROR] /D:/Code/Project/JChatMind/mindharness/src/main/java/com/kama/mindharness/converter/ChatMessageConverter.java:[28,40] 找不到符号
+  符号:   方法 getContent()
+  位置: 类型为com.kama.mindharness.model.dto.ChatMessageDTO的变量 chatMessageDTO
+[ERROR] /D:/Code/Project/JChatMind/mindharness/src/main/java/com/kama/mindharness/converter/ChatMessageConverter.java:[29,41] 找不到符号
+  符号:   方法 getMetadata()
+  位置: 类型为com.kama.mindharness.model.dto.ChatMessageDTO的变量 chatMessageDTO
+[ERROR] /D:/Code/Project/JChatMind/mindharness/src/main/java/com/kama/mindharness/converter/ChatMessageConverter.java:[30,73] 找不到符号
+  符号:   方法 getMetadata()
+  位置: 类型为com.kama.mindharness.model.dto.ChatMessageDTO的变量 chatMessageDTO
+[ERROR] /D:/Code/Project/JChatMind/mindharness/src/main/java/com/kama/mindharness/converter/ChatMessageConverter.java:[32,42] 找不到符号
+  符号:   方法 getCreatedAt()
+  位置: 类型为com.kama.mindharness.model.dto.ChatMessageDTO的变量 chatMessageDTO
+[ERROR] /D:/Code/Project/JChatMind/mindharness/src/main/java/com/kama/mindharness/converter/ChatMessageConverter.java:[33,42] 找不到符号
+  符号:   方法 getUpdatedAt()
+  位置: 类型为com.kama.mindharness.model.dto.ChatMessageDTO的变量 chatMessageDTO
+[ERROR] /D:/Code/Project/JChatMind/mindharness/src/main/java/com/kama/mindharness/converter/ChatMessageConverter.java:[39,35] 找不到符号
+  符号:   方法 getRole()
+  位置: 类型为com.kama.mindharness.model.entity.ChatMessage的变量 chatMessage
+[ERROR] /D:/Code/Project/JChatMind/mindharness/src/main/java/com/kama/mindharness/converter/ChatMessageConverter.java:[41,30] 找不到符号
+  符号:   方法 builder()
+  位置: 类 com.kama.mindharness.model.dto.ChatMessageDTO
+[ERROR] /D:/Code/Project/JChatMind/mindharness/src/main/java/com/kama/mindharness/converter/ChatMessageConverter.java:[42,32] 找不到符号
+  符号:   方法 getId()
+  位置: 类型为com.kama.mindharness.model.entity.ChatMessage的变量 chatMessage
+[ERROR] /D:/Code/Project/JChatMind/mindharness/src/main/java/com/kama/mindharness/converter/ChatMessageConverter.java:[43,39] 找不到符号
+  符号:   方法 getSessionId()
+  位置: 类型为com.kama.mindharness.model.entity.ChatMessage的变量 chatMessage
+[ERROR] /D:/Code/Project/JChatMind/mindharness/src/main/java/com/kama/mindharness/converter/ChatMessageConverter.java:[44,67] 找不到符号
+  符号:   方法 getRole()
+  位置: 类型为com.kama.mindharness.model.entity.ChatMessage的变量 chatMessage
+[ERROR] /D:/Code/Project/JChatMind/mindharness/src/main/java/com/kama/mindharness/converter/ChatMessageConverter.java:[45,37] 找不到符号
+  符号:   方法 getContent()
+  位置: 类型为com.kama.mindharness.model.entity.ChatMessage的变量 chatMessage
+[ERROR] /D:/Code/Project/JChatMind/mindharness/src/main/java/com/kama/mindharness/converter/ChatMessageConverter.java:[46,38] 找不到符号
+  符号:   方法 getMetadata()
+  位置: 类型为com.kama.mindharness.model.entity.ChatMessage的变量 chatMessage
+[ERROR] /D:/Code/Project/JChatMind/mindharness/src/main/java/com/kama/mindharness/converter/ChatMessageConverter.java:[47,61] 找不到符号
+  符号:   方法 getMetadata()
+  位置: 类型为com.kama.mindharness.model.entity.ChatMessage的变量 chatMessage
+[ERROR] /D:/Code/Project/JChatMind/mindharness/src/main/java/com/kama/mindharness/converter/ChatMessageConverter.java:[49,39] 找不到符号
+  符号:   方法 getCreatedAt()
+  位置: 类型为com.kama.mindharness.model.entity.ChatMessage的变量 chatMessage
+[ERROR] /D:/Code/Project/JChatMind/mindharness/src/main/java/com/kama/mindharness/converter/ChatMessageConverter.java:[50,39] 找不到符号
+  符号:   方法 getUpdatedAt()
+  位置: 类型为com.kama.mindharness.model.entity.ChatMessage的变量 chatMessage
+[ERROR] /D:/Code/Project/JChatMind/mindharness/src/main/java/com/kama/mindharness/converter/ChatMessageConverter.java:[55,29] 找不到符号
+  符号:   方法 builder()
+  位置: 类 com.kama.mindharness.model.vo.ChatMessageVO
+[ERROR] /D:/Code/Project/JChatMind/mindharness/src/main/java/com/kama/mindharness/converter/ChatMessageConverter.java:[56,24] 找不到符号
+  符号:   方法 getId()
+  位置: 类型为com.kama.mindharness.model.dto.ChatMessageDTO的变量 dto
+[ERROR] /D:/Code/Project/JChatMind/mindharness/src/main/java/com/kama/mindharness/converter/ChatMessageConverter.java:[57,31] 找不到符号
+  符号:   方法 getSessionId()
+  位置: 类型为com.kama.mindharness.model.dto.ChatMessageDTO的变量 dto
+[ERROR] /D:/Code/Project/JChatMind/mindharness/src/main/java/com/kama/mindharness/converter/ChatMessageConverter.java:[58,26] 找不到符号
+  符号:   方法 getRole()
+  位置: 类型为com.kama.mindharness.model.dto.ChatMessageDTO的变量 dto
+[ERROR] /D:/Code/Project/JChatMind/mindharness/src/main/java/com/kama/mindharness/converter/ChatMessageConverter.java:[59,29] 找不到符号
+  符号:   方法 getContent()
+  位置: 类型为com.kama.mindharness.model.dto.ChatMessageDTO的变量 dto
+[ERROR] /D:/Code/Project/JChatMind/mindharness/src/main/java/com/kama/mindharness/converter/ChatMessageConverter.java:[60,30] 找不到符号
+  符号:   方法 getMetadata()
+  位置: 类型为com.kama.mindharness.model.dto.ChatMessageDTO的变量 dto
+[ERROR] /D:/Code/Project/JChatMind/mindharness/src/main/java/com/kama/mindharness/converter/ChatMessageConverter.java:[70,31] 找不到符号
+  符号:   方法 getSessionId()
+  位置: 类型为com.kama.mindharness.model.request.CreateChatMessageRequest的变量 request
+[ERROR] /D:/Code/Project/JChatMind/mindharness/src/main/java/com/kama/mindharness/converter/ChatMessageConverter.java:[71,31] 找不到符号
+  符号:   方法 getRole()
+  位置: 类型为com.kama.mindharness.model.request.CreateChatMessageRequest的变量 request
+[ERROR] /D:/Code/Project/JChatMind/mindharness/src/main/java/com/kama/mindharness/converter/ChatMessageConverter.java:[73,30] 找不到符号
+  符号:   方法 builder()
+  位置: 类 com.kama.mindharness.model.dto.ChatMessageDTO
+[ERROR] /D:/Code/Project/JChatMind/mindharness/src/main/java/com/kama/mindharness/converter/ChatMessageConverter.java:[74,35] 找不到符号
+  符号:   方法 getSessionId()
+  位置: 类型为com.kama.mindharness.model.request.CreateChatMessageRequest的变量 request
+[ERROR] /D:/Code/Project/JChatMind/mindharness/src/main/java/com/kama/mindharness/converter/ChatMessageConverter.java:[75,30] 找不到符号
+  符号:   方法 getRole()
+  位置: 类型为com.kama.mindharness.model.request.CreateChatMessageRequest的变量 request
+[ERROR] /D:/Code/Project/JChatMind/mindharness/src/main/java/com/kama/mindharness/converter/ChatMessageConverter.java:[76,33] 找不到符号
+  符号:   方法 getContent()
+  位置: 类型为com.kama.mindharness.model.request.CreateChatMessageRequest的变量 request
+[ERROR] /D:/Code/Project/JChatMind/mindharness/src/main/java/com/kama/mindharness/converter/ChatMessageConverter.java:[77,34] 找不到符号
+  符号:   方法 getMetadata()
+  位置: 类型为com.kama.mindharness.model.request.CreateChatMessageRequest的变量 request
+[ERROR] /D:/Code/Project/JChatMind/mindharness/src/main/java/com/kama/mindharness/converter/ChatMessageConverter.java:[85,20] 找不到符号
+  符号:   方法 getContent()
+  位置: 类型为com.kama.mindharness.model.request.UpdateChatMessageRequest的变量 request
+[ERROR] /D:/Code/Project/JChatMind/mindharness/src/main/java/com/kama/mindharness/converter/ChatMessageConverter.java:[86,35] 找不到符号
+  符号:   方法 getContent()
+  位置: 类型为com.kama.mindharness.model.request.UpdateChatMessageRequest的变量 request
+[ERROR] /D:/Code/Project/JChatMind/mindharness/src/main/java/com/kama/mindharness/converter/ChatMessageConverter.java:[88,20] 找不到符号
+  符号:   方法 getMetadata()
+  位置: 类型为com.kama.mindharness.model.request.UpdateChatMessageRequest的变量 request
+[ERROR] /D:/Code/Project/JChatMind/mindharness/src/main/java/com/kama/mindharness/converter/ChatMessageConverter.java:[89,36] 找不到符号
+  符号:   方法 getMetadata()
+  位置: 类型为com.kama.mindharness.model.request.UpdateChatMessageRequest的变量 request
+[ERROR] /D:/Code/Project/JChatMind/mindharness/src/main/java/com/kama/mindharness/model/dto/ChatMessageDTO.java:[41,13] 无法将枚举 com.kama.mindharness.model.dto.ChatMessageDTO.RoleType中的构造器 RoleType应用到给定类型;
+  需要: 没有参数
+  找到:    java.lang.String
+  原因: 实际参数列表和形式参数列表长度不同
+[ERROR] /D:/Code/Project/JChatMind/mindharness/src/main/java/com/kama/mindharness/model/dto/ChatMessageDTO.java:[42,18] 无法将枚举 com.kama.mindharness.model.dto.ChatMessageDTO.RoleType中的构造器 RoleType应用到给定类型;
+  需要: 没有参数
+  找到:    java.lang.String
+  原因: 实际参数列表和形式参数列表长度不同
+[ERROR] /D:/Code/Project/JChatMind/mindharness/src/main/java/com/kama/mindharness/model/dto/ChatMessageDTO.java:[43,15] 无法将枚举 com.kama.mindharness.model.dto.ChatMessageDTO.RoleType中的构造器 RoleType应用到给定类型;
+  需要: 没有参数
+  找到:    java.lang.String
+  原因: 实际参数列表和形式参数列表长度不同
+[ERROR] /D:/Code/Project/JChatMind/mindharness/src/main/java/com/kama/mindharness/model/dto/ChatMessageDTO.java:[44,13] 无法将枚举 com.kama.mindharness.model.dto.ChatMessageDTO.RoleType中的构造器 RoleType应用到给定类型;
+  需要: 没有参数
+  找到:    java.lang.String
+  原因: 实际参数列表和形式参数列表长度不同
+[ERROR] /D:/Code/Project/JChatMind/mindharness/src/main/java/com/kama/mindharness/model/entity/ChatMessage.java:[41,21] 找不到符号
+  符号: 方法 getId()
+[ERROR] /D:/Code/Project/JChatMind/mindharness/src/main/java/com/kama/mindharness/model/entity/ChatMessage.java:[41,45] 找不到符号
+  符号:   方法 getId()
+  位置: 类型为com.kama.mindharness.model.entity.ChatMessage的变量 other
+[ERROR] /D:/Code/Project/JChatMind/mindharness/src/main/java/com/kama/mindharness/model/entity/ChatMessage.java:[41,68] 找不到符号
+  符号: 方法 getId()
+[ERROR] /D:/Code/Project/JChatMind/mindharness/src/main/java/com/kama/mindharness/model/entity/ChatMessage.java:[41,89] 找不到符号
+  符号:   方法 getId()
+  位置: 类型为com.kama.mindharness.model.entity.ChatMessage的变量 other
+[ERROR] /D:/Code/Project/JChatMind/mindharness/src/main/java/com/kama/mindharness/model/entity/ChatMessage.java:[42,21] 找不到符号
+  符号: 方法 getSessionId()
+[ERROR] /D:/Code/Project/JChatMind/mindharness/src/main/java/com/kama/mindharness/model/entity/ChatMessage.java:[42,52] 找不到符号
+  符号:   方法 getSessionId()
+  位置: 类型为com.kama.mindharness.model.entity.ChatMessage的变量 other
+[ERROR] /D:/Code/Project/JChatMind/mindharness/src/main/java/com/kama/mindharness/model/entity/ChatMessage.java:[42,82] 找不到符号
+  符号: 方法 getSessionId()
+[ERROR] /D:/Code/Project/JChatMind/mindharness/src/main/java/com/kama/mindharness/model/entity/ChatMessage.java:[42,110] 找不到符号
+  符号:   方法 getSessionId()
+  位置: 类型为com.kama.mindharness.model.entity.ChatMessage的变量 other
+[ERROR] /D:/Code/Project/JChatMind/mindharness/src/main/java/com/kama/mindharness/model/entity/ChatMessage.java:[43,21] 找不到符号
+  符号: 方法 getRole()
+[ERROR] /D:/Code/Project/JChatMind/mindharness/src/main/java/com/kama/mindharness/model/entity/ChatMessage.java:[43,47] 找不到符号
+  符号:   方法 getRole()
+  位置: 类型为com.kama.mindharness.model.entity.ChatMessage的变量 other
+[ERROR] /D:/Code/Project/JChatMind/mindharness/src/main/java/com/kama/mindharness/model/entity/ChatMessage.java:[43,72] 找不到符号
+  符号: 方法 getRole()
+[ERROR] /D:/Code/Project/JChatMind/mindharness/src/main/java/com/kama/mindharness/model/entity/ChatMessage.java:[43,95] 找不到符号
+  符号:   方法 getRole()
+  位置: 类型为com.kama.mindharness.model.entity.ChatMessage的变量 other
+[ERROR] /D:/Code/Project/JChatMind/mindharness/src/main/java/com/kama/mindharness/model/entity/ChatMessage.java:[44,21] 找不到符号
+  符号: 方法 getContent()
+[ERROR] /D:/Code/Project/JChatMind/mindharness/src/main/java/com/kama/mindharness/model/entity/ChatMessage.java:[44,50] 找不到符号
+  符号:   方法 getContent()
+  位置: 类型为com.kama.mindharness.model.entity.ChatMessage的变量 other
+[ERROR] /D:/Code/Project/JChatMind/mindharness/src/main/java/com/kama/mindharness/model/entity/ChatMessage.java:[44,78] 找不到符号
+  符号: 方法 getContent()
+[ERROR] /D:/Code/Project/JChatMind/mindharness/src/main/java/com/kama/mindharness/model/entity/ChatMessage.java:[44,104] 找不到符号
+  符号:   方法 getContent()
+  位置: 类型为com.kama.mindharness.model.entity.ChatMessage的变量 other
+[ERROR] /D:/Code/Project/JChatMind/mindharness/src/main/java/com/kama/mindharness/model/entity/ChatMessage.java:[45,21] 找不到符号
+  符号: 方法 getMetadata()
+[ERROR] /D:/Code/Project/JChatMind/mindharness/src/main/java/com/kama/mindharness/model/entity/ChatMessage.java:[45,51] 找不到符号
+  符号:   方法 getMetadata()
+  位置: 类型为com.kama.mindharness.model.entity.ChatMessage的变量 other
+[ERROR] /D:/Code/Project/JChatMind/mindharness/src/main/java/com/kama/mindharness/model/entity/ChatMessage.java:[45,80] 找不到符号
+  符号: 方法 getMetadata()
+[ERROR] /D:/Code/Project/JChatMind/mindharness/src/main/java/com/kama/mindharness/model/entity/ChatMessage.java:[45,107] 找不到符号
+  符号:   方法 getMetadata()
+  位置: 类型为com.kama.mindharness.model.entity.ChatMessage的变量 other
+[ERROR] /D:/Code/Project/JChatMind/mindharness/src/main/java/com/kama/mindharness/model/entity/ChatMessage.java:[46,21] 找不到符号
+  符号: 方法 getCreatedAt()
+[ERROR] /D:/Code/Project/JChatMind/mindharness/src/main/java/com/kama/mindharness/model/entity/ChatMessage.java:[46,52] 找不到符号
+  符号:   方法 getCreatedAt()
+  位置: 类型为com.kama.mindharness.model.entity.ChatMessage的变量 other
+[ERROR] /D:/Code/Project/JChatMind/mindharness/src/main/java/com/kama/mindharness/model/entity/ChatMessage.java:[46,82] 找不到符号
+  符号: 方法 getCreatedAt()
+[ERROR] /D:/Code/Project/JChatMind/mindharness/src/main/java/com/kama/mindharness/model/entity/ChatMessage.java:[46,110] 找不到符号
+  符号:   方法 getCreatedAt()
+  位置: 类型为com.kama.mindharness.model.entity.ChatMessage的变量 other
+[ERROR] /D:/Code/Project/JChatMind/mindharness/src/main/java/com/kama/mindharness/model/entity/ChatMessage.java:[47,21] 找不到符号
+  符号: 方法 getUpdatedAt()
+[ERROR] /D:/Code/Project/JChatMind/mindharness/src/main/java/com/kama/mindharness/model/entity/ChatMessage.java:[47,52] 找不到符号
+  符号:   方法 getUpdatedAt()
+  位置: 类型为com.kama.mindharness.model.entity.ChatMessage的变量 other
+[ERROR] /D:/Code/Project/JChatMind/mindharness/src/main/java/com/kama/mindharness/model/entity/ChatMessage.java:[47,82] 找不到符号
+  符号: 方法 getUpdatedAt()
+[ERROR] /D:/Code/Project/JChatMind/mindharness/src/main/java/com/kama/mindharness/model/entity/ChatMessage.java:[47,110] 找不到符号
+  符号:   方法 getUpdatedAt()
+  位置: 类型为com.kama.mindharness.model.entity.ChatMessage的变量 other
+[ERROR] /D:/Code/Project/JChatMind/mindharness/src/main/java/com/kama/mindharness/model/entity/ChatMessage.java:[54,37] 找不到符号
+  符号:   方法 getId()
+  位置: 类 com.kama.mindharness.model.entity.ChatMessage
+[ERROR] /D:/Code/Project/JChatMind/mindharness/src/main/java/com/kama/mindharness/model/entity/ChatMessage.java:[54,60] 找不到符号
+  符号:   方法 getId()
+  位置: 类 com.kama.mindharness.model.entity.ChatMessage
+[ERROR] /D:/Code/Project/JChatMind/mindharness/src/main/java/com/kama/mindharness/model/entity/ChatMessage.java:[55,37] 找不到符号
+  符号:   方法 getSessionId()
+  位置: 类 com.kama.mindharness.model.entity.ChatMessage
+[ERROR] /D:/Code/Project/JChatMind/mindharness/src/main/java/com/kama/mindharness/model/entity/ChatMessage.java:[55,67] 找不到符号
+  符号:   方法 getSessionId()
+  位置: 类 com.kama.mindharness.model.entity.ChatMessage
+[ERROR] /D:/Code/Project/JChatMind/mindharness/src/main/java/com/kama/mindharness/model/entity/ChatMessage.java:[56,37] 找不到符号
+  符号:   方法 getRole()
+  位置: 类 com.kama.mindharness.model.entity.ChatMessage
+[ERROR] /D:/Code/Project/JChatMind/mindharness/src/main/java/com/kama/mindharness/model/entity/ChatMessage.java:[56,62] 找不到符号
+  符号:   方法 getRole()
+  位置: 类 com.kama.mindharness.model.entity.ChatMessage
+[ERROR] /D:/Code/Project/JChatMind/mindharness/src/main/java/com/kama/mindharness/model/entity/ChatMessage.java:[57,37] 找不到符号
+  符号:   方法 getContent()
+  位置: 类 com.kama.mindharness.model.entity.ChatMessage
+[ERROR] /D:/Code/Project/JChatMind/mindharness/src/main/java/com/kama/mindharness/model/entity/ChatMessage.java:[57,65] 找不到符号
+  符号:   方法 getContent()
+  位置: 类 com.kama.mindharness.model.entity.ChatMessage
+[ERROR] /D:/Code/Project/JChatMind/mindharness/src/main/java/com/kama/mindharness/model/entity/ChatMessage.java:[58,37] 找不到符号
+  符号:   方法 getMetadata()
+  位置: 类 com.kama.mindharness.model.entity.ChatMessage
+[ERROR] /D:/Code/Project/JChatMind/mindharness/src/main/java/com/kama/mindharness/model/entity/ChatMessage.java:[58,66] 找不到符号
+  符号:   方法 getMetadata()
+  位置: 类 com.kama.mindharness.model.entity.ChatMessage
+[ERROR] /D:/Code/Project/JChatMind/mindharness/src/main/java/com/kama/mindharness/model/entity/ChatMessage.java:[59,37] 找不到符号
+  符号:   方法 getCreatedAt()
+  位置: 类 com.kama.mindharness.model.entity.ChatMessage
+[ERROR] /D:/Code/Project/JChatMind/mindharness/src/main/java/com/kama/mindharness/model/entity/ChatMessage.java:[59,67] 找不到符号
+  符号:   方法 getCreatedAt()
+  位置: 类 com.kama.mindharness.model.entity.ChatMessage
+[ERROR] /D:/Code/Project/JChatMind/mindharness/src/main/java/com/kama/mindharness/model/entity/ChatMessage.java:[60,37] 找不到符号
+  符号:   方法 getUpdatedAt()
+  位置: 类 com.kama.mindharness.model.entity.ChatMessage
+[ERROR] /D:/Code/Project/JChatMind/mindharness/src/main/java/com/kama/mindharness/model/entity/ChatMessage.java:[60,67] 找不到符号
+  符号:   方法 getUpdatedAt()
+  位置: 类 com.kama.mindharness.model.entity.ChatMessage
+[INFO] 100 errors 
+[INFO] -------------------------------------------------------------
+[INFO] ------------------------------------------------------------------------
+[INFO] BUILD FAILURE
+[INFO] ------------------------------------------------------------------------
+[INFO] Total time:  6.965 s
+[INFO] Finished at: 2026-06-02T14:24:29+08:00
+[INFO] ------------------------------------------------------------------------
+[ERROR] Failed to execute goal org.apache.maven.plugins:maven-compiler-plugin:3.14.1:compile (default-compile) on project mindharness: Compilation failure: Compilation failure: 
+[ERROR] /D:/Code/Project/JChatMind/mindharness/src/main/java/com/kama/mindharness/MindHarnessApplication.java:[11,8] 类 MindharnessApplication 是公共的, 应在名为 MindharnessApplication.java 的文件中声明
+[ERROR] /D:/Code/Project/JChatMind/mindharness/src/main/java/com/kama/mindharness/agent/MindHarness.java:[139,13] 找不到符号
+[ERROR]   符号:   变量 log
+[ERROR]   位置: 类 com.kama.mindharness.agent.MindHarness
+[ERROR] /D:/Code/Project/JChatMind/mindharness/src/main/java/com/kama/mindharness/agent/MindHarness.java:[153,9] 找不到符号
+[ERROR]   符号:   变量 log
+[ERROR]   位置: 类 com.kama.mindharness.agent.MindHarness
+[ERROR] /D:/Code/Project/JChatMind/mindharness/src/main/java/com/kama/mindharness/agent/MindHarness.java:[164,23] 找不到符号
+[ERROR]   符号:   类 ChatMessageDTOBuilder
+[ERROR]   位置: 类 com.kama.mindharness.model.dto.ChatMessageDTO
+[ERROR] /D:/Code/Project/JChatMind/mindharness/src/main/java/com/kama/mindharness/agent/MindHarness.java:[164,70] 找不到符号
+[ERROR]   符号:   方法 builder()
+[ERROR]   位置: 类 com.kama.mindharness.model.dto.ChatMessageDTO
+[ERROR] /D:/Code/Project/JChatMind/mindharness/src/main/java/com/kama/mindharness/agent/MindHarness.java:[169,54] 找不到符号
+[ERROR]   符号:   方法 builder()
+[ERROR]   位置: 类 com.kama.mindharness.model.dto.ChatMessageDTO.MetaData
+[ERROR] /D:/Code/Project/JChatMind/mindharness/src/main/java/com/kama/mindharness/agent/MindHarness.java:[174,45] 找不到符号
+[ERROR]   符号:   方法 getChatMessageId()
+[ERROR]   位置: 类型为com.kama.mindharness.model.response.CreateChatMessageResponse的变量 chatMessage
+[ERROR] /D:/Code/Project/JChatMind/mindharness/src/main/java/com/kama/mindharness/agent/MindHarness.java:[182,58] 找不到符号
+[ERROR]   符号:   方法 builder()
+[ERROR]   位置: 类 com.kama.mindharness.model.dto.ChatMessageDTO.MetaData
+[ERROR] /D:/Code/Project/JChatMind/mindharness/src/main/java/com/kama/mindharness/agent/MindHarness.java:[187,49] 找不到符号
+[ERROR]   符号:   方法 getChatMessageId()
+[ERROR]   位置: 类型为com.kama.mindharness.model.response.CreateChatMessageResponse的变量 chatMessage
+[ERROR] /D:/Code/Project/JChatMind/mindharness/src/main/java/com/kama/mindharness/agent/MindHarness.java:[199,47] 找不到符号
+[ERROR]   符号:   方法 builder()
+[ERROR]   位置: 类 com.kama.mindharness.message.SseMessage
+[ERROR] /D:/Code/Project/JChatMind/mindharness/src/main/java/com/kama/mindharness/agent/MindHarness.java:[201,48] 找不到符号
+[ERROR]   符号:   方法 builder()
+[ERROR]   位置: 类 com.kama.mindharness.message.SseMessage.Payload
+[ERROR] /D:/Code/Project/JChatMind/mindharness/src/main/java/com/kama/mindharness/agent/MindHarness.java:[204,50] 找不到符号
+[ERROR]   符号:   方法 builder()
+[ERROR]   位置: 类 com.kama.mindharness.message.SseMessage.Metadata
+[ERROR] /D:/Code/Project/JChatMind/mindharness/src/main/java/com/kama/mindharness/agent/MindHarness.java:[205,51] 找不到符号
+[ERROR]   符号:   方法 getId()
+[ERROR]   位置: 类型为com.kama.mindharness.model.dto.ChatMessageDTO的变量 message
+[ERROR] /D:/Code/Project/JChatMind/mindharness/src/main/java/com/kama/mindharness/agent/MindHarness.java:[283,9] 找不到符号
+[ERROR]   符号:   变量 log
+[ERROR]   位置: 类 com.kama.mindharness.agent.MindHarness
+[ERROR] /D:/Code/Project/JChatMind/mindharness/src/main/java/com/kama/mindharness/agent/MindHarness.java:[293,13] 找不到符号
+[ERROR]   符号:   变量 log
+[ERROR]   位置: 类 com.kama.mindharness.agent.MindHarness
+[ERROR] /D:/Code/Project/JChatMind/mindharness/src/main/java/com/kama/mindharness/agent/MindHarness.java:[319,21] 找不到符号
+[ERROR]   符号:   变量 log
+[ERROR]   位置: 类 com.kama.mindharness.agent.MindHarness
+[ERROR] /D:/Code/Project/JChatMind/mindharness/src/main/java/com/kama/mindharness/agent/MindHarness.java:[325,13] 找不到符号
+[ERROR]   符号:   变量 log
+[ERROR]   位置: 类 com.kama.mindharness.agent.MindHarness
+[ERROR] /D:/Code/Project/JChatMind/mindharness/src/main/java/com/kama/mindharness/converter/ChatMessageConverter.java:[22,38] 找不到符号
+[ERROR]   符号:   方法 getRole()
+[ERROR]   位置: 类型为com.kama.mindharness.model.dto.ChatMessageDTO的变量 chatMessageDTO
+[ERROR] /D:/Code/Project/JChatMind/mindharness/src/main/java/com/kama/mindharness/converter/ChatMessageConverter.java:[24,27] 找不到符号
+[ERROR]   符号:   方法 builder()
+[ERROR]   位置: 类 com.kama.mindharness.model.entity.ChatMessage
+[ERROR] /D:/Code/Project/JChatMind/mindharness/src/main/java/com/kama/mindharness/converter/ChatMessageConverter.java:[25,35] 找不到符号
+[ERROR]   符号:   方法 getId()
+[ERROR]   位置: 类型为com.kama.mindharness.model.dto.ChatMessageDTO的变量 chatMessageDTO
+[ERROR] /D:/Code/Project/JChatMind/mindharness/src/main/java/com/kama/mindharness/converter/ChatMessageConverter.java:[26,42] 找不到符号
+[ERROR]   符号:   方法 getSessionId()
+[ERROR]   位置: 类型为com.kama.mindharness.model.dto.ChatMessageDTO的变量 chatMessageDTO
+[ERROR] /D:/Code/Project/JChatMind/mindharness/src/main/java/com/kama/mindharness/converter/ChatMessageConverter.java:[27,37] 找不到符号
+[ERROR]   符号:   方法 getRole()
+[ERROR]   位置: 类型为com.kama.mindharness.model.dto.ChatMessageDTO的变量 chatMessageDTO
+[ERROR] /D:/Code/Project/JChatMind/mindharness/src/main/java/com/kama/mindharness/converter/ChatMessageConverter.java:[28,40] 找不到符号
+[ERROR]   符号:   方法 getContent()
+[ERROR]   位置: 类型为com.kama.mindharness.model.dto.ChatMessageDTO的变量 chatMessageDTO
+[ERROR] /D:/Code/Project/JChatMind/mindharness/src/main/java/com/kama/mindharness/converter/ChatMessageConverter.java:[29,41] 找不到符号
+[ERROR]   符号:   方法 getMetadata()
+[ERROR]   位置: 类型为com.kama.mindharness.model.dto.ChatMessageDTO的变量 chatMessageDTO
+[ERROR] /D:/Code/Project/JChatMind/mindharness/src/main/java/com/kama/mindharness/converter/ChatMessageConverter.java:[30,73] 找不到符号
+[ERROR]   符号:   方法 getMetadata()
+[ERROR]   位置: 类型为com.kama.mindharness.model.dto.ChatMessageDTO的变量 chatMessageDTO
+[ERROR] /D:/Code/Project/JChatMind/mindharness/src/main/java/com/kama/mindharness/converter/ChatMessageConverter.java:[32,42] 找不到符号
+[ERROR]   符号:   方法 getCreatedAt()
+[ERROR]   位置: 类型为com.kama.mindharness.model.dto.ChatMessageDTO的变量 chatMessageDTO
+[ERROR] /D:/Code/Project/JChatMind/mindharness/src/main/java/com/kama/mindharness/converter/ChatMessageConverter.java:[33,42] 找不到符号
+[ERROR]   符号:   方法 getUpdatedAt()
+[ERROR]   位置: 类型为com.kama.mindharness.model.dto.ChatMessageDTO的变量 chatMessageDTO
+[ERROR] /D:/Code/Project/JChatMind/mindharness/src/main/java/com/kama/mindharness/converter/ChatMessageConverter.java:[39,35] 找不到符号
+[ERROR]   符号:   方法 getRole()
+[ERROR]   位置: 类型为com.kama.mindharness.model.entity.ChatMessage的变量 chatMessage
+[ERROR] /D:/Code/Project/JChatMind/mindharness/src/main/java/com/kama/mindharness/converter/ChatMessageConverter.java:[41,30] 找不到符号
+[ERROR]   符号:   方法 builder()
+[ERROR]   位置: 类 com.kama.mindharness.model.dto.ChatMessageDTO
+[ERROR] /D:/Code/Project/JChatMind/mindharness/src/main/java/com/kama/mindharness/converter/ChatMessageConverter.java:[42,32] 找不到符号
+[ERROR]   符号:   方法 getId()
+[ERROR]   位置: 类型为com.kama.mindharness.model.entity.ChatMessage的变量 chatMessage
+[ERROR] /D:/Code/Project/JChatMind/mindharness/src/main/java/com/kama/mindharness/converter/ChatMessageConverter.java:[43,39] 找不到符号
+[ERROR]   符号:   方法 getSessionId()
+[ERROR]   位置: 类型为com.kama.mindharness.model.entity.ChatMessage的变量 chatMessage
+[ERROR] /D:/Code/Project/JChatMind/mindharness/src/main/java/com/kama/mindharness/converter/ChatMessageConverter.java:[44,67] 找不到符号
+[ERROR]   符号:   方法 getRole()
+[ERROR]   位置: 类型为com.kama.mindharness.model.entity.ChatMessage的变量 chatMessage
+[ERROR] /D:/Code/Project/JChatMind/mindharness/src/main/java/com/kama/mindharness/converter/ChatMessageConverter.java:[45,37] 找不到符号
+[ERROR]   符号:   方法 getContent()
+[ERROR]   位置: 类型为com.kama.mindharness.model.entity.ChatMessage的变量 chatMessage
+[ERROR] /D:/Code/Project/JChatMind/mindharness/src/main/java/com/kama/mindharness/converter/ChatMessageConverter.java:[46,38] 找不到符号
+[ERROR]   符号:   方法 getMetadata()
+[ERROR]   位置: 类型为com.kama.mindharness.model.entity.ChatMessage的变量 chatMessage
+[ERROR] /D:/Code/Project/JChatMind/mindharness/src/main/java/com/kama/mindharness/converter/ChatMessageConverter.java:[47,61] 找不到符号
+[ERROR]   符号:   方法 getMetadata()
+[ERROR]   位置: 类型为com.kama.mindharness.model.entity.ChatMessage的变量 chatMessage
+[ERROR] /D:/Code/Project/JChatMind/mindharness/src/main/java/com/kama/mindharness/converter/ChatMessageConverter.java:[49,39] 找不到符号
+[ERROR]   符号:   方法 getCreatedAt()
+[ERROR]   位置: 类型为com.kama.mindharness.model.entity.ChatMessage的变量 chatMessage
+[ERROR] /D:/Code/Project/JChatMind/mindharness/src/main/java/com/kama/mindharness/converter/ChatMessageConverter.java:[50,39] 找不到符号
+[ERROR]   符号:   方法 getUpdatedAt()
+[ERROR]   位置: 类型为com.kama.mindharness.model.entity.ChatMessage的变量 chatMessage
+[ERROR] /D:/Code/Project/JChatMind/mindharness/src/main/java/com/kama/mindharness/converter/ChatMessageConverter.java:[55,29] 找不到符号
+[ERROR]   符号:   方法 builder()
+[ERROR]   位置: 类 com.kama.mindharness.model.vo.ChatMessageVO
+[ERROR] /D:/Code/Project/JChatMind/mindharness/src/main/java/com/kama/mindharness/converter/ChatMessageConverter.java:[56,24] 找不到符号
+[ERROR]   符号:   方法 getId()
+[ERROR]   位置: 类型为com.kama.mindharness.model.dto.ChatMessageDTO的变量 dto
+[ERROR] /D:/Code/Project/JChatMind/mindharness/src/main/java/com/kama/mindharness/converter/ChatMessageConverter.java:[57,31] 找不到符号
+[ERROR]   符号:   方法 getSessionId()
+[ERROR]   位置: 类型为com.kama.mindharness.model.dto.ChatMessageDTO的变量 dto
+[ERROR] /D:/Code/Project/JChatMind/mindharness/src/main/java/com/kama/mindharness/converter/ChatMessageConverter.java:[58,26] 找不到符号
+[ERROR]   符号:   方法 getRole()
+[ERROR]   位置: 类型为com.kama.mindharness.model.dto.ChatMessageDTO的变量 dto
+[ERROR] /D:/Code/Project/JChatMind/mindharness/src/main/java/com/kama/mindharness/converter/ChatMessageConverter.java:[59,29] 找不到符号
+[ERROR]   符号:   方法 getContent()
+[ERROR]   位置: 类型为com.kama.mindharness.model.dto.ChatMessageDTO的变量 dto
+[ERROR] /D:/Code/Project/JChatMind/mindharness/src/main/java/com/kama/mindharness/converter/ChatMessageConverter.java:[60,30] 找不到符号
+[ERROR]   符号:   方法 getMetadata()
+[ERROR]   位置: 类型为com.kama.mindharness.model.dto.ChatMessageDTO的变量 dto
+[ERROR] /D:/Code/Project/JChatMind/mindharness/src/main/java/com/kama/mindharness/converter/ChatMessageConverter.java:[70,31] 找不到符号
+[ERROR]   符号:   方法 getSessionId()
+[ERROR]   位置: 类型为com.kama.mindharness.model.request.CreateChatMessageRequest的变量 request
+[ERROR] /D:/Code/Project/JChatMind/mindharness/src/main/java/com/kama/mindharness/converter/ChatMessageConverter.java:[71,31] 找不到符号
+[ERROR]   符号:   方法 getRole()
+[ERROR]   位置: 类型为com.kama.mindharness.model.request.CreateChatMessageRequest的变量 request
+[ERROR] /D:/Code/Project/JChatMind/mindharness/src/main/java/com/kama/mindharness/converter/ChatMessageConverter.java:[73,30] 找不到符号
+[ERROR]   符号:   方法 builder()
+[ERROR]   位置: 类 com.kama.mindharness.model.dto.ChatMessageDTO
+[ERROR] /D:/Code/Project/JChatMind/mindharness/src/main/java/com/kama/mindharness/converter/ChatMessageConverter.java:[74,35] 找不到符号
+[ERROR]   符号:   方法 getSessionId()
+[ERROR]   位置: 类型为com.kama.mindharness.model.request.CreateChatMessageRequest的变量 request
+[ERROR] /D:/Code/Project/JChatMind/mindharness/src/main/java/com/kama/mindharness/converter/ChatMessageConverter.java:[75,30] 找不到符号
+[ERROR]   符号:   方法 getRole()
+[ERROR]   位置: 类型为com.kama.mindharness.model.request.CreateChatMessageRequest的变量 request
+[ERROR] /D:/Code/Project/JChatMind/mindharness/src/main/java/com/kama/mindharness/converter/ChatMessageConverter.java:[76,33] 找不到符号
+[ERROR]   符号:   方法 getContent()
+[ERROR]   位置: 类型为com.kama.mindharness.model.request.CreateChatMessageRequest的变量 request
+[ERROR] /D:/Code/Project/JChatMind/mindharness/src/main/java/com/kama/mindharness/converter/ChatMessageConverter.java:[77,34] 找不到符号
+[ERROR]   符号:   方法 getMetadata()
+[ERROR]   位置: 类型为com.kama.mindharness.model.request.CreateChatMessageRequest的变量 request
+[ERROR] /D:/Code/Project/JChatMind/mindharness/src/main/java/com/kama/mindharness/converter/ChatMessageConverter.java:[85,20] 找不到符号
+[ERROR]   符号:   方法 getContent()
+[ERROR]   位置: 类型为com.kama.mindharness.model.request.UpdateChatMessageRequest的变量 request
+[ERROR] /D:/Code/Project/JChatMind/mindharness/src/main/java/com/kama/mindharness/converter/ChatMessageConverter.java:[86,35] 找不到符号
+[ERROR]   符号:   方法 getContent()
+[ERROR]   位置: 类型为com.kama.mindharness.model.request.UpdateChatMessageRequest的变量 request
+[ERROR] /D:/Code/Project/JChatMind/mindharness/src/main/java/com/kama/mindharness/converter/ChatMessageConverter.java:[88,20] 找不到符号
+[ERROR]   符号:   方法 getMetadata()
+[ERROR]   位置: 类型为com.kama.mindharness.model.request.UpdateChatMessageRequest的变量 request
+[ERROR] /D:/Code/Project/JChatMind/mindharness/src/main/java/com/kama/mindharness/converter/ChatMessageConverter.java:[89,36] 找不到符号
+[ERROR]   符号:   方法 getMetadata()
+[ERROR]   位置: 类型为com.kama.mindharness.model.request.UpdateChatMessageRequest的变量 request
+[ERROR] /D:/Code/Project/JChatMind/mindharness/src/main/java/com/kama/mindharness/model/dto/ChatMessageDTO.java:[41,13] 无法将枚举 com.kama.mindharness.model.dto.ChatMessageDTO.RoleType中的构造器 RoleType应用到给定类型;
+[ERROR]   需要: 没有参数
+[ERROR]   找到:    java.lang.String
+[ERROR]   原因: 实际参数列表和形式参数列表长度不同
+[ERROR] /D:/Code/Project/JChatMind/mindharness/src/main/java/com/kama/mindharness/model/dto/ChatMessageDTO.java:[42,18] 无法将枚举 com.kama.mindharness.model.dto.ChatMessageDTO.RoleType中的构造器 RoleType应用到给定类型;
+[ERROR]   需要: 没有参数
+[ERROR]   找到:    java.lang.String
+[ERROR]   原因: 实际参数列表和形式参数列表长度不同
+[ERROR] /D:/Code/Project/JChatMind/mindharness/src/main/java/com/kama/mindharness/model/dto/ChatMessageDTO.java:[43,15] 无法将枚举 com.kama.mindharness.model.dto.ChatMessageDTO.RoleType中的构造器 RoleType应用到给定类型;
+[ERROR]   需要: 没有参数
+[ERROR]   找到:    java.lang.String
+[ERROR]   原因: 实际参数列表和形式参数列表长度不同
+[ERROR] /D:/Code/Project/JChatMind/mindharness/src/main/java/com/kama/mindharness/model/dto/ChatMessageDTO.java:[44,13] 无法将枚举 com.kama.mindharness.model.dto.ChatMessageDTO.RoleType中的构造器 RoleType应用到给定类型;
+[ERROR]   需要: 没有参数
+[ERROR]   找到:    java.lang.String
+[ERROR]   原因: 实际参数列表和形式参数列表长度不同
+[ERROR] /D:/Code/Project/JChatMind/mindharness/src/main/java/com/kama/mindharness/model/entity/ChatMessage.java:[41,21] 找不到符号
+[ERROR]   符号: 方法 getId()
+[ERROR] /D:/Code/Project/JChatMind/mindharness/src/main/java/com/kama/mindharness/model/entity/ChatMessage.java:[41,45] 找不到符号
+[ERROR]   符号:   方法 getId()
+[ERROR]   位置: 类型为com.kama.mindharness.model.entity.ChatMessage的变量 other
+[ERROR] /D:/Code/Project/JChatMind/mindharness/src/main/java/com/kama/mindharness/model/entity/ChatMessage.java:[41,68] 找不到符号
+[ERROR]   符号: 方法 getId()
+[ERROR] /D:/Code/Project/JChatMind/mindharness/src/main/java/com/kama/mindharness/model/entity/ChatMessage.java:[41,89] 找不到符号
+[ERROR]   符号:   方法 getId()
+[ERROR]   位置: 类型为com.kama.mindharness.model.entity.ChatMessage的变量 other
+[ERROR] /D:/Code/Project/JChatMind/mindharness/src/main/java/com/kama/mindharness/model/entity/ChatMessage.java:[42,21] 找不到符号
+[ERROR]   符号: 方法 getSessionId()
+[ERROR] /D:/Code/Project/JChatMind/mindharness/src/main/java/com/kama/mindharness/model/entity/ChatMessage.java:[42,52] 找不到符号
+[ERROR]   符号:   方法 getSessionId()
+[ERROR]   位置: 类型为com.kama.mindharness.model.entity.ChatMessage的变量 other
+[ERROR] /D:/Code/Project/JChatMind/mindharness/src/main/java/com/kama/mindharness/model/entity/ChatMessage.java:[42,82] 找不到符号
+[ERROR]   符号: 方法 getSessionId()
+[ERROR] /D:/Code/Project/JChatMind/mindharness/src/main/java/com/kama/mindharness/model/entity/ChatMessage.java:[42,110] 找不到符号
+[ERROR]   符号:   方法 getSessionId()
+[ERROR]   位置: 类型为com.kama.mindharness.model.entity.ChatMessage的变量 other
+[ERROR] /D:/Code/Project/JChatMind/mindharness/src/main/java/com/kama/mindharness/model/entity/ChatMessage.java:[43,21] 找不到符号
+[ERROR]   符号: 方法 getRole()
+[ERROR] /D:/Code/Project/JChatMind/mindharness/src/main/java/com/kama/mindharness/model/entity/ChatMessage.java:[43,47] 找不到符号
+[ERROR]   符号:   方法 getRole()
+[ERROR]   位置: 类型为com.kama.mindharness.model.entity.ChatMessage的变量 other
+[ERROR] /D:/Code/Project/JChatMind/mindharness/src/main/java/com/kama/mindharness/model/entity/ChatMessage.java:[43,72] 找不到符号
+[ERROR]   符号: 方法 getRole()
+[ERROR] /D:/Code/Project/JChatMind/mindharness/src/main/java/com/kama/mindharness/model/entity/ChatMessage.java:[43,95] 找不到符号
+[ERROR]   符号:   方法 getRole()
+[ERROR]   位置: 类型为com.kama.mindharness.model.entity.ChatMessage的变量 other
+[ERROR] /D:/Code/Project/JChatMind/mindharness/src/main/java/com/kama/mindharness/model/entity/ChatMessage.java:[44,21] 找不到符号
+[ERROR]   符号: 方法 getContent()
+[ERROR] /D:/Code/Project/JChatMind/mindharness/src/main/java/com/kama/mindharness/model/entity/ChatMessage.java:[44,50] 找不到符号
+[ERROR]   符号:   方法 getContent()
+[ERROR]   位置: 类型为com.kama.mindharness.model.entity.ChatMessage的变量 other
+[ERROR] /D:/Code/Project/JChatMind/mindharness/src/main/java/com/kama/mindharness/model/entity/ChatMessage.java:[44,78] 找不到符号
+[ERROR]   符号: 方法 getContent()
+[ERROR] /D:/Code/Project/JChatMind/mindharness/src/main/java/com/kama/mindharness/model/entity/ChatMessage.java:[44,104] 找不到符号
+[ERROR]   符号:   方法 getContent()
+[ERROR]   位置: 类型为com.kama.mindharness.model.entity.ChatMessage的变量 other
+[ERROR] /D:/Code/Project/JChatMind/mindharness/src/main/java/com/kama/mindharness/model/entity/ChatMessage.java:[45,21] 找不到符号
+[ERROR]   符号: 方法 getMetadata()
+[ERROR] /D:/Code/Project/JChatMind/mindharness/src/main/java/com/kama/mindharness/model/entity/ChatMessage.java:[45,51] 找不到符号
+[ERROR]   符号:   方法 getMetadata()
+[ERROR]   位置: 类型为com.kama.mindharness.model.entity.ChatMessage的变量 other
+[ERROR] /D:/Code/Project/JChatMind/mindharness/src/main/java/com/kama/mindharness/model/entity/ChatMessage.java:[45,80] 找不到符号
+[ERROR]   符号: 方法 getMetadata()
+[ERROR] /D:/Code/Project/JChatMind/mindharness/src/main/java/com/kama/mindharness/model/entity/ChatMessage.java:[45,107] 找不到符号
+[ERROR]   符号:   方法 getMetadata()
+[ERROR]   位置: 类型为com.kama.mindharness.model.entity.ChatMessage的变量 other
+[ERROR] /D:/Code/Project/JChatMind/mindharness/src/main/java/com/kama/mindharness/model/entity/ChatMessage.java:[46,21] 找不到符号
+[ERROR]   符号: 方法 getCreatedAt()
+[ERROR] /D:/Code/Project/JChatMind/mindharness/src/main/java/com/kama/mindharness/model/entity/ChatMessage.java:[46,52] 找不到符号
+[ERROR]   符号:   方法 getCreatedAt()
+[ERROR]   位置: 类型为com.kama.mindharness.model.entity.ChatMessage的变量 other
+[ERROR] /D:/Code/Project/JChatMind/mindharness/src/main/java/com/kama/mindharness/model/entity/ChatMessage.java:[46,82] 找不到符号
+[ERROR]   符号: 方法 getCreatedAt()
+[ERROR] /D:/Code/Project/JChatMind/mindharness/src/main/java/com/kama/mindharness/model/entity/ChatMessage.java:[46,110] 找不到符号
+[ERROR]   符号:   方法 getCreatedAt()
+[ERROR]   位置: 类型为com.kama.mindharness.model.entity.ChatMessage的变量 other
+[ERROR] /D:/Code/Project/JChatMind/mindharness/src/main/java/com/kama/mindharness/model/entity/ChatMessage.java:[47,21] 找不到符号
+[ERROR]   符号: 方法 getUpdatedAt()
+[ERROR] /D:/Code/Project/JChatMind/mindharness/src/main/java/com/kama/mindharness/model/entity/ChatMessage.java:[47,52] 找不到符号
+[ERROR]   符号:   方法 getUpdatedAt()
+[ERROR]   位置: 类型为com.kama.mindharness.model.entity.ChatMessage的变量 other
+[ERROR] /D:/Code/Project/JChatMind/mindharness/src/main/java/com/kama/mindharness/model/entity/ChatMessage.java:[47,82] 找不到符号
+[ERROR]   符号: 方法 getUpdatedAt()
+[ERROR] /D:/Code/Project/JChatMind/mindharness/src/main/java/com/kama/mindharness/model/entity/ChatMessage.java:[47,110] 找不到符号
+[ERROR]   符号:   方法 getUpdatedAt()
+[ERROR]   位置: 类型为com.kama.mindharness.model.entity.ChatMessage的变量 other
+[ERROR] /D:/Code/Project/JChatMind/mindharness/src/main/java/com/kama/mindharness/model/entity/ChatMessage.java:[54,37] 找不到符号
+[ERROR]   符号:   方法 getId()
+[ERROR]   位置: 类 com.kama.mindharness.model.entity.ChatMessage
+[ERROR] /D:/Code/Project/JChatMind/mindharness/src/main/java/com/kama/mindharness/model/entity/ChatMessage.java:[54,60] 找不到符号
+[ERROR]   符号:   方法 getId()
+[ERROR]   位置: 类 com.kama.mindharness.model.entity.ChatMessage
+[ERROR] /D:/Code/Project/JChatMind/mindharness/src/main/java/com/kama/mindharness/model/entity/ChatMessage.java:[55,37] 找不到符号
+[ERROR]   符号:   方法 getSessionId()
+[ERROR]   位置: 类 com.kama.mindharness.model.entity.ChatMessage
+[ERROR] /D:/Code/Project/JChatMind/mindharness/src/main/java/com/kama/mindharness/model/entity/ChatMessage.java:[55,67] 找不到符号
+[ERROR]   符号:   方法 getSessionId()
+[ERROR]   位置: 类 com.kama.mindharness.model.entity.ChatMessage
+[ERROR] /D:/Code/Project/JChatMind/mindharness/src/main/java/com/kama/mindharness/model/entity/ChatMessage.java:[56,37] 找不到符号
+[ERROR]   符号:   方法 getRole()
+[ERROR]   位置: 类 com.kama.mindharness.model.entity.ChatMessage
+[ERROR] /D:/Code/Project/JChatMind/mindharness/src/main/java/com/kama/mindharness/model/entity/ChatMessage.java:[56,62] 找不到符号
+[ERROR]   符号:   方法 getRole()
+[ERROR]   位置: 类 com.kama.mindharness.model.entity.ChatMessage
+[ERROR] /D:/Code/Project/JChatMind/mindharness/src/main/java/com/kama/mindharness/model/entity/ChatMessage.java:[57,37] 找不到符号
+[ERROR]   符号:   方法 getContent()
+[ERROR]   位置: 类 com.kama.mindharness.model.entity.ChatMessage
+[ERROR] /D:/Code/Project/JChatMind/mindharness/src/main/java/com/kama/mindharness/model/entity/ChatMessage.java:[57,65] 找不到符号
+[ERROR]   符号:   方法 getContent()
+[ERROR]   位置: 类 com.kama.mindharness.model.entity.ChatMessage
+[ERROR] /D:/Code/Project/JChatMind/mindharness/src/main/java/com/kama/mindharness/model/entity/ChatMessage.java:[58,37] 找不到符号
+[ERROR]   符号:   方法 getMetadata()
+[ERROR]   位置: 类 com.kama.mindharness.model.entity.ChatMessage
+[ERROR] /D:/Code/Project/JChatMind/mindharness/src/main/java/com/kama/mindharness/model/entity/ChatMessage.java:[58,66] 找不到符号
+[ERROR]   符号:   方法 getMetadata()
+[ERROR]   位置: 类 com.kama.mindharness.model.entity.ChatMessage
+[ERROR] /D:/Code/Project/JChatMind/mindharness/src/main/java/com/kama/mindharness/model/entity/ChatMessage.java:[59,37] 找不到符号
+[ERROR]   符号:   方法 getCreatedAt()
+[ERROR]   位置: 类 com.kama.mindharness.model.entity.ChatMessage
+[ERROR] /D:/Code/Project/JChatMind/mindharness/src/main/java/com/kama/mindharness/model/entity/ChatMessage.java:[59,67] 找不到符号
+[ERROR]   符号:   方法 getCreatedAt()
+[ERROR]   位置: 类 com.kama.mindharness.model.entity.ChatMessage
+[ERROR] /D:/Code/Project/JChatMind/mindharness/src/main/java/com/kama/mindharness/model/entity/ChatMessage.java:[60,37] 找不到符号
+[ERROR]   符号:   方法 getUpdatedAt()
+[ERROR]   位置: 类 com.kama.mindharness.model.entity.ChatMessage
+[ERROR] /D:/Code/Project/JChatMind/mindharness/src/main/java/com/kama/mindharness/model/entity/ChatMessage.java:[60,67] 找不到符号
+[ERROR]   符号:   方法 getUpdatedAt()
+[ERROR]   位置: 类 com.kama.mindharness.model.entity.ChatMessage
+[ERROR] -> [Help 1]
+[ERROR] 
+[ERROR] To see the full stack trace of the errors, re-run Maven with the -e switch.
+[ERROR] Re-run Maven using the -X switch to enable full debug logging.
+[ERROR] 
+[ERROR] For more information about the errors and possible solutions, please read the following articles:
+[ERROR] [Help 1] http://cwiki.apache.org/confluence/display/MAVEN/MojoFailureException

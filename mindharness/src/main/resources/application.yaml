@@ -1,0 +1,34 @@
+spring:
+  application:
+    name: mindharness
+  profiles:
+    active: tailscale
+  datasource:
+    username: mindharness
+    password: mindharness123
+    driver-class-name: org.postgresql.Driver
+  servlet:
+    multipart:
+      max-file-size: 50MB
+      max-request-size: 50MB
+  sql:
+    init:
+      mode: always
+      schema-locations: classpath:schema.sql
+      continue-on-error: true
+  ai:
+    deepseek:
+      api-key: ${DEEPSEEK_API_KEY:}
+      base-url: https://api.deepseek.com
+      chat:
+        options:
+          model: deepseek-chat
+#    zhipuai:
+#      api-key: ${ZHIPUAI_API_KEY:}
+#      base-url: https://open.bigmodel.cn/api/paas
+#      chat:
+#        options:
+#          model: glm-4.6
+mybatis:
+  type-aliases-package: com.kama.mindharness.model.entity
+  mapper-locations: classpath:mapper/*.xml

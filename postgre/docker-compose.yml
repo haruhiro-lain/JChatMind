@@ -1,18 +1,21 @@
 services:
   postgres:
-    image: docker.1ms.run/pgvector/pgvector:pg16
-    container_name: jchatmind-postgres
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: mindharness-postgres:local
+    container_name: mindharness-postgres
     environment:
-      POSTGRES_DB: jchatmind
-      POSTGRES_USER: jchatmind
-      POSTGRES_PASSWORD: jchatmind123
+      POSTGRES_DB: mindharness
+      POSTGRES_USER: mindharness
+      POSTGRES_PASSWORD: mindharness123
     ports:
       - "15432:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
       - ./init.sql:/docker-entrypoint-initdb.d/init.sql
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U jchatmind -d jchatmind"]
+      test: ["CMD-SHELL", "pg_isready -U mindharness -d mindharness"]
       interval: 5s
       timeout: 5s
       retries: 10

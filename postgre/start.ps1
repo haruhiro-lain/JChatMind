@@ -1,13 +1,13 @@
-﻿# JChatMind 数据库启动脚本（台式机用）
+﻿# MindHarness 数据库启动脚本（台式机用）
 # 仅启动 PostgreSQL 容器，供远程开发机连接
 
 $ErrorActionPreference = "Stop"
-$Host.UI.RawUI.WindowTitle = "JChatMind 数据库"
+$Host.UI.RawUI.WindowTitle = "MindHarness 数据库"
 
 $scriptDir = Split-Path -Parent $MyInvocation.MyCommand.Path
 
 Write-Host "============================================" -ForegroundColor Cyan
-Write-Host "  JChatMind PostgreSQL 数据库" -ForegroundColor Cyan
+Write-Host "  MindHarness PostgreSQL 数据库" -ForegroundColor Cyan
 Write-Host "============================================" -ForegroundColor Cyan
 Write-Host ""
 
@@ -41,11 +41,16 @@ try {
         "1" {
             Write-Host ""
             Write-Host "▶ 启动 PostgreSQL..." -ForegroundColor Cyan
-            docker compose up -d
+            $rebuild = Read-Host "是否重新构建镜像并启动？ (y/n)"
+            if ($rebuild -match '^[Yy]') {
+                docker compose up -d --build
+            } else {
+                docker compose up -d
+            }
             Write-Host ""
             Write-Host "✓ 数据库已启动" -ForegroundColor Green
             Write-Host "  地址: localhost:15432" -ForegroundColor White
-            Write-Host "  数据库: jchatmind  用户: jchatmind  密码: jchatmind123" -ForegroundColor DarkGray
+            Write-Host "  数据库: mindharness  用户: mindharness  密码: mindharness123" -ForegroundColor DarkGray
         }
         "2" {
             Write-Host ""
@@ -61,7 +66,7 @@ try {
         "4" {
             Write-Host ""
             Write-Host "▶ 进入 psql..." -ForegroundColor Cyan
-            docker exec -it jchatmind-postgres psql -U jchatmind -d jchatmind
+            docker exec -it mindharness-postgres psql -U mindharness -d mindharness
         }
         default {
             Write-Host "无效选项" -ForegroundColor Red
