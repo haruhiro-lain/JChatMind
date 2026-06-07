@@ -68,20 +68,20 @@
       </template>
     </div>
 
-    <!-- Agent 状态 (SillyTavern 风格 "正在输入...") -->
-    <div v-if="displayAgentStatus" class="mb-5 animate-pulse">
+    <!-- Agent 状态指示器 -->
+    <div v-if="displayAgentStatus" class="mb-5" :class="{ 'animate-pulse': agentStatusType !== 'AI_ERROR' }">
       <div class="flex gap-3">
-        <div class="w-11 h-11 rounded-full overflow-hidden shrink-0 border-2 border-[rgba(0,229,255,0.3)] shadow-[0_0_12px_rgba(0,229,255,0.15)]">
+        <div class="w-11 h-11 rounded-full overflow-hidden shrink-0 border-2 shadow-[0_0_12px_rgba(0,229,255,0.15)]" :class="agentStatusType === 'AI_ERROR' ? 'border-[rgba(255,107,107,0.5)] shadow-[0_0_12px_rgba(255,107,107,0.2)]' : 'border-[rgba(0,229,255,0.3)]'">
           <img v-if="agentAvatar" :src="agentAvatar" class="w-full h-full object-cover" :alt="agentName" />
           <div v-else class="w-full h-full bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center">
             <span class="text-white text-sm font-bold">{{ (agentName || 'AI').charAt(0) }}</span>
           </div>
         </div>
         <div class="flex-1 min-w-0">
-          <div class="text-xs font-semibold text-[#00e5ff] mb-1 ml-0.5">{{ agentName || 'Assistant' }}</div>
-          <div class="px-4 py-3 rounded-2xl bg-[rgba(0,229,255,0.04)] border border-[rgba(0,229,255,0.1)]">
-            <span class="text-sm text-[#8ba4c0] flex items-center gap-2">
-              <span class="font-semibold text-[#00e5ff]">✨ {{ getStatusLabel() }}</span>
+          <div class="text-xs font-semibold mb-1 ml-0.5" :class="agentStatusType === 'AI_ERROR' ? 'text-[#ff6b6b]' : 'text-[#00e5ff]'">{{ agentName || 'Assistant' }}</div>
+          <div class="px-4 py-3 rounded-2xl border" :class="agentStatusType === 'AI_ERROR' ? 'bg-[rgba(255,107,107,0.08)] border-[rgba(255,107,107,0.3)]' : 'bg-[rgba(0,229,255,0.04)] border-[rgba(0,229,255,0.1)]'">
+            <span class="text-sm flex items-center gap-2" :class="agentStatusType === 'AI_ERROR' ? 'text-[#ff6b6b]' : 'text-[#8ba4c0]'">
+              <span class="font-semibold" :class="agentStatusType === 'AI_ERROR' ? 'text-[#ff6b6b]' : 'text-[#00e5ff]'">{{ getStatusIcon() }} {{ getStatusLabel() }}</span>
               <span class="text-[#5a7090]">·</span>
               <span>{{ agentStatusText }}</span>
             </span>
@@ -177,7 +177,12 @@ function getStatusLabel() {
     case "AI_PLANNING": return "规划中";
     case "AI_THINKING": return "思考中";
     case "AI_EXECUTING": return "执行中";
+    case "AI_ERROR": return "出错了";
     default: return "处理中";
   }
+}
+
+function getStatusIcon() {
+  return props.agentStatusType === "AI_ERROR" ? "⚠️" : "✨";
 }
 </script>

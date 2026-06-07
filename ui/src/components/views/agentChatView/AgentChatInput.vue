@@ -43,12 +43,13 @@
       <!-- 右侧：发送按钮 -->
       <a-button
         type="primary"
-        :disabled="!message.trim()"
+        :disabled="!message.trim() || sending"
+        :loading="sending"
         @click="handleSubmit"
         class="send-btn"
       >
         <SendOutlined class="text-sm" />
-        <span class="ml-1.5 text-xs font-medium">发送</span>
+        <span class="ml-1.5 text-xs font-medium">{{ sending ? '发送中' : '发送' }}</span>
       </a-button>
     </div>
   </div>
@@ -61,6 +62,7 @@ import type { ChatMode } from "../../../types";
 
 const props = defineProps<{
   chatMode: ChatMode;
+  sending?: boolean;
 }>();
 
 const emit = defineEmits<{

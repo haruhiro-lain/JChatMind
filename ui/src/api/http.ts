@@ -42,15 +42,18 @@ function buildUrl(url: string, params?: Record<string, string | number | boolean
 async function handleResponse<T>(response: Response): Promise<ApiResponse<T>> {
   if (!response.ok) {
     // HTTP 状态码错误
-    throw new Error(`HTTP error! status: ${response.status}`);
+    const errorMsg = `HTTP ${response.status}`;
+    message.error(errorMsg);
+    throw new Error(errorMsg);
   }
 
   const data: ApiResponse<T> = await response.json();
 
   // 检查业务状态码
   if (data.code !== 200) {
-    message.error(data.message || "请求失败");
-    throw new Error(data.message || "请求失败");
+    const errorMsg = data.message || "请求失败";
+    message.error(errorMsg);
+    throw new Error(errorMsg);
   }
 
   return data;
@@ -77,6 +80,7 @@ async function request<T = unknown>(
   try {
     const response = await fetch(fullUrl, {
       ...restOptions,
+      cache: "no-cache",
       ...(effectiveHeaders ? { headers: effectiveHeaders } : {}),
     });
 

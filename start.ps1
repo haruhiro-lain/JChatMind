@@ -126,9 +126,12 @@ Write-Host "============================================" -ForegroundColor Cyan
 Write-Host "  [2/4] 端口检查 & 旧进程清理" -ForegroundColor Yellow
 Write-Host "============================================" -ForegroundColor Cyan
 
-$backendPort = 8080
-$frontendPort = 15173
-$dbPort = 15432
+$backendPort  = [Environment]::GetEnvironmentVariable("BACKEND_PORT", "Process")
+$frontendPort = [Environment]::GetEnvironmentVariable("FRONTEND_PORT", "Process")
+$dbPort      = [Environment]::GetEnvironmentVariable("DB_PORT", "Process")
+if (-not $backendPort)  { $backendPort  = 8080 }
+if (-not $frontendPort) { $frontendPort = 15173 }
+if (-not $dbPort)       { $dbPort       = 15432 }
 
 function Stop-ProcessOnPort($port, $label) {
     $netstatLine = netstat -ano | Select-String "LISTENING" | Select-String ":${port}\s"
@@ -272,7 +275,7 @@ if ($dockerAvailable -and $composeAvailable -and (Test-Path $composeFile)) {
             Write-Host "============================================" -ForegroundColor Red
             Write-Host "  docker compose up 失败！" -ForegroundColor Red
             Write-Host "  常见原因：" -ForegroundColor Yellow
-            Write-Host "  1. 端口冲突：检查 15432/8080/15173 是否被占用" -ForegroundColor DarkGray
+            Write-Host "  1. 端口冲突：检查 ${dbPort}/${backendPort}/${frontendPort} 是否被占用" -ForegroundColor DarkGray
             Write-Host "  2. 镜像拉取失败：检查 Docker Hub 网络连接或代理配置" -ForegroundColor DarkGray
             Write-Host "  3. Maven/npm 构建失败：检查网络和依赖" -ForegroundColor DarkGray
             Write-Host "============================================" -ForegroundColor Red
@@ -299,18 +302,18 @@ if ($dockerAvailable -and $composeAvailable -and (Test-Path $composeFile)) {
     Write-Host "      打开浏览器..." -ForegroundColor Yellow
     # 检查前端是否已经可访问，避免重复打开浏览器
     try {
-        $alreadyRunning = (Test-NetConnection -ComputerName "127.0.0.1" -Port 15173 -WarningAction SilentlyContinue -ErrorAction SilentlyContinue).TcpTestSucceeded
+        $alreadyRunning = (Test-NetConnection -ComputerName "127.0.0.1" -Port $frontendPort -WarningAction SilentlyContinue -ErrorAction SilentlyContinue).TcpTestSucceeded
     } catch { $alreadyRunning = $false }
     if ($alreadyRunning) {
         Write-Host "   ⚠ 前端已在运行，跳过打开浏览器" -ForegroundColor Yellow
     } else {
-        Start-Process "http://127.0.0.1:15173/"
+        Start-Process "http://127.0.0.1:${frontendPort}/"
     }
 
     Write-Host ""
     Write-Host "============================================" -ForegroundColor Cyan
-    Write-Host "  前端地址: http://127.0.0.1:15173" -ForegroundColor White
-    Write-Host "  后端地址: http://127.0.0.1:8080" -ForegroundColor White
+    Write-Host "  前端地址: http://127.0.0.1:${frontendPort}" -ForegroundColor White
+    Write-Host "  后端地址: http://127.0.0.1:${backendPort}" -ForegroundColor White
     Write-Host "============================================" -ForegroundColor Cyan
     Write-Host ""
     Write-Host "常用命令:" -ForegroundColor Yellow
@@ -378,7 +381,7 @@ Write-Host "   等待后端初始化（15秒）..."
 Start-Sleep -Seconds 15
 
 # 启动前端
-Write-Host "   ▶ 启动前端服务（Vite，端口 15173）..." -ForegroundColor Cyan
+Write-Host "   ▶ 启动前端服务（Vite，端口 ${frontendPort}）..." -ForegroundColor Cyan
 $frontendCmd = 'cd /d "' + $rootDir + '\ui" && title MindHarness 前端 && npm run dev'
 $frontendProc = Start-Process -FilePath "cmd.exe" -ArgumentList "/c", $frontendCmd -PassThru
 
@@ -389,19 +392,19 @@ Start-Sleep -Seconds 5
 Write-Host "   ▶ 检查前端状态..." -ForegroundColor Cyan
 # 检查前端是否已经可访问，避免重复打开浏览器
 try {
-    $alreadyRunning = (Test-NetConnection -ComputerName "127.0.0.1" -Port 15173 -WarningAction SilentlyContinue -ErrorAction SilentlyContinue).TcpTestSucceeded
+    $alreadyRunning = (Test-NetConnection -ComputerName "127.0.0.1" -Port $frontendPort -WarningAction SilentlyContinue -ErrorAction SilentlyContinue).TcpTestSucceeded
 } catch { $alreadyRunning = $false }
 if ($alreadyRunning) {
     Write-Host "   ⚠ 前端已在运行，跳过打开浏览器" -ForegroundColor Yellow
 } else {
     Write-Host "   ▶ 打开浏览器..." -ForegroundColor Cyan
-    Start-Process "http://127.0.0.1:15173/"
+    Start-Process "http://127.0.0.1:${frontendPort}/"
 }
 
 Write-Host ""
 Write-Host "============================================" -ForegroundColor Cyan
-Write-Host "  后端地址: http://127.0.0.1:8080" -ForegroundColor White
-Write-Host "  前端地址: http://127.0.0.1:15173" -ForegroundColor White
+Write-Host "  后端地址: http://127.0.0.1:${backendPort}" -ForegroundColor White
+Write-Host "  前端地址: http://127.0.0.1:${frontendPort}" -ForegroundColor White
 Write-Host "============================================" -ForegroundColor Cyan
 Write-Host "  按任意键关闭此窗口（服务不受影响）"
 $null = $Host.UI.RawUI.ReadKey("NoEcho,IncludeKeyDown")

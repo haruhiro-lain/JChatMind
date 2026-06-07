@@ -54,8 +54,8 @@
               <a-menu-item v-if="$attrs.onEditAgent" key="edit" @click="() => $emit('editAgent', agent)">
                 <EditOutlined /> 编辑
               </a-menu-item>
-              <a-menu-item key="delete" danger @click="() => confirmDelete(agent)">
-                <DeleteOutlined /> 删除
+              <a-menu-item key="delete" danger @click="() => confirmDelete(agent)" :disabled="deletingAgentId === agent.id">
+                <DeleteOutlined /> {{ deletingAgentId === agent.id ? '删除中...' : '删除' }}
               </a-menu-item>
             </a-menu>
           </template>
@@ -74,6 +74,7 @@ import { getAgentEmoji } from "../../utils";
 
 const props = defineProps<{
   agents: AgentVO[];
+  deletingAgentId?: string | null;
 }>();
 
 const emit = defineEmits<{

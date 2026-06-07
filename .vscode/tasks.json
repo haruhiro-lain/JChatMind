@@ -2,51 +2,16 @@
 	"version": "2.0.0",
 	"tasks": [
 		{
-			"label": "Start Spring Boot (local)",
-			"type": "shell",
-			"command": "cd mindharness && set DEEPSEEK_API_KEY=sk-c2d4936e836a4e3ba1797b404132c004 && .\\mvnw.cmd spring-boot:run",
-			"isBackground": true,
-			"problemMatcher": []
-		},
-		{
-			"label": "Start Spring Boot Backend",
-			"type": "shell",
-			"command": "cd d:\\Code\\Project\\JChatMind\\mindharness; $env:DEEPSEEK_API_KEY = 'sk-c2d4936e836a4e3ba1797b404132c004'; .\\mvnw.cmd spring-boot:run \"-Dspring-boot.run.profiles=local\"",
-			"isBackground": true,
-			"problemMatcher": []
-		},
-		{
 			"label": "Start MindHarness Backend",
 			"type": "shell",
-			"command": "cd d:\\Code\\Project\\JChatMind\\mindharness; $env:DEEPSEEK_API_KEY = 'sk-c2d4936e836a4e3ba1797b404132c004'; .\\mvnw.cmd spring-boot:run",
-			"isBackground": true,
+			"command": "& ${workspaceFolder}\\dev.ps1",
+			"isBackground": false,
 			"problemMatcher": []
 		},
 		{
 			"label": "Test Remote DB Connection",
 			"type": "shell",
-			"command": "Test-NetConnection -ComputerName 100.99.85.73 -Port 15432",
-			"isBackground": false,
-			"problemMatcher": []
-		},
-		{
-			"label": "Test PostgreSQL Login",
-			"type": "shell",
-			"command": "cd d:\\Code\\Project\\JChatMind\\mindharness; $env:PGPASSWORD = 'mindharness123'; & 'C:\\Program Files\\PostgreSQL\\17\\bin\\psql.exe' -h 100.99.85.73 -p 15432 -U mindharness -d mindharness -c 'SELECT 1 AS connected;' 2>&1",
-			"isBackground": false,
-			"problemMatcher": []
-		},
-		{
-			"label": "Test PostgreSQL Raw Socket",
-			"type": "shell",
-			"command": "$socket = New-Object System.Net.Sockets.TcpClient('100.99.85.73', 15432); $stream = $socket.GetStream(); $reader = New-Object System.IO.StreamReader($stream); $writer = New-Object System.IO.StreamWriter($stream); $writer.AutoFlush = $true; $writer.WriteLine(\"SELECT 1;\"); Start-Sleep -Milliseconds 500; while ($stream.DataAvailable) { Write-Host ($reader.ReadLine()) }; $socket.Close(); Write-Host 'Socket test done.'",
-			"isBackground": false,
-			"problemMatcher": []
-		},
-		{
-			"label": "Spring Boot Tailscale DB Test",
-			"type": "shell",
-			"command": "cd d:\\Code\\Project\\JChatMind\\mindharness; $env:DEEPSEEK_API_KEY = 'sk-c2d4936e836a4e3ba1797b404132c004'; $env:SPRING_PROFILES_ACTIVE = 'tailscale'; .\\mvnw.cmd spring-boot:run --debug 2>&1 | Select-String -Pattern 'HikariPool|PSQLException|Connection|timeout|refused|tailscale|datasource'",
+			"command": "Test-NetConnection -ComputerName 100.97.73.86 -Port 15432",
 			"isBackground": false,
 			"problemMatcher": []
 		}

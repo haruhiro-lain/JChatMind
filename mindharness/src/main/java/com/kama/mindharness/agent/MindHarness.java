@@ -326,8 +326,47 @@ public class MindHarness {
         } catch (Exception e) {
             agentState = AgentState.ERROR;
             log.error("Error running agent", e);
+
+            // 通过 SSE 将错误信息推送给前端
+            String errorMsg = extractUserFriendlyErrorMessage(e);
+            SseMessage errorSse = SseMessage.builder()
+                    .type(SseMessage.Type.AI_ERROR)
+                    .payload(SseMessage.Payload.builder()
+                            .statusText(errorMsg)
+                            .done(true)
+                            .build())
+                    .build();
+            sseService.send(this.chatSessionId, errorSse);
+
             throw new RuntimeException("Error running agent", e);
         }
+    }
+
+    /**
+     * 从异常中提取用户友好的错误信息
+     */
+    private String extractUserFriendlyErrorMessage(Exception e) {
+        String msg = e.getMessage();
+        if (msg == null) {
+            return "未知错误，请检查后端日志";
+        }
+        // DeepSeek / OpenAI 401 认证错误
+        if (msg.contains("401") || msg.contains("Authentication Fails") || msg.contains("invalid_request_error")) {
+            return "API Key 无效或已过期，请检查 .env 文件中的 DEEPSEEK_API_KEY";
+        }
+        // 网络超时
+        if (msg.contains("timeout") || msg.contains("timed out") || msg.contains("connect")) {
+            return "连接 AI 服务超时，请检查网络或稍后重试";
+        }
+        // 限流
+        if (msg.contains("429") || msg.contains("rate_limit")) {
+            return "请求过于频繁，请稍后重试";
+        }
+        // 其他错误，截取前 200 字符
+        if (msg.length() > 200) {
+            msg = msg.substring(0, 200) + "...";
+        }
+        return "AI 服务异常: " + msg;
     }
 
     @Override

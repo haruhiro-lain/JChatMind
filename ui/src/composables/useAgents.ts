@@ -9,24 +9,45 @@ import {
   type UpdateAgentRequest,
 } from "../api/api.ts";
 
+// 模块级共享状态，所有调用者共用同一个 agents 列表
+const agents = ref<AgentVO[]>([]);
+let initialized = false;
+
 export function useAgents() {
-  const agents = ref<AgentVO[]>([]);
 
   async function refreshAgents() {
     const resp = await getAgents();
     agents.value = resp.agents;
   }
 
-  refreshAgents();
+  if (!initialized) {
+    initialized = true;
+    refreshAgents();
+  }
 
   async function createAgentHandle(agent: CreateAgentRequest) {
-    await createAgent(agent);
-    await refreshAgents();
+    const resp = await createAgent(agent);
+    // 乐观更新：直接用表单数据拼出完整对象，省掉 refreshAgents 的额外请求
+    const newAgent: AgentVO = {
+      id: resp.agentId,
+      name: agent.name,
+      description: agent.description,
+      systemPrompt: agent.systemPrompt,
+      model: agent.model,
+      allowedTools: agent.allowedTools,
+      chatOptions: agent.chatOptions,
+      apiKey: agent.apiKey,
+      avatar: agent.avatar,
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
+    };
+    agents.value = [newAgent, ...agents.value];
   }
 
   async function deleteAgentHandle(agentId: string) {
     await deleteAgent(agentId);
-    await refreshAgents();
+    // 乐观更新：直接从本地列表移除
+    agents.value = agents.value.filter((a) => a.id !== agentId);
   }
 
   async function updateAgentHandle(
@@ -34,7 +55,10 @@ export function useAgents() {
     request: UpdateAgentRequest,
   ) {
     await updateAgent(agentId, request);
-    await refreshAgents();
+    // 乐观更新：直接更新本地列表中的对应项
+    agents.value = agents.value.map((a) =>
+      a.id === agentId ? { ...a, ...request, updatedAt: new Date().toISOString() } : a
+    );
   }
 
   return {

@@ -188,7 +188,6 @@ const menuItems = [
 const selectedKey = ref("base");
 const tools = ref<ToolVO[]>([]);
 const createAgentLoading = ref(false);
-
 const modelOptions = [
   { value: "deepseek-pro", label: "DeepSeek V4 Pro" },
   { value: "deepseek-flash", label: "DeepSeek V4 Flash" },
@@ -211,6 +210,7 @@ const isEditMode = ref(false);
 
 watch(() => props.open, (val) => {
   if (val) {
+    createAgentLoading.value = false;
     if (props.editingAgent) {
       isEditMode.value = true;
       formData.value = {
@@ -290,7 +290,8 @@ async function handleSubmit() {
     } else {
       emit("create", request);
     }
-  } finally {
+    // 不在此处重置 loading，由父组件关闭弹窗时通过 watch(open) 重置
+  } catch {
     createAgentLoading.value = false;
   }
 }

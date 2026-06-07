@@ -143,11 +143,19 @@ Write-Host "============================================" -ForegroundColor Cyan
 Write-Host "  [2/5] 数据库连通性检查" -ForegroundColor Yellow
 Write-Host "============================================" -ForegroundColor Cyan
 
-$dbHost = "100.99.85.73"
-$dbPort = 15432
-$dbName = "mindharness"
-$dbUser = "mindharness"
-$dbPassword = "mindharness123"
+# ========== 从 .env 读取数据库连接信息 ==========
+$dbHost     = [Environment]::GetEnvironmentVariable("DB_HOST", "Process")
+$dbPort     = [Environment]::GetEnvironmentVariable("DB_PORT", "Process")
+$dbName     = [Environment]::GetEnvironmentVariable("DB_NAME", "Process")
+$dbUser     = [Environment]::GetEnvironmentVariable("DB_USERNAME", "Process")
+$dbPassword = [Environment]::GetEnvironmentVariable("DB_PASSWORD", "Process")
+
+if (-not $dbHost -or -not $dbPort -or -not $dbName -or -not $dbUser -or -not $dbPassword) {
+    Write-Host "   ✗ .env 中缺少数据库连接配置（DB_HOST/DB_PORT/DB_NAME/DB_USERNAME/DB_PASSWORD）" -ForegroundColor Red
+    $allChecksPassed = $false
+}
+
+Write-Host "   配置来源: .env" -ForegroundColor Gray
 
 Write-Host "  目标: ${dbHost}:${dbPort} (PostgreSQL, Tailscale 组网)" -ForegroundColor Gray
 
@@ -352,8 +360,10 @@ Write-Host "============================================" -ForegroundColor Cyan
 Write-Host "  [3/5] 端口检查 & 旧进程清理" -ForegroundColor Yellow
 Write-Host "============================================" -ForegroundColor Cyan
 
-$backendPort = 8080
-$frontendPort = 15173
+$backendPort  = [Environment]::GetEnvironmentVariable("BACKEND_PORT", "Process")
+$frontendPort = [Environment]::GetEnvironmentVariable("FRONTEND_PORT", "Process")
+if (-not $backendPort) { $backendPort = 8080 }
+if (-not $frontendPort) { $frontendPort = 15173 }
 
 # 辅助函数：根据端口号终止占用进程
 function Stop-ProcessOnPort($port, $label) {
@@ -444,21 +454,76 @@ Write-Host "  [5/5] 启动服务" -ForegroundColor Yellow
 Write-Host "============================================" -ForegroundColor Cyan
 Write-Host ""
 
-# 启动后端（tailscale profile）
-Write-Host "   ▶ 启动后端服务（Spring Boot，端口 8080，tailscale 配置）..." -ForegroundColor Cyan
-$backendCmd = 'cd /d "' + $rootDir + '\mindharness" && title MindHarness 后端 && .\mvnw.cmd spring-boot:run "-DskipTests" "-Dspring-boot.run.profiles=tailscale"'
+# 启动后端
+Write-Host "   ▶ 启动后端服务（Spring Boot，端口 ${backendPort}）..." -ForegroundColor Cyan
+$backendCmd = 'cd /d "' + $rootDir + '\mindharness" && title MindHarness 后端 && .\mvnw.cmd spring-boot:run "-DskipTests"'
 $backendProc = Start-Process -FilePath "cmd.exe" -ArgumentList "/c", $backendCmd -PassThru
 
-Write-Host "   等待后端初始化（15秒）..."
-Start-Sleep -Seconds 15
+# 轮询等待后端就绪（最多等 120 秒）
+Write-Host "   等待后端就绪..." -ForegroundColor Gray
+$backendUrl = "http://127.0.0.1:${backendPort}/"
+$maxWait = 120
+$waited = 0
+$backendReady = $false
+while ($waited -lt $maxWait) {
+    try {
+        # 尝试连接后端 — 只要收到 HTTP 响应（含 404）就说明后端已启动
+        Invoke-WebRequest -Uri $backendUrl -UseBasicParsing -TimeoutSec 3 | Out-Null
+        $backendReady = $true
+        break
+    } catch {
+        # 如果拿到了 HTTP 响应对象（哪怕是 4xx），说明端口已监听
+        if ($_.Exception.Response) {
+            $backendReady = $true
+            break
+        }
+        # 连接被拒绝 — 后端还没起来，继续等
+    }
+    Start-Sleep -Seconds 2
+    $waited += 2
+    if ($waited % 10 -eq 0) {
+        Write-Host "     已等待 ${waited} 秒..." -ForegroundColor DarkGray
+    }
+}
+if ($backendReady) {
+    Write-Host "   ✓ 后端就绪（耗时 ${waited} 秒）" -ForegroundColor Green
+} else {
+    Write-Host "   ⚠ 后端等待超时（${maxWait} 秒），继续启动前端" -ForegroundColor Yellow
+}
+
+Write-Host ""
 
 # 启动前端
-Write-Host "   ▶ 启动前端服务（Vite，端口 15173）..." -ForegroundColor Cyan
+Write-Host "   ▶ 启动前端服务（Vite，端口 ${frontendPort}）..." -ForegroundColor Cyan
 $frontendCmd = 'cd /d "' + $rootDir + '\ui" && title MindHarness 前端 && npm run dev'
 $frontendProc = Start-Process -FilePath "cmd.exe" -ArgumentList "/c", $frontendCmd -PassThru
 
-Write-Host "   等待前端启动（5秒）..."
-Start-Sleep -Seconds 5
+Write-Host "   等待前端启动..." -ForegroundColor Gray
+
+# 轮询等待 Vite 就绪（最多等 60 秒）
+$frontendUrl = "http://127.0.0.1:${frontendPort}/"
+$maxWait = 60
+$waited = 0
+$ready = $false
+while ($waited -lt $maxWait) {
+    try {
+        Invoke-WebRequest -Uri $frontendUrl -UseBasicParsing -TimeoutSec 2 | Out-Null
+        $ready = $true
+        break
+    } catch {
+        if ($_.Exception.Response) {
+            $ready = $true
+            break
+        }
+    }
+    Start-Sleep -Seconds 1
+    $waited++
+}
+if ($ready) {
+    Write-Host "   ✓ 前端就绪（耗时 ${waited} 秒）" -ForegroundColor Green
+} else {
+    Write-Host "   ⚠ 等待超时（${maxWait} 秒），强制打开浏览器" -ForegroundColor Yellow
+}
 
 # 打开浏览器
 Write-Host "   ▶ 打开浏览器..." -ForegroundColor Cyan
@@ -466,9 +531,9 @@ Start-Process "http://127.0.0.1:${frontendPort}/"
 
 Write-Host ""
 Write-Host "============================================" -ForegroundColor Cyan
-Write-Host "  后端地址: http://127.0.0.1:8080" -ForegroundColor White
-Write-Host "  前端地址: http://127.0.0.1:15173" -ForegroundColor White
-Write-Host "  数据库:   100.99.85.73:15432（Tailscale）" -ForegroundColor DarkGray
+Write-Host "  后端地址: http://127.0.0.1:${backendPort}" -ForegroundColor White
+Write-Host "  前端地址: http://127.0.0.1:${frontendPort}" -ForegroundColor White
+Write-Host "  数据库:   ${dbHost}:${dbPort}/${dbName}（配置来源: .env）" -ForegroundColor DarkGray
 Write-Host "============================================" -ForegroundColor Cyan
 Write-Host "  按任意键关闭此窗口（服务不受影响）"
 $null = $Host.UI.RawUI.ReadKey("NoEcho,IncludeKeyDown")

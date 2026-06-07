@@ -8,6 +8,8 @@ import com.kama.mindharness.model.entity.Agent;
 import com.kama.mindharness.model.request.CreateAgentRequest;
 import com.kama.mindharness.model.request.UpdateAgentRequest;
 import com.kama.mindharness.model.vo.AgentVO;
+import java.util.List;
+
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Component;
 import org.springframework.util.Assert;
@@ -20,9 +22,14 @@ public class AgentConverter {
 
     public Agent toEntity(AgentDTO agentDTO) throws JsonProcessingException {
         Assert.notNull(agentDTO, "AgentDTO cannot be null");
-        Assert.notNull(agentDTO.getAllowedTools(), "Allowed tools cannot be null");
-        Assert.notNull(agentDTO.getChatOptions(), "Chat options cannot be null");
         Assert.notNull(agentDTO.getModel(), "Model cannot be null");
+
+        List<String> allowedTools = agentDTO.getAllowedTools() != null
+                ? agentDTO.getAllowedTools()
+                : List.of();
+        AgentDTO.ChatOptions chatOptions = agentDTO.getChatOptions() != null
+                ? agentDTO.getChatOptions()
+                : AgentDTO.ChatOptions.defaultOptions();
 
         return Agent.builder()
                 .id(agentDTO.getId())
@@ -30,8 +37,8 @@ public class AgentConverter {
                 .description(agentDTO.getDescription())
                 .systemPrompt(agentDTO.getSystemPrompt())
                 .model(agentDTO.getModel().getModelName())
-                .allowedTools(objectMapper.writeValueAsString(agentDTO.getAllowedTools()))
-                .chatOptions(objectMapper.writeValueAsString(agentDTO.getChatOptions()))
+                .allowedTools(objectMapper.writeValueAsString(allowedTools))
+                .chatOptions(objectMapper.writeValueAsString(chatOptions))
                 .apiKey(agentDTO.getApiKey())
                 .avatar(agentDTO.getAvatar())
                 .createdAt(agentDTO.getCreatedAt())
@@ -80,17 +87,22 @@ public class AgentConverter {
 
     public AgentDTO toDTO(CreateAgentRequest request) {
         Assert.notNull(request, "CreateAgentRequest cannot be null");
-        Assert.notNull(request.getAllowedTools(), "Allowed tools cannot be null");
-        Assert.notNull(request.getChatOptions(), "Chat options cannot be null");
         Assert.notNull(request.getModel(), "Model cannot be null");
+
+        List<String> allowedTools = request.getAllowedTools() != null
+                ? request.getAllowedTools()
+                : List.of();
+        AgentDTO.ChatOptions chatOptions = request.getChatOptions() != null
+                ? request.getChatOptions()
+                : AgentDTO.ChatOptions.defaultOptions();
 
         return AgentDTO.builder()
                 .name(request.getName())
                 .description(request.getDescription())
                 .systemPrompt(request.getSystemPrompt())
                 .model(AgentDTO.ModelType.fromModelName(request.getModel()))
-                .allowedTools(request.getAllowedTools())
-                .chatOptions(request.getChatOptions())
+                .allowedTools(allowedTools)
+                .chatOptions(chatOptions)
                 .apiKey(request.getApiKey())
                 .avatar(request.getAvatar())
                 .build();

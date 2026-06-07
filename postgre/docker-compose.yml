@@ -5,17 +5,19 @@ services:
       dockerfile: Dockerfile
     image: mindharness-postgres:local
     container_name: mindharness-postgres
+    env_file:
+      - ../.env
     environment:
-      POSTGRES_DB: mindharness
-      POSTGRES_USER: mindharness
-      POSTGRES_PASSWORD: mindharness123
+      POSTGRES_DB: ${DB_NAME:-mindharness}
+      POSTGRES_USER: ${DB_USERNAME:-mindharness}
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-mindharness123}
     ports:
-      - "15432:5432"
+      - "${DB_PORT:-15432}:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
       - ./init.sql:/docker-entrypoint-initdb.d/init.sql
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U mindharness -d mindharness"]
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USERNAME:-mindharness} -d ${DB_NAME:-mindharness}"]
       interval: 5s
       timeout: 5s
       retries: 10

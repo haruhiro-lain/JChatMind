@@ -1,4 +1,20 @@
-# 台式机数据库配置（Tailscale 组网）
+# NAS 数据库配置（Tailscale 组网，profile 默认值）
+#
+# 数据库连接信息统一从 .env 环境变量中读取，此文件提供 Tailscale 场景的默认值。
+# 修改数据库信息只需编辑 .env，无需修改此文件。
+#
+# Windows 上 PostgreSQL JDBC 的 tcpKeepAliveIdle / tcpKeepAliveInterval
+# 参数不生效（不支持 TCP_KEEPIDLE socket 选项）。
+# 因此依赖 HikariCP SQL 级别 keepalive（每 30s 发 SELECT 1）来保活。
 spring:
   datasource:
-    url: jdbc:postgresql://100.99.85.73:15432/mindharness
+    url: "jdbc:postgresql://${DB_HOST:100.97.128.94}:${DB_PORT:15432}/${DB_NAME:mindharness}?tcpKeepAlive=true&socketTimeout=60&connectTimeout=30"
+    hikari:
+      connection-timeout: 30000
+      validation-timeout: 10000
+      idle-timeout: 120000
+      max-lifetime: 300000
+      minimum-idle: 1
+      maximum-pool-size: 3
+      connection-test-query: SELECT 1
+      keepalive-time: 30000

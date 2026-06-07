@@ -34,7 +34,8 @@ export type SseMessageType =
   | "AI_PLANNING"
   | "AI_THINKING"
   | "AI_EXECUTING"
-  | "AI_DONE";
+  | "AI_DONE"
+  | "AI_ERROR";
 
 export interface SseMessagePayload {
   message: ChatMessageVO;

@@ -13,8 +13,13 @@ import com.kama.mindharness.model.response.GetAgentsResponse;
 import com.kama.mindharness.model.vo.AgentVO;
 import com.kama.mindharness.service.AgentFacadeService;
 import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.StandardCopyOption;
 import java.time.OffsetDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -22,10 +27,15 @@ import java.util.List;
 
 @Service
 @AllArgsConstructor
+@Slf4j
 public class AgentFacadeServiceImpl implements AgentFacadeService {
 
     private final AgentMapper agentMapper;
     private final AgentConverter agentConverter;
+
+    /** 头像回收站目录 */
+    private static final Path AVATAR_DIR = Path.of("uploads/avatars");
+    private static final Path RECYCLE_DIR = AVATAR_DIR.resolve(".recycle");
 
     @Override
     public GetAgentsResponse getAgents() {
@@ -79,10 +89,34 @@ public class AgentFacadeServiceImpl implements AgentFacadeService {
         if (agent == null) {
             throw new BizException("Agent 不存在: " + agentId);
         }
-        
+
+        // 将关联的头像文件移至回收站
+        moveAvatarToRecycle(agent.getAvatar());
+
         int result = agentMapper.deleteById(agentId);
         if (result <= 0) {
             throw new BizException("删除 agent 失败");
+        }
+    }
+
+    /**
+     * 将头像文件从 uploads/avatars/ 移至 uploads/avatars/.recycle/
+     */
+    private void moveAvatarToRecycle(String avatarFileName) {
+        if (avatarFileName == null || avatarFileName.isBlank()) {
+            return;
+        }
+        try {
+            Path avatarPath = AVATAR_DIR.resolve(avatarFileName);
+            if (Files.exists(avatarPath)) {
+                Files.createDirectories(RECYCLE_DIR);
+                Files.move(avatarPath, RECYCLE_DIR.resolve(avatarFileName),
+                        StandardCopyOption.REPLACE_EXISTING);
+                log.info("头像已移至回收站: {}", RECYCLE_DIR.resolve(avatarFileName));
+            }
+        } catch (IOException e) {
+            log.warn("移动头像到回收站失败 ({}): {}", avatarFileName, e.getMessage());
+            // 不阻止删除操作，头像丢失总比删不掉好
         }
     }
 

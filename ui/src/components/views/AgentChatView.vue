@@ -62,6 +62,7 @@
     />
     <AgentChatInput
       :chat-mode="chatMode"
+      :sending="sending"
       @send="handleSendMessage"
       @update:chat-mode="chatMode = $event"
     />
@@ -108,6 +109,7 @@ const currentAgentEmoji = computed(() =>
 );
 
 const loading = ref(false);
+const sending = ref(false);
 const messages = ref<ChatMessageVO[]>([]);
 const agentId = ref("");
 
@@ -172,6 +174,7 @@ watch(chatSessionId, (newId) => {
 async function handleSendMessage(data: { text: string }) {
   const text = data.text;
   if (!text || !text.trim()) return;
+  sending.value = true;
 
   if (!chatSessionId.value) {
     if (!agentId.value) {
@@ -179,6 +182,7 @@ async function handleSendMessage(data: { text: string }) {
         agentId.value = agents.value[0].id;
       } else {
         message.warning("请先创建一个智能体助手");
+        sending.value = false;
         return;
       }
     }
@@ -202,6 +206,7 @@ async function handleSendMessage(data: { text: string }) {
       message.error("发送消息失败，请重试");
     } finally {
       loading.value = false;
+      sending.value = false;
     }
   } else {
     try {
@@ -214,6 +219,8 @@ async function handleSendMessage(data: { text: string }) {
       await fetchMessages();
     } catch {
       message.error("发送消息失败，请重试");
+    } finally {
+      sending.value = false;
     }
   }
 }
@@ -251,6 +258,10 @@ watch(chatSessionId, (newId, oldId) => {
       displayAgentStatus.value = false;
       agentStatusText.value = "";
       agentStatusType.value = undefined;
+    } else if (msg.type === "AI_ERROR") {
+      displayAgentStatus.value = true;
+      agentStatusText.value = msg.payload.statusText || "AI 服务异常";
+      agentStatusType.value = "AI_ERROR";
     }
   });
 

@@ -19,6 +19,7 @@
         <a-tab-pane key="agent" tab="助手">
           <AgentTabContent
             :agents="agents"
+            :deleting-agent-id="deletingAgentId"
             @create-agent-click="toggleAddAgentModal"
             @edit-agent="onEditAgent"
             @delete-agent="onDeleteAgent"
@@ -51,10 +52,11 @@ import { useAgents } from "../composables/useAgents.ts";
 import type { AgentVO, CreateAgentRequest, UpdateAgentRequest } from "../api/api.ts";
 
 const route = useRoute();
-const { agents, createAgentHandle, deleteAgentHandle, updateAgentHandle } = useAgents();
+const { agents, createAgentHandle, deleteAgentHandle, updateAgentHandle, refreshAgents } = useAgents();
 
 const isAddAgentModalOpen = ref(false);
 const editingAgent = ref<AgentVO | null>(null);
+const deletingAgentId = ref<string | null>(null);
 
 const activeKey = ref("agent");
 
@@ -74,19 +76,33 @@ function onEditAgent(agent: AgentVO) {
   isAddAgentModalOpen.value = true;
 }
 
-function onDeleteAgent(agentId: string) {
-  deleteAgentHandle(agentId);
+async function onDeleteAgent(agentId: string) {
+  deletingAgentId.value = agentId;
+  try {
+    await deleteAgentHandle(agentId);
+  } finally {
+    deletingAgentId.value = null;
+  }
 }
 
 async function onCreateAgent(request: CreateAgentRequest) {
-  await createAgentHandle(request);
-  isAddAgentModalOpen.value = false;
+  try {
+    await createAgentHandle(request);
+    isAddAgentModalOpen.value = false;
+  } catch {
+    // 错误提示已由 http.ts 的 handleResponse 统一处理
+    refreshAgents();
+    isAddAgentModalOpen.value = false;
+  }
 }
 
 async function onUpdateAgent(agentId: string, request: UpdateAgentRequest) {
-  if (updateAgentHandle) {
+  try {
     await updateAgentHandle(agentId, request);
+    isAddAgentModalOpen.value = false;
+  } catch {
+    refreshAgents();
+    isAddAgentModalOpen.value = false;
   }
-  isAddAgentModalOpen.value = false;
 }
 </script>
