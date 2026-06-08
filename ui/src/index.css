@@ -136,40 +136,30 @@ body {
   box-shadow: 0 0 20px rgba(0, 229, 255, 0.1);
 }
 
-/* 深色模式下强制覆盖 Ant Design 组件 CSS 变量（解决弹窗边框浅色问题） */
+/* 深色模式 Ant Design CSS 变量全覆盖 */
+html[data-theme="dark"],
+[data-theme="dark"] .ant-app,
+[data-theme="dark"] .css-var-root,
 [data-theme="dark"] .ant-modal-css-var {
-  --ant-modal-content-bg: var(--color-bg-secondary) !important;
+  --ant-color-text: var(--color-text) !important;
+  --ant-color-text-secondary: var(--color-text-secondary) !important;
+  --ant-color-text-tertiary: var(--color-text-tertiary) !important;
+  --ant-color-text-quaternary: var(--color-text-tertiary) !important;
   --ant-color-border: var(--color-border) !important;
   --ant-color-border-secondary: var(--color-border-light) !important;
   --ant-color-split: var(--color-border-light) !important;
   --ant-color-bg-container: var(--color-bg-secondary) !important;
   --ant-color-bg-elevated: var(--color-bg-secondary) !important;
   --ant-color-bg-layout: var(--color-bg) !important;
-  --ant-color-text: var(--color-text) !important;
-  --ant-color-text-secondary: var(--color-text-secondary) !important;
-  --ant-color-text-tertiary: var(--color-text-tertiary) !important;
+  --ant-color-bg-spotlight: var(--color-bg) !important;
+  --ant-color-bg-mask: rgba(0,0,0,0.65) !important;
   --ant-color-icon: var(--color-text-secondary) !important;
   --ant-color-icon-hover: var(--color-accent) !important;
   --ant-color-bg-text-hover: var(--color-accent-light) !important;
   --ant-modal-title-color: var(--color-text) !important;
-}
-
-/* 全局深色模式 - 覆盖所有 Ant Design 容器 */
-[data-theme="dark"] .css-var-root {
   --ant-modal-content-bg: var(--color-bg-secondary) !important;
-  --ant-color-border: var(--color-border) !important;
-  --ant-color-border-secondary: var(--color-border-light) !important;
-  --ant-color-split: var(--color-border-light) !important;
-  --ant-color-bg-container: var(--color-bg-secondary) !important;
-  --ant-color-bg-elevated: var(--color-bg-secondary) !important;
-  --ant-color-bg-layout: var(--color-bg) !important;
-  --ant-color-text: var(--color-text) !important;
-  --ant-color-text-secondary: var(--color-text-secondary) !important;
-  --ant-color-text-tertiary: var(--color-text-tertiary) !important;
-  --ant-color-icon: var(--color-text-secondary) !important;
-  --ant-color-icon-hover: var(--color-accent) !important;
-  --ant-color-bg-text-hover: var(--color-accent-light) !important;
-  --ant-modal-title-color: var(--color-text) !important;
+  --ant-popover-bg: var(--color-bg-secondary) !important;
+  --ant-dropdown-bg: var(--color-bg-secondary) !important;
 }
 
 [data-theme="dark"] .ant-modal-header {
@@ -193,10 +183,72 @@ body {
   color: var(--color-accent) !important;
 }
 
-/* 弹窗内所有文字 */
+/* 弹窗内表单文字 */
 [data-theme="dark"] .ant-modal-body label,
-[data-theme="dark"] .ant-modal-body .text-gray-700 {
+[data-theme="dark"] .ant-modal-body .ant-form-item-label > label,
+[data-theme="dark"] .ant-form-item-label > label,
+[data-theme="dark"] .ant-radio-wrapper,
+[data-theme="dark"] .ant-checkbox-wrapper,
+[data-theme="dark"] .ant-input,
+[data-theme="dark"] .ant-input-affix-wrapper,
+[data-theme="dark"] .ant-select-selector,
+[data-theme="dark"] .ant-select-selection-item,
+[data-theme="dark"] .ant-select-item-option-content {
   color: var(--color-text) !important;
+}
+
+/* 输入框 / 选择器背景 */
+[data-theme="dark"] .ant-input,
+[data-theme="dark"] .ant-input-affix-wrapper,
+[data-theme="dark"] .ant-select-selector,
+[data-theme="dark"] .ant-picker {
+  background: var(--color-bg-tertiary) !important;
+  border-color: var(--color-border) !important;
+}
+
+[data-theme="dark"] .ant-input::placeholder,
+[data-theme="dark"] .ant-select-selection-placeholder {
+  color: var(--color-text-tertiary) !important;
+}
+
+/* 下拉菜单 */
+[data-theme="dark"] .ant-dropdown-menu,
+[data-theme="dark"] .ant-select-dropdown {
+  background: var(--color-bg-secondary) !important;
+  border: 1px solid var(--color-border) !important;
+}
+
+[data-theme="dark"] .ant-dropdown-menu-item,
+[data-theme="dark"] .ant-select-item {
+  color: var(--color-text) !important;
+}
+
+[data-theme="dark"] .ant-dropdown-menu-item:hover,
+[data-theme="dark"] .ant-select-item-option-active {
+  background: var(--color-accent-light) !important;
+}
+
+[data-theme="dark"] .ant-dropdown-menu-item-danger {
+  color: #ff6b6b !important;
+}
+
+/* Popconfirm */
+[data-theme="dark"] .ant-popover-inner,
+[data-theme="dark"] .ant-popconfirm .ant-popover-inner {
+  background: var(--color-bg-secondary) !important;
+  border: 1px solid var(--color-border) !important;
+}
+
+[data-theme="dark"] .ant-popover-message-title,
+[data-theme="dark"] .ant-popconfirm-message-title {
+  color: var(--color-text) !important;
+}
+
+/* 消息提示 */
+[data-theme="dark"] .ant-message-notice-content {
+  background: var(--color-bg-secondary) !important;
+  color: var(--color-text) !important;
+  border: 1px solid var(--color-border) !important;
 }
 
 [data-theme="dark"] .ant-modal-body .text-gray-600 {

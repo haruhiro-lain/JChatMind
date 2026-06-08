@@ -59,6 +59,7 @@
       :display-agent-status="displayAgentStatus"
       :agent-status-text="agentStatusText"
       :agent-status-type="agentStatusType"
+      :streaming-message-id="streamingMessageId"
     />
     <AgentChatInput
       :chat-mode="chatMode"
@@ -117,6 +118,9 @@ const displayAgentStatus = ref(false);
 const agentStatusText = ref("");
 const agentStatusType = ref<SseMessageType | undefined>(undefined);
 
+/** 当前正在流式输出的消息 ID（无流式时为 null） */
+const streamingMessageId = ref<string | null>(null);
+
 const chatSessionId = ref<string | undefined>(undefined);
 
 // 智能体切换
@@ -154,6 +158,7 @@ function addMessage(message: ChatMessageVO) {
 
 async function fetchMessages() {
   if (!chatSessionId.value) return;
+  loading.value = true;
   try {
     const resp = await getChatMessagesBySessionId(chatSessionId.value);
     messages.value = resp.chatMessages;
@@ -164,6 +169,8 @@ async function fetchMessages() {
     message.warning("会话不存在");
     chatSessionId.value = undefined;
     router.replace("/");
+  } finally {
+    loading.value = false;
   }
 }
 
@@ -240,8 +247,37 @@ watch(chatSessionId, (newId, oldId) => {
 
   es.addEventListener("message", (event) => {
     const msg = JSON.parse(event.data) as SseMessage;
-    if (msg.type === "AI_GENERATED_CONTENT") {
-      addMessage(msg.payload.message);
+    if (msg.type === "AI_STREAMING") {
+      // 流式增量：追加深文本到现有消息或创建新泡泡
+      displayAgentStatus.value = false;
+      const delta = msg.payload.delta || "";
+      const mId = msg.payload.messageId || "";
+      streamingMessageId.value = mId || null;
+      const existing = messages.value.find((m) => m.id === mId);
+      if (existing) {
+        existing.content += delta;
+      } else if (delta) {
+        messages.value = [...messages.value, {
+          id: mId,
+          sessionId: chatSessionId.value || "",
+          role: "assistant",
+          content: delta,
+        }];
+      }
+    } else if (msg.type === "AI_GENERATED_CONTENT") {
+      // 完整消息：替换流式泡泡或新增
+      streamingMessageId.value = null;
+      const mId = msg.metadata?.chatMessageId || msg.payload.message?.id;
+      if (mId) {
+        const idx = messages.value.findIndex((m) => m.id === mId);
+        if (idx >= 0) {
+          messages.value[idx] = msg.payload.message;
+        } else {
+          addMessage(msg.payload.message);
+        }
+      } else {
+        addMessage(msg.payload.message);
+      }
     } else if (msg.type === "AI_PLANNING") {
       displayAgentStatus.value = true;
       agentStatusText.value = msg.payload.statusText;

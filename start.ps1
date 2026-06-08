@@ -23,6 +23,7 @@ if (Test-Path $envFile) {
             $value = $value.Trim()
             if ($name -and $value) {
                 [Environment]::SetEnvironmentVariable($name, $value, "Process")
+                Set-Item -Path "env:$name" -Value $value
             }
         }
     }
@@ -171,6 +172,15 @@ function Stop-ProcessOnPort($port, $label) {
             return $false
         }
         Write-Host "   ✓ 旧进程 (PID: ${procId}) 已终止" -ForegroundColor Green
+
+        # 关闭关联的 MindHarness cmd 窗口
+        $windowTitle = "MindHarness ${label}"
+        Get-Process cmd -ErrorAction SilentlyContinue | Where-Object {
+            $_.MainWindowTitle -eq $windowTitle
+        } | ForEach-Object {
+            Stop-Process -Id $_.Id -Force -ErrorAction SilentlyContinue
+            Write-Host "   ✓ 已关闭旧窗口: ${windowTitle}" -ForegroundColor DarkGray
+        }
         return $true
     } catch {
         Write-Host "   ✗ 无法终止进程 (PID: ${procId}): $_" -ForegroundColor Red
@@ -373,33 +383,72 @@ Write-Host "[4/4] 启动服务..." -ForegroundColor Yellow
 Write-Host ""
 
 # 启动后端
-Write-Host "   ▶ 启动后端服务（Spring Boot，端口 8080）..." -ForegroundColor Cyan
-$backendCmd = 'cd /d "' + $rootDir + '\mindharness" && title MindHarness 后端 && .\mvnw.cmd spring-boot:run -DskipTests'
+Write-Host "   ▶ 启动后端服务（Spring Boot，端口 ${backendPort}）..." -ForegroundColor Cyan
+$backendCmd = 'cd /d "' + $rootDir + '\mindharness" && title MindHarness 后端 && .\mvnw.cmd clean spring-boot:run -DskipTests'
 $backendProc = Start-Process -FilePath "cmd.exe" -ArgumentList "/c", $backendCmd -PassThru
 
-Write-Host "   等待后端初始化（15秒）..."
-Start-Sleep -Seconds 15
+# 轮询等待后端就绪（最多等 120 秒）
+Write-Host "   等待后端就绪..." -ForegroundColor Gray
+$backendUrl = "http://127.0.0.1:${backendPort}/"
+$maxWait = 120
+$waited = 0
+$backendReady = $false
+while ($waited -lt $maxWait) {
+    try {
+        Invoke-WebRequest -Uri $backendUrl -UseBasicParsing -TimeoutSec 3 | Out-Null
+        $backendReady = $true
+        break
+    } catch {
+        if ($_.Exception.Response) {
+            $backendReady = $true
+            break
+        }
+    }
+    Start-Sleep -Seconds 2
+    $waited += 2
+}
+if ($backendReady) {
+    Write-Host "   ✓ 后端就绪（耗时 ${waited} 秒）" -ForegroundColor Green
+} else {
+    Write-Host "   ⚠ 后端等待超时（${maxWait} 秒），继续启动前端" -ForegroundColor Yellow
+}
+
+Write-Host ""
 
 # 启动前端
 Write-Host "   ▶ 启动前端服务（Vite，端口 ${frontendPort}）..." -ForegroundColor Cyan
 $frontendCmd = 'cd /d "' + $rootDir + '\ui" && title MindHarness 前端 && npm run dev'
 $frontendProc = Start-Process -FilePath "cmd.exe" -ArgumentList "/c", $frontendCmd -PassThru
 
-Write-Host "   等待前端启动（5秒）..."
-Start-Sleep -Seconds 5
+# 轮询等待 Vite 就绪（最多等 60 秒）
+Write-Host "   等待前端启动..." -ForegroundColor Gray
+$frontendUrl = "http://127.0.0.1:${frontendPort}/"
+$maxWait = 60
+$waited = 0
+$ready = $false
+while ($waited -lt $maxWait) {
+    try {
+        Invoke-WebRequest -Uri $frontendUrl -UseBasicParsing -TimeoutSec 2 | Out-Null
+        $ready = $true
+        break
+    } catch {
+        if ($_.Exception.Response) {
+            $ready = $true
+            break
+        }
+    }
+    Start-Sleep -Seconds 1
+    $waited++
+}
+if ($ready) {
+    Write-Host "   ✓ 前端就绪（耗时 ${waited} 秒）" -ForegroundColor Green
+} else {
+    Write-Host "   ⚠ 等待超时（${maxWait} 秒），强制打开浏览器" -ForegroundColor Yellow
+}
 
 # 打开浏览器
-Write-Host "   ▶ 检查前端状态..." -ForegroundColor Cyan
-# 检查前端是否已经可访问，避免重复打开浏览器
-try {
-    $alreadyRunning = (Test-NetConnection -ComputerName "127.0.0.1" -Port $frontendPort -WarningAction SilentlyContinue -ErrorAction SilentlyContinue).TcpTestSucceeded
-} catch { $alreadyRunning = $false }
-if ($alreadyRunning) {
-    Write-Host "   ⚠ 前端已在运行，跳过打开浏览器" -ForegroundColor Yellow
-} else {
-    Write-Host "   ▶ 打开浏览器..." -ForegroundColor Cyan
-    Start-Process "http://127.0.0.1:${frontendPort}/"
-}
+Write-Host "   ▶ 打开浏览器..." -ForegroundColor Cyan
+Start-Process "http://127.0.0.1:${frontendPort}/"
 
 Write-Host ""
 Write-Host "============================================" -ForegroundColor Cyan

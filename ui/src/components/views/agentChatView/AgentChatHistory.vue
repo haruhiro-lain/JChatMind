@@ -30,6 +30,12 @@
             <!-- 消息内容 -->
             <div v-if="message.content" class="prose prose-sm max-w-none text-[#c8d6e5] leading-relaxed">
               <div v-html="renderMarkdown(message.content)" />
+              <!-- 流式输出光标 -->
+              <span
+                v-if="streamingMessageId === message.id"
+                class="inline-block w-0.5 h-4 bg-[#00e5ff] ml-0.5 align-text-bottom animate-pulse"
+                style="animation-duration: 0.6s"
+              >&nbsp;</span>
             </div>
           </div>
         </div>
@@ -106,6 +112,7 @@ const props = defineProps<{
   displayAgentStatus?: boolean;
   agentStatusText?: string;
   agentStatusType?: SseMessageType;
+  streamingMessageId?: string | null;
 }>();
 
 const scrollContainerRef = ref<HTMLDivElement | null>(null);
@@ -162,6 +169,16 @@ watch(() => props.messages.length, (newLen) => {
   const hasNew = newLen > prevMessagesLength.value;
   prevMessagesLength.value = newLen;
   if (hasNew && isNearBottom.value) {
+    nextTick(() => scrollToBottom());
+  }
+});
+
+// 流式输出时自动滚动（内容在变但消息数不变）
+watch(() => {
+  const streaming = props.messages.find((m) => m.id === props.streamingMessageId);
+  return streaming?.content?.length ?? 0;
+}, () => {
+  if (props.streamingMessageId && isNearBottom.value) {
     nextTick(() => scrollToBottom());
   }
 });

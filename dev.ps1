@@ -22,6 +22,7 @@ if (Test-Path $envFile) {
             $value = $value.Trim()
             if ($name -and $value) {
                 [Environment]::SetEnvironmentVariable($name, $value, "Process")
+                Set-Item -Path "env:$name" -Value $value
             }
         }
     }
@@ -390,6 +391,15 @@ function Stop-ProcessOnPort($port, $label) {
         Stop-Process -Id $procId -Force -ErrorAction Stop
         Write-Host "   ✓ 旧进程 (PID: ${procId}) 已终止" -ForegroundColor Green
 
+        # 关闭关联的 MindHarness cmd 窗口（标题如 "MindHarness 后端"/"MindHarness 前端"）
+        $windowTitle = "MindHarness ${label}"
+        Get-Process cmd -ErrorAction SilentlyContinue | Where-Object {
+            $_.MainWindowTitle -eq $windowTitle
+        } | ForEach-Object {
+            Stop-Process -Id $_.Id -Force -ErrorAction SilentlyContinue
+            Write-Host "   ✓ 已关闭旧窗口: ${windowTitle}" -ForegroundColor DarkGray
+        }
+
         # 等待端口释放
         Start-Sleep -Milliseconds 500
         $stillInUse = netstat -ano | Select-String "LISTENING" | Select-String ":${port}\s"
@@ -456,7 +466,7 @@ Write-Host ""
 
 # 启动后端
 Write-Host "   ▶ 启动后端服务（Spring Boot，端口 ${backendPort}）..." -ForegroundColor Cyan
-$backendCmd = 'cd /d "' + $rootDir + '\mindharness" && title MindHarness 后端 && .\mvnw.cmd spring-boot:run "-DskipTests"'
+$backendCmd = 'cd /d "' + $rootDir + '\mindharness" && title MindHarness 后端 && .\mvnw.cmd clean spring-boot:run "-DskipTests"'
 $backendProc = Start-Process -FilePath "cmd.exe" -ArgumentList "/c", $backendCmd -PassThru
 
 # 轮询等待后端就绪（最多等 120 秒）

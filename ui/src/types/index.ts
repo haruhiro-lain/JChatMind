@@ -30,6 +30,7 @@ export interface ChatMessageVO {
 }
 
 export type SseMessageType =
+  | "AI_STREAMING"
   | "AI_GENERATED_CONTENT"
   | "AI_PLANNING"
   | "AI_THINKING"
@@ -41,6 +42,10 @@ export interface SseMessagePayload {
   message: ChatMessageVO;
   statusText: string;
   done: boolean;
+  /** 流式增量文本 */
+  delta?: string;
+  /** 流式消息 ID */
+  messageId?: string;
 }
 
 export interface SseMessageMetadata {
