@@ -22,6 +22,7 @@ import org.springframework.ai.tool.ToolCallback;
 import org.springframework.lang.NonNull;
 import org.springframework.util.Assert;
 import org.springframework.util.StringUtils;
+import reactor.core.publisher.Flux;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -219,6 +220,14 @@ public class MindHarness {
                 如果有可用的工具，优先考虑调用工具来完成任务。
                 """;
 
+        // 发送 AI_THINKING 状态
+        sseService.send(this.chatSessionId, SseMessage.builder()
+                .type(SseMessage.Type.AI_THINKING)
+                .payload(SseMessage.Payload.builder()
+                        .statusText(Objects.requireNonNull("正在分析上下文..."))
+                        .build())
+                .build());
+
         // 将 thinkPrompt 通过 .user(thinkPrompt) 的方式构造进入 chatClient 中
         // 既能让每次 messageList 的最后一条是 本条提示词，
         // 又能够避免将 thinkPrompt 加入到聊天记录中
@@ -227,24 +236,72 @@ public class MindHarness {
                 .messages(this.chatMemory.get(this.chatSessionId))
                 .build();
 
-        this.lastChatResponse = this.chatClient
+        // 使用流式调用，实现实时输出
+        Flux<ChatResponse> responseFlux = this.chatClient
                 .prompt(Objects.requireNonNull(prompt))
                 .system(thinkPrompt)
                 .toolCallbacks(Objects.requireNonNull(this.availableTools.toArray(new ToolCallback[0])))
-                .call()
-                .chatClientResponse()
+                .stream()
                 .chatResponse();
 
-        Assert.notNull(lastChatResponse, "Last chat client response cannot be null");
+        // 累积完整文本和所有响应块
+        StringBuilder fullText = new StringBuilder();
+        StringBuilder reasoningText = new StringBuilder();
+        List<ChatResponse> allResponses = responseFlux
+                .doOnNext(response -> {
+                    AssistantMessage output = response.getResult().getOutput();
+                    String delta = output.getText();
 
-        AssistantMessage output = this.lastChatResponse
-                .getResult()
-                .getOutput();
+                    // 尝试提取 DeepSeek 等模型的 reasoning_content（思考链）
+                    extractAndSendReasoning(response, reasoningText);
 
-        List<AssistantMessage.ToolCall> toolCalls = output.getToolCalls();
+                    if (delta != null && !delta.isEmpty()) {
+                        fullText.append(delta);
+                        // 发送流式增量 SSE
+                        SseMessage streamingSse = SseMessage.builder()
+                                .type(SseMessage.Type.AI_STREAMING)
+                                .payload(SseMessage.Payload.builder()
+                                        .delta(delta)
+                                        .messageId(Objects.requireNonNull(chatSessionId + "-streaming"))
+                                        .build())
+                                .build();
+                        sseService.send(this.chatSessionId, streamingSse);
+                    }
+                })
+                .collectList()
+                .block();
 
-        // 保存
-        saveMessage(output);
+        Assert.notNull(allResponses, "Streaming responses cannot be null");
+        Assert.notEmpty(allResponses, "Streaming responses cannot be empty");
+
+        // 使用最后一个响应来获取工具调用
+        ChatResponse lastResponse = allResponses.get(allResponses.size() - 1);
+        this.lastChatResponse = lastResponse;
+
+        AssistantMessage lastOutput = lastResponse.getResult().getOutput();
+        List<AssistantMessage.ToolCall> toolCalls = lastOutput.getToolCalls();
+
+        // 构建完整的 AssistantMessage（合并流式文本 + 工具调用）
+        AssistantMessage fullOutput;
+        if (StringUtils.hasLength(fullText.toString())) {
+            fullOutput = AssistantMessage.builder()
+                    .content(Objects.requireNonNull(fullText.toString()))
+                    .properties(lastOutput.getMetadata())
+                    .toolCalls(toolCalls)
+                    .build();
+        } else if (!toolCalls.isEmpty()) {
+            // 纯工具调用（无文本），也需要保留 toolCalls
+            fullOutput = AssistantMessage.builder()
+                    .content("")
+                    .properties(lastOutput.getMetadata())
+                    .toolCalls(toolCalls)
+                    .build();
+        } else {
+            fullOutput = lastOutput;
+        }
+
+        // 持久化并推送给前端
+        saveMessage(fullOutput);
         refreshPendingMessages();
 
         // 打印工具调用
@@ -252,6 +309,41 @@ public class MindHarness {
 
         // 如果工具调用不为空，则进入执行阶段
         return !toolCalls.isEmpty();
+    }
+
+    /**
+     * 尝试从 ChatResponse 的 Generation metadata 中提取 reasoning_content，
+     * 并以 AI_THINKING SSE 事件流式发送给前端（DeepSeek R1 等推理模型）。
+     */
+    private void extractAndSendReasoning(ChatResponse response, StringBuilder reasoningBuffer) {
+        try {
+            if (response.getResults() == null || response.getResults().isEmpty()) return;
+            var metadata = response.getResults().get(0).getMetadata();
+            if (metadata == null) return;
+
+            // DeepSeek API 返回的 reasoning_content 可能以多种 key 存储
+            String reasoningDelta = null;
+            for (String key : new String[]{"reasoningContent", "reasoning_content", "reasoning"}) {
+                if (metadata.containsKey(key)) {
+                    Object val = metadata.get(key);
+                    if (val instanceof String s && !s.isEmpty()) {
+                        reasoningDelta = s;
+                        break;
+                    }
+                }
+            }
+            if (reasoningDelta == null) return;
+
+            reasoningBuffer.append(reasoningDelta);
+            sseService.send(this.chatSessionId, SseMessage.builder()
+                    .type(SseMessage.Type.AI_THINKING)
+                    .payload(SseMessage.Payload.builder()
+                            .statusText(Objects.requireNonNull(reasoningBuffer.toString()))
+                            .build())
+                    .build());
+        } catch (Exception ignored) {
+            // 提取 reasoning 失败不影响主流程
+        }
     }
 
     // 执行
@@ -262,6 +354,18 @@ public class MindHarness {
         if (!lastResponse.hasToolCalls()) {
             return;
         }
+
+        // 提取工具名称用于状态展示
+        List<AssistantMessage.ToolCall> toolCalls = lastResponse.getResult().getOutput().getToolCalls();
+        String toolNames = toolCalls.stream()
+                .map(AssistantMessage.ToolCall::name)
+                .collect(Collectors.joining("、"));
+        sseService.send(this.chatSessionId, SseMessage.builder()
+                .type(SseMessage.Type.AI_EXECUTING)
+                .payload(SseMessage.Payload.builder()
+                        .statusText(Objects.requireNonNull("正在调用: " + toolNames))
+                        .build())
+                .build());
 
         Prompt prompt = Prompt.builder()
                 .messages(this.chatMemory.get(this.chatSessionId))
@@ -288,6 +392,14 @@ public class MindHarness {
         // 保存工具调用
         saveMessage(toolResponseMessage);
         refreshPendingMessages();
+
+        // 清除执行状态
+        sseService.send(this.chatSessionId, SseMessage.builder()
+                .type(SseMessage.Type.AI_EXECUTING)
+                .payload(SseMessage.Payload.builder()
+                        .done(true)
+                        .build())
+                .build());
 
         if (toolResponseMessage.getResponses()
                 .stream()
@@ -323,6 +435,15 @@ public class MindHarness {
                 }
             }
             agentState = AgentState.FINISHED;
+
+            // 发送 AI_DONE 通知前端
+            SseMessage doneSse = SseMessage.builder()
+                    .type(SseMessage.Type.AI_DONE)
+                    .payload(SseMessage.Payload.builder()
+                            .done(true)
+                            .build())
+                    .build();
+            sseService.send(this.chatSessionId, doneSse);
         } catch (Exception e) {
             agentState = AgentState.ERROR;
             log.error("Error running agent", e);

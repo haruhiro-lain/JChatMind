@@ -78,7 +78,7 @@ import { DownOutlined, CheckCircleFilled } from "@ant-design/icons-vue";
 import AgentChatHistory from "./agentChatView/AgentChatHistory.vue";
 import AgentChatInput from "./agentChatView/AgentChatInput.vue";
 import EmptyAgentChatView from "./agentChatView/EmptyAgentChatView.vue";
-import { createChatMessage, createChatSession, getChatMessagesBySessionId, getChatSession, updateChatSession } from "../../api/api";
+import { createChatMessage, createChatSession, getChatSession, updateChatSession } from "../../api/api";
 import { BASE_URL } from "../../api/http";
 import { useAgents } from "../../composables/useAgents";
 import { useChatSessions } from "../../composables/useChatSessions";
@@ -126,6 +126,9 @@ const chatSessionId = ref<string | undefined>(undefined);
 // 智能体切换
 const switchingAgent = ref(false);
 
+/** 用于取消正在进行的 fetch 请求，防止切换会话时的竞态条件 */
+let fetchAbortController: AbortController | null = null;
+
 async function handleAgentSelectClick(newAgentId: string) {
   if (!chatSessionId.value || newAgentId === agentId.value) return;
   switchingAgent.value = true;
@@ -156,25 +159,92 @@ function addMessage(message: ChatMessageVO) {
   messages.value = [...messages.value, message];
 }
 
-async function fetchMessages() {
-  if (!chatSessionId.value) return;
-  loading.value = true;
-  try {
-    const resp = await getChatMessagesBySessionId(chatSessionId.value);
-    messages.value = resp.chatMessages;
-    const sessionResp = await getChatSession(chatSessionId.value);
-    agentId.value = sessionResp.chatSession.agentId;
-  } catch {
-    // 会话不存在或已删除，回到首页
-    message.warning("会话不存在");
-    chatSessionId.value = undefined;
-    router.replace("/");
-  } finally {
-    loading.value = false;
+/** 清除 Agent 状态指示器 */
+function clearAgentStatus() {
+  displayAgentStatus.value = false;
+  agentStatusText.value = "";
+  agentStatusType.value = undefined;
+}
+
+/**
+ * 取消正在进行的 fetch 请求
+ */
+function cancelPendingFetch() {
+  if (fetchAbortController) {
+    fetchAbortController.abort();
+    fetchAbortController = null;
   }
 }
 
-watch(chatSessionId, (newId) => {
+async function fetchMessages() {
+  if (!chatSessionId.value) return;
+
+  // 如果正在流式输出，跳过全量刷新以免覆盖流式内容
+  if (streamingMessageId.value) return;
+
+  // 取消之前的请求，防止旧数据覆盖新数据
+  cancelPendingFetch();
+  fetchAbortController = new AbortController();
+
+  const currentSessionId = chatSessionId.value;
+  loading.value = true;
+  try {
+    // 使用自定义 fetch 以便支持 AbortController
+    const url = `${BASE_URL}/chat-messages/session/${currentSessionId}`;
+    const response = await fetch(url, {
+      headers: { "Content-Type": "application/json" },
+      cache: "no-cache",
+      signal: fetchAbortController.signal,
+    });
+
+    if (!response.ok) {
+      throw new Error(`HTTP ${response.status}`);
+    }
+
+    const apiResp = await response.json();
+    if (apiResp.code !== 200) {
+      throw new Error(apiResp.message || "请求失败");
+    }
+
+    // 只有当前会话 ID 没变时才更新数据
+    if (chatSessionId.value !== currentSessionId) return;
+    messages.value = apiResp.data.chatMessages;
+
+    // 同时获取会话信息
+    const sessionResp = await getChatSession(currentSessionId);
+    if (chatSessionId.value !== currentSessionId) return;
+    agentId.value = sessionResp.chatSession.agentId;
+  } catch (err: unknown) {
+    if (err instanceof DOMException && err.name === "AbortError") {
+      // 请求被取消，忽略
+      return;
+    }
+    // 会话不存在或已删除，回到首页
+    if (chatSessionId.value === currentSessionId) {
+      message.warning("会话不存在");
+      chatSessionId.value = undefined;
+      router.replace("/");
+    }
+  } finally {
+    if (chatSessionId.value === currentSessionId) {
+      loading.value = false;
+    }
+    if (fetchAbortController?.signal.aborted === false) {
+      fetchAbortController = null;
+    }
+  }
+}
+
+watch(chatSessionId, (newId, oldId) => {
+  // 切换会话时先清空消息列表，避免闪现旧数据
+  if (oldId !== newId) {
+    messages.value = [];
+    agentId.value = "";
+    streamingMessageId.value = null;
+    displayAgentStatus.value = false;
+    agentStatusText.value = "";
+    agentStatusType.value = undefined;
+  }
   if (newId) fetchMessages();
 });
 
@@ -217,8 +287,16 @@ async function handleSendMessage(data: { text: string }) {
     }
   } else {
     try {
-      await createChatMessage({
+      const resp = await createChatMessage({
         agentId: agentId.value ?? "",
+        sessionId: chatSessionId.value,
+        role: "user",
+        content: text,
+      });
+      // 先本地追加用户消息获得即时反馈，再刷新消息列表作为安全回退
+      // SSE 会实时推送 AI 回复，fetchMessages 确保 SSE 断开时数据不丢失
+      addMessage({
+        id: resp.chatMessageId,
         sessionId: chatSessionId.value,
         role: "user",
         content: text,
@@ -234,82 +312,150 @@ async function handleSendMessage(data: { text: string }) {
 
 // SSE 连接
 let es: EventSource | null = null;
+/** 当前 SSE 连接的会话 ID，用于过滤过期事件 */
+let sseSessionId: string | null = null;
 
-watch(chatSessionId, (newId, oldId) => {
-  if (oldId && es) {
+function closeSseConnection() {
+  if (es) {
     es.close();
     es = null;
   }
+  sseSessionId = null;
+}
+
+watch(chatSessionId, (newId) => {
+  // 关闭旧连接
+  closeSseConnection();
+
   if (!newId) return;
+
+  // 记录当前 SSE 连接的会话 ID
+  sseSessionId = newId;
+  const currentSseSessionId = newId;
 
   const sseBaseUrl = BASE_URL.replace(/\/api$/, "");
   es = new EventSource(`${sseBaseUrl}/sse/connect/${newId}`);
 
   es.addEventListener("message", (event) => {
-    const msg = JSON.parse(event.data) as SseMessage;
-    if (msg.type === "AI_STREAMING") {
-      // 流式增量：追加深文本到现有消息或创建新泡泡
-      displayAgentStatus.value = false;
-      const delta = msg.payload.delta || "";
-      const mId = msg.payload.messageId || "";
-      streamingMessageId.value = mId || null;
-      const existing = messages.value.find((m) => m.id === mId);
-      if (existing) {
-        existing.content += delta;
-      } else if (delta) {
-        messages.value = [...messages.value, {
-          id: mId,
-          sessionId: chatSessionId.value || "",
-          role: "assistant",
-          content: delta,
-        }];
-      }
-    } else if (msg.type === "AI_GENERATED_CONTENT") {
-      // 完整消息：替换流式泡泡或新增
-      streamingMessageId.value = null;
-      const mId = msg.metadata?.chatMessageId || msg.payload.message?.id;
-      if (mId) {
-        const idx = messages.value.findIndex((m) => m.id === mId);
-        if (idx >= 0) {
-          messages.value[idx] = msg.payload.message;
-        } else {
-          addMessage(msg.payload.message);
-        }
-      } else {
-        addMessage(msg.payload.message);
-      }
-    } else if (msg.type === "AI_PLANNING") {
-      displayAgentStatus.value = true;
-      agentStatusText.value = msg.payload.statusText;
-      agentStatusType.value = "AI_PLANNING";
-    } else if (msg.type === "AI_THINKING") {
-      displayAgentStatus.value = true;
-      agentStatusText.value = msg.payload.statusText;
-      agentStatusType.value = "AI_THINKING";
-    } else if (msg.type === "AI_EXECUTING") {
-      displayAgentStatus.value = true;
-      agentStatusText.value = msg.payload.statusText;
-      agentStatusType.value = "AI_EXECUTING";
-    } else if (msg.type === "AI_DONE") {
-      displayAgentStatus.value = false;
-      agentStatusText.value = "";
-      agentStatusType.value = undefined;
-    } else if (msg.type === "AI_ERROR") {
-      displayAgentStatus.value = true;
-      agentStatusText.value = msg.payload.statusText || "AI 服务异常";
-      agentStatusType.value = "AI_ERROR";
+    // 忽略来自旧会话的事件
+    if (sseSessionId !== currentSseSessionId) return;
+
+    try {
+      const msg = JSON.parse(event.data) as SseMessage;
+      handleSseMessage(msg, currentSseSessionId);
+    } catch {
+      // JSON 解析失败，忽略
     }
   });
 
-  es.onerror = (error) => {
-    console.error("SSE error:", error);
+  es.onerror = () => {
+    // SSE 连接出错，如果是当前会话则尝试重连
+    if (sseSessionId === currentSseSessionId && es && es.readyState === EventSource.CLOSED) {
+      // EventSource 已关闭，延迟后重连
+      setTimeout(() => {
+        if (chatSessionId.value === currentSseSessionId) {
+          closeSseConnection();
+          sseSessionId = currentSseSessionId;
+          es = new EventSource(`${sseBaseUrl}/sse/connect/${currentSseSessionId}`);
+          es.addEventListener("message", (event) => {
+            if (sseSessionId !== currentSseSessionId) return;
+            try {
+              const msg = JSON.parse(event.data) as SseMessage;
+              handleSseMessage(msg, currentSseSessionId);
+            } catch { /* ignore */ }
+          });
+          es.onerror = () => {
+            if (sseSessionId === currentSseSessionId) {
+              closeSseConnection();
+            }
+          };
+        }
+      }, 2000);
+    }
   };
 });
 
-onUnmounted(() => {
-  if (es) {
-    es.close();
+/**
+ * 处理 SSE 消息（提取为独立函数，便于重连时复用）
+ */
+function handleSseMessage(msg: SseMessage, sessionId: string) {
+  if (msg.type === "AI_STREAMING") {
+    // 流式增量：追加文本到现有消息或创建新泡泡
+    displayAgentStatus.value = false;
+    const delta = msg.payload.delta || "";
+    const mId = msg.payload.messageId || "";
+    streamingMessageId.value = mId || null;
+    const existing = messages.value.find((m) => m.id === mId);
+    if (existing) {
+      existing.content += delta;
+    } else if (delta) {
+      messages.value = [...messages.value, {
+        id: mId,
+        sessionId: sessionId,
+        role: "assistant",
+        content: delta,
+      }];
+    }
+  } else if (msg.type === "AI_GENERATED_CONTENT") {
+    // 完整消息：先移除流式泡泡，再添加/替换真实消息
+    const currentStreamingId = streamingMessageId.value;
+    streamingMessageId.value = null;
+
+    // 移除流式临时泡泡
+    if (currentStreamingId) {
+      const streamIdx = messages.value.findIndex((m) => m.id === currentStreamingId);
+      if (streamIdx >= 0) {
+        messages.value.splice(streamIdx, 1);
+      }
+    }
+
+    const mId = msg.metadata?.chatMessageId || msg.payload.message?.id;
+    if (mId && msg.payload.message) {
+      const idx = messages.value.findIndex((m) => m.id === mId);
+      if (idx >= 0) {
+        messages.value[idx] = msg.payload.message;
+      } else {
+        addMessage(msg.payload.message);
+      }
+    } else if (msg.payload.message) {
+      addMessage(msg.payload.message);
+    }
+  } else if (msg.type === "AI_PLANNING") {
+    if (msg.payload.done) {
+      clearAgentStatus();
+    } else {
+      displayAgentStatus.value = true;
+      agentStatusText.value = msg.payload.statusText;
+      agentStatusType.value = "AI_PLANNING";
+    }
+  } else if (msg.type === "AI_THINKING") {
+    if (msg.payload.done) {
+      clearAgentStatus();
+    } else {
+      displayAgentStatus.value = true;
+      agentStatusText.value = msg.payload.statusText;
+      agentStatusType.value = "AI_THINKING";
+    }
+  } else if (msg.type === "AI_EXECUTING") {
+    if (msg.payload.done) {
+      clearAgentStatus();
+    } else {
+      displayAgentStatus.value = true;
+      agentStatusText.value = msg.payload.statusText;
+      agentStatusType.value = "AI_EXECUTING";
+    }
+  } else if (msg.type === "AI_DONE") {
+    clearAgentStatus();
+  } else if (msg.type === "AI_ERROR") {
+    displayAgentStatus.value = true;
+    agentStatusText.value = msg.payload.statusText || "AI 服务异常";
+    agentStatusType.value = "AI_ERROR";
   }
+}
+
+onUnmounted(() => {
+  cancelPendingFetch();
+  closeSseConnection();
 });
 </script>
 

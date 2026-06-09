@@ -2,7 +2,9 @@ package com.mindharness;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.scheduling.annotation.EnableAsync;
 
+@EnableAsync
 @SpringBootApplication(excludeName = {
     "org.springframework.ai.model.zhipuai.autoconfigure.ZhiPuAiChatAutoConfiguration",
     "org.springframework.ai.model.zhipuai.autoconfigure.ZhiPuAiEmbeddingAutoConfiguration",

@@ -74,8 +74,8 @@
       </template>
     </div>
 
-    <!-- Agent 状态指示器 -->
-    <div v-if="displayAgentStatus" class="mb-5" :class="{ 'animate-pulse': agentStatusType !== 'AI_ERROR' }">
+    <!-- Agent 状态指示器（思考/执行过程实时展示） -->
+    <div v-if="displayAgentStatus" class="mb-5">
       <div class="flex gap-3">
         <div class="w-11 h-11 rounded-full overflow-hidden shrink-0 border-2 shadow-[0_0_12px_rgba(0,229,255,0.15)]" :class="agentStatusType === 'AI_ERROR' ? 'border-[rgba(255,107,107,0.5)] shadow-[0_0_12px_rgba(255,107,107,0.2)]' : 'border-[rgba(0,229,255,0.3)]'">
           <img v-if="agentAvatar" :src="agentAvatar" class="w-full h-full object-cover" :alt="agentName" />
@@ -84,13 +84,28 @@
           </div>
         </div>
         <div class="flex-1 min-w-0">
-          <div class="text-xs font-semibold mb-1 ml-0.5" :class="agentStatusType === 'AI_ERROR' ? 'text-[#ff6b6b]' : 'text-[#00e5ff]'">{{ agentName || 'Assistant' }}</div>
-          <div class="px-4 py-3 rounded-2xl border" :class="agentStatusType === 'AI_ERROR' ? 'bg-[rgba(255,107,107,0.08)] border-[rgba(255,107,107,0.3)]' : 'bg-[rgba(0,229,255,0.04)] border-[rgba(0,229,255,0.1)]'">
-            <span class="text-sm flex items-center gap-2" :class="agentStatusType === 'AI_ERROR' ? 'text-[#ff6b6b]' : 'text-[#8ba4c0]'">
-              <span class="font-semibold" :class="agentStatusType === 'AI_ERROR' ? 'text-[#ff6b6b]' : 'text-[#00e5ff]'">{{ getStatusIcon() }} {{ getStatusLabel() }}</span>
-              <span class="text-[#5a7090]">·</span>
-              <span>{{ agentStatusText }}</span>
-            </span>
+          <div class="text-xs font-semibold mb-1 ml-0.5" :class="agentStatusType === 'AI_ERROR' ? 'text-[#ff6b6b]' : 'text-[#00e5ff]'">
+            {{ agentName || 'Assistant' }}
+            <span class="font-normal ml-1 opacity-70">{{ getStatusLabel() }}</span>
+          </div>
+          <div class="rounded-2xl border" :class="[
+            agentStatusType === 'AI_ERROR'
+              ? 'bg-[rgba(255,107,107,0.08)] border-[rgba(255,107,107,0.3)]'
+              : 'bg-[rgba(0,229,255,0.04)] border-[rgba(0,229,255,0.1)]',
+            isThinkingExpanded ? '' : 'max-h-16 overflow-hidden'
+          ]">
+            <div class="px-4 py-3 text-sm whitespace-pre-wrap break-words"
+                 :class="agentStatusType === 'AI_ERROR' ? 'text-[#ff6b6b]' : 'text-[#8ba4c0]'"
+                 :style="isThinkingExpanded ? '' : 'display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;'"
+            >{{ agentStatusText || '处理中...' }}</div>
+            <div
+              v-if="(agentStatusText?.length || 0) > 120"
+              class="px-4 pb-2 text-xs cursor-pointer transition-colors"
+              :class="agentStatusType === 'AI_ERROR' ? 'text-[#ff6b6b]/70 hover:text-[#ff6b6b]' : 'text-[#5a7090] hover:text-[#00e5ff]'"
+              @click="isThinkingExpanded = !isThinkingExpanded"
+            >
+              {{ isThinkingExpanded ? '▲ 收起' : '▼ 展开思考过程' }}
+            </div>
           </div>
         </div>
       </div>
@@ -118,6 +133,7 @@ const props = defineProps<{
 const scrollContainerRef = ref<HTMLDivElement | null>(null);
 const isNearBottom = ref(true);
 const prevMessagesLength = ref(0);
+const isThinkingExpanded = ref(false);
 const SCROLL_THRESHOLD = 20;
 
 function renderMarkdown(content: string): string {
